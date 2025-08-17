@@ -258,13 +258,14 @@
             hideError();
 
             try {
+                let prompt;
                 if (activeTab === 'scan') {
                     if (!base64ImageData) {
                         showError("Please upload or capture an image of the question first.");
                         resetButtonState();
                         return;
                     }
-                    const prompt = "Provide a simple and easy-to-understand solution for a 10-12th grade CBSE student. Analyze the provided image and answer the question in it.";
+                    prompt = "First, analyze the provided image to identify the question. Then, determine if the question is suitable for a 10-12th grade CBSE student. If it is, provide a simple and easy-to-understand solution. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade CBSE level.'";
                     await getSolution(prompt, base64ImageData);
                 } else {
                     const questionText = manualQuestion.value.trim();
@@ -273,7 +274,7 @@
                         resetButtonState();
                         return;
                     }
-                    const prompt = `Provide a simple and easy-to-understand solution for the following 10-12th grade CBSE question: "${questionText}"`;
+                    prompt = `First, determine if the following question is suitable for a 10-12th grade CBSE student. If it is, provide a simple and easy-to-understand solution. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade CBSE level.' The question is: "${questionText}"`;
                     await getSolution(prompt);
                 }
             } catch (error) {
