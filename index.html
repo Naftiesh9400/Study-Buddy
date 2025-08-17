@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE Question Solver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container-main {
+            flex-grow: 1;
+        }
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Simple transition for tab content */
+        .tab-content {
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Modal styles */
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 sm:p-8 text-center max-w-sm w-full transform transition-all scale-100 opacity-100" id="modalContent">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome!</h2>
+            <p class="text-md sm:text-lg text-gray-600 mb-6">Hi Hanshika, you can ask any question.</p>
+            <button id="getStartedBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
+                Get Started
+            </button>
+        </div>
+    </div>
+
+
+    <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">CBSE Question Solver</h1>
+            <p class="text-md sm:text-lg text-gray-600 mt-2">Your AI-powered study buddy for grades 10-12</p>
+        </header>
+
+        <main>
+            <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+                <!-- Tabs for switching between scan and manual input -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button id="scanTab" class="py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none w-1/2 text-center">Scan</button>
+                    <button id="typeTab" class="py-2 px-4 font-semibold text-gray-500 focus:outline-none w-1/2 text-center">Type</button>
+                </div>
+
+                <!-- Content for Scan Tab -->
+                <div id="scanContent" class="tab-content">
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Upload Your Question</h2>
+                    <div class="relative w-full">
+                        <input type="file" id="questionScanner" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                        <div id="file-display" class="flex items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <div class="text-center px-2">
+                                <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <p id="file-text" class="mt-1 text-sm text-gray-600 truncate">Click to upload an image</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content for Type Tab -->
+                <div id="typeContent" class="hidden tab-content">
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Enter Your Question</h2>
+                    <textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Type your question here..."></textarea>
+                </div>
+
+                <!-- Button to get the answer -->
+                <button id="getAnswerBtn" class="w-full mt-6 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
+                    Get Answer
+                </button>
+            </div>
+
+            <!-- Area to display the result -->
+            <div id="resultContainer" class="mt-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Solution</h2>
+                <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto my-4 hidden"></div>
+                <div id="answer" class="text-gray-700 leading-relaxed prose max-w-none"></div>
+            </div>
+             <!-- Error Message Box -->
+            <div id="errorBox" class="hidden mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                <strong class="font-bold">Error:</strong>
+                <span class="block sm:inline" id="errorMessage"></span>
+            </div>
+        </main>
+    </div>
+
+    <footer class="text-center py-6 mt-8">
+        <p class="text-sm text-gray-500">© 2025 Naresh. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // DOM element references
+        const getAnswerBtn = document.getElementById('getAnswerBtn');
+        const questionScanner = document.getElementById('questionScanner');
+        const resultContainer = document.getElementById('resultContainer');
+        const loader = document.getElementById('loader');
+        const answerDiv = document.getElementById('answer');
+        const fileDisplay = document.getElementById('file-display');
+        const fileText = document.getElementById('file-text');
+        const errorBox = document.getElementById('errorBox');
+        const errorMessage = document.getElementById('errorMessage');
+        const scanTab = document.getElementById('scanTab');
+        const typeTab = document.getElementById('typeTab');
+        const scanContent = document.getElementById('scanContent');
+        const typeContent = document.getElementById('typeContent');
+        const manualQuestion = document.getElementById('manualQuestion');
+        const welcomeModal = document.getElementById('welcomeModal');
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const modalContent = document.getElementById('modalContent');
+
+        let base64ImageData = null;
+        let activeTab = 'scan'; // Default active tab
+
+        // --- Modal Logic ---
+        getStartedBtn.addEventListener('click', () => {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            welcomeModal.classList.add('opacity-0');
+            setTimeout(() => {
+                welcomeModal.classList.add('hidden');
+            }, 300); // Match transition duration
+        });
+
+
+        // --- Tab Switching Logic ---
+        scanTab.addEventListener('click', () => {
+            if (activeTab === 'scan') return;
+            activeTab = 'scan';
+            scanTab.classList.add('text-blue-600', 'border-blue-600');
+            scanTab.classList.remove('text-gray-500');
+            typeTab.classList.remove('text-blue-600', 'border-blue-600');
+            typeTab.classList.add('text-gray-500');
+            scanContent.classList.remove('hidden');
+            typeContent.classList.add('hidden');
+        });
+
+        typeTab.addEventListener('click', () => {
+            if (activeTab === 'type') return;
+            activeTab = 'type';
+            typeTab.classList.add('text-blue-600', 'border-blue-600');
+            typeTab.classList.remove('text-gray-500');
+            scanTab.classList.remove('text-blue-600', 'border-blue-600');
+            scanTab.classList.add('text-gray-500');
+            typeContent.classList.remove('hidden');
+            scanContent.classList.add('hidden');
+        });
+
+        // --- File Input Logic ---
+        questionScanner.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                fileText.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    base64ImageData = e.target.result.split(',')[1];
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileText.textContent = 'Click to upload an image';
+                base64ImageData = null;
+            }
+        });
+
+        // --- Main 'Get Answer' Button Logic ---
+        getAnswerBtn.addEventListener('click', async () => {
+            answerDiv.innerHTML = '';
+            resultContainer.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            getAnswerBtn.disabled = true;
+            getAnswerBtn.textContent = 'Fetching Solution...';
+            hideError();
+
+            try {
+                if (activeTab === 'scan') {
+                    if (!base64ImageData) {
+                        showError("Please upload an image of the question first.");
+                        resetButtonState();
+                        return;
+                    }
+                    const prompt = "Provide a simple and easy-to-understand solution for a 10-12th grade CBSE student. Analyze the provided image and answer the question in it.";
+                    await getSolution(prompt, base64ImageData);
+                } else {
+                    const questionText = manualQuestion.value.trim();
+                    if (!questionText) {
+                        showError("Please type your question in the text box.");
+                        resetButtonState();
+                        return;
+                    }
+                    const prompt = `Provide a simple and easy-to-understand solution for the following 10-12th grade CBSE question: "${questionText}"`;
+                    await getSolution(prompt);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to fetch the solution. Please try again.');
+            } finally {
+                resetButtonState();
+            }
+        });
+
+        /**
+         * Fetches the solution from the Gemini API.
+         * @param {string} prompt - The question/prompt for the model.
+         * @param {string|null} imageData - Base64 encoded image data, or null for text-only.
+         */
+        async function getSolution(prompt, imageData = null) {
+            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const parts = [{ text: prompt }];
+            if (imageData) {
+                parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
+            }
+
+            const payload = {
+                contents: [{ parts: parts }],
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    console.error("API Error Response:", errorBody);
+                    throw new Error(`API request failed: ${errorBody.error.message}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const solutionText = result.candidates[0].content.parts[0].text;
+                    let formattedSolution = solutionText
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>')
+                        .replace(/\n/g, '<br>');
+                    answerDiv.innerHTML = formattedSolution;
+                } else {
+                    // This case might happen if the content is blocked due to safety settings
+                    console.warn("API Result Warning:", result);
+                    answerDiv.textContent = 'Sorry, a solution could not be generated. The question may have violated safety policies.';
+                }
+            } catch (error) {
+                console.error("API call failed:", error);
+                showError(error.message || "There was an issue connecting to the AI service.");
+            }
+        }
+        
+        function resetButtonState() {
+            loader.classList.add('hidden');
+            getAnswerBtn.disabled = false;
+            getAnswerBtn.textContent = 'Get Answer';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorBox.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorBox.classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
