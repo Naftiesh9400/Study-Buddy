@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,56 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container-main {
-            flex-grow: 1;
-        }
-        .loader {
-            border-top-color: #3498db;
-            -webkit-animation: spin 1s linear infinite;
-            animation: spin 1s linear infinite;
-        }
-        @-webkit-keyframes spin {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .tab-content {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        #cameraView {
-            max-width: 100%;
-            border-radius: 0.5rem;
-        }
+        body { font-family: 'Inter', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        .container-main { flex-grow: 1; }
+        .loader { border-top-color: #4A00E0; -webkit-animation: spin 1s linear infinite; animation: spin 1s linear infinite; }
+        @-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-gradient { background-image: linear-gradient(to right, #8A2BE2, #4A00E0); }
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-900 text-gray-200">
 
-    <div id="mainAppContainer">
-        <div id="welcomeModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-xl shadow-2xl p-6 sm:p-8 text-center max-w-sm w-full transform transition-all scale-100 opacity-100" id="modalContent">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome!</h2>
-                <p id="welcomeMessage" class="text-md sm:text-lg text-gray-600 mb-6">Hi Buddy, you can ask any question.</p>
-                <button id="getStartedBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
-                    Get Started
-                </button>
-            </div>
-        </div>
-        
-        <div id="cameraModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
-            <video id="cameraView" autoplay playsinline class="mb-4"></video>
+    <div id="mainAppContainer" class="hidden"> <!-- Hide main app until user is logged in -->
+        <!-- Camera Modal -->
+        <div id="cameraModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex-col items-center justify-center p-4 z-50">
+            <video id="cameraView" autoplay playsinline class="mb-4 max-w-full rounded-lg"></video>
             <canvas id="cameraCanvas" class="hidden"></canvas>
             <div class="flex space-x-4">
                 <button id="captureBtn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700">Capture</button>
@@ -65,84 +29,101 @@
             </div>
         </div>
 
-        <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
+        <!-- Main Content -->
+        <div class="container-main mx-auto p-4 sm:p-8 max-w-3xl">
             <header class="text-center mb-8 relative">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">CBSE & NCERT Question Solver</h1>
-                <p class="text-md sm:text-lg text-gray-600 mt-2">Your AI-powered study buddy for grades 10-12</p>
+                <div class="absolute top-0 right-0">
+                    <button id="authBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 text-sm">Sign Out</button>
+                    <span id="userName" class="font-semibold text-gray-300"></span>
+                </div>
+                <h1 class="text-4xl font-bold text-white">CBSE & NCERT Question Solver</h1>
+                <p class="text-lg text-gray-400 mt-2">Your AI-powered study buddy for grades 10-12</p>
             </header>
+            
+            <div class="flex justify-center space-x-8 sm:space-x-16 my-8 text-center">
+                <div><p class="text-3xl font-bold text-purple-400" id="userQuestionsSolved">0</p><p class="text-sm text-gray-400">Questions Solved</p></div>
+                <div><p class="text-3xl font-bold text-cyan-400">10-12</p><p class="text-sm text-gray-400">Grade Level</p></div>
+                <div><p class="text-3xl font-bold text-green-400">Free</p><p class="text-sm text-gray-400">Completely Free</p></div>
+            </div>
 
             <main>
-                <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-                    <div class="flex border-b border-gray-200 mb-6">
-                        <button id="scanTab" class="py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none w-1/2 text-center">Scan</button>
-                        <button id="typeTab" class="py-2 px-4 font-semibold text-gray-500 focus:outline-none w-1/2 text-center">Type</button>
-                    </div>
-
-                    <div id="scanContent" class="tab-content">
-                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Upload Your Question</h2>
-                        <div class="relative w-full">
-                            <input type="file" id="questionScanner" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
-                            <div id="file-display" class="flex items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                                <div class="text-center px-2">
-                                    <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <p id="file-text" class="mt-1 text-sm text-gray-600 truncate">Click to upload an image</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="openCameraBtn" class="w-full mt-4 bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800">Scan with Camera</button>
-                    </div>
-
-                    <div id="typeContent" class="hidden tab-content">
-                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Enter Your Question</h2>
-                        <textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Type your question here..."></textarea>
-                    </div>
-
-                    <div id="curriculumSelector" class="mt-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Select Curriculum</h3>
-                        <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
-                            <div class="flex items-center">
-                                <input id="cbseOption" type="radio" name="curriculum" value="CBSE" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
-                                <label for="cbseOption" class="ml-2 block text-sm font-medium text-gray-700">CBSE</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input id="ncertOption" type="radio" name="curriculum" value="NCERT" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                <label for="ncertOption" class="ml-2 block text-sm font-medium text-gray-700">NCERT</label>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="getAnswerBtn" class="w-full mt-6 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
-                        Get Answer
-                    </button>
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8">
+                    <div class="flex border-b border-gray-700 mb-6"><button id="scanTab" class="py-2 px-4 font-semibold text-blue-500 border-b-2 border-blue-500 w-1/2 text-center">Scan</button><button id="typeTab" class="py-2 px-4 font-semibold text-gray-400 w-1/2 text-center">Type</button></div>
+                    <div id="scanContent"><h2 class="text-2xl font-semibold mb-4 text-gray-200">Upload Your Question</h2><div class="relative w-full"><input type="file" id="questionScanner" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*"><div class="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-600 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"><div class="text-center px-2"><svg class="mx-auto h-8 w-8 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg><p id="file-text" class="mt-1 text-sm text-gray-400 truncate">Click to upload an image</p></div></div></div><button id="openCameraBtn" class="w-full mt-4 bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-700">Scan with Camera</button></div>
+                    <div id="typeContent" class="hidden"><h2 class="text-2xl font-semibold mb-4 text-gray-200">Enter Your Question</h2><textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Type your question here..."></textarea></div>
+                    <div id="curriculumSelector" class="mt-6"><h3 class="text-lg font-semibold text-gray-200 mb-3 text-center">Select Curriculum</h3><div class="flex justify-center space-x-8 bg-gray-700 p-3 rounded-lg"><div class="flex items-center"><input id="cbseOption" type="radio" name="curriculum" value="CBSE" class="h-4 w-4 text-blue-600 border-gray-500 bg-gray-800 focus:ring-blue-500" checked><label for="cbseOption" class="ml-2 block text-sm font-medium text-gray-300">CBSE</label></div><div class="flex items-center"><input id="ncertOption" type="radio" name="curriculum" value="NCERT" class="h-4 w-4 text-blue-600 border-gray-500 bg-gray-800 focus:ring-blue-500"><label for="ncertOption" class="ml-2 block text-sm font-medium text-gray-300">NCERT</label></div></div></div>
+                    <button id="getAnswerBtn" class="w-full mt-6 btn-gradient text-white font-semibold py-3 px-6 rounded-lg hover:scale-105 transition-transform disabled:bg-gray-500 disabled:cursor-not-allowed disabled:transform-none">Get Answer</button>
                 </div>
 
-                <div id="resultContainer" class="mt-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 hidden">
-                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Solution</h2>
-                    <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto my-4 hidden"></div>
-                    <div id="answer" class="text-gray-700 leading-relaxed prose max-w-none"></div>
-                </div>
-                
-                <div id="errorBox" class="hidden mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
-                    <strong class="font-bold">Error:</strong>
-                    <span class="block sm:inline" id="errorMessage"></span>
-                </div>
+                <div id="resultContainer" class="mt-8 bg-gray-800 rounded-xl shadow-lg p-8 hidden"><h2 class="text-2xl font-semibold mb-4 text-gray-200">Solution</h2><div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12 mx-auto my-4 hidden"></div><div id="answer" class="text-gray-300 leading-relaxed prose max-w-none"></div></div>
+                <div id="errorBox" class="hidden mt-4 bg-red-200 border border-red-500 text-red-800 px-4 py-3 rounded-lg"><strong class="font-bold">Error:</strong><span class="block sm:inline" id="errorMessage"></span></div>
             </main>
         </div>
 
-        <footer class="text-center py-6 mt-8">
-            <p class="text-sm text-gray-500">© 2025 Naresh. All rights reserved.</p>
+        <footer class="text-center py-6 mt-8 border-t border-gray-700">
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto px-4">
+                <div><h3 class="font-semibold text-lg mb-2 text-white">Subscribe for Updates</h3><form id="subscribeForm" class="flex"><input type="email" id="subscribeEmail" placeholder="your.email@example.com" required class="w-full p-2 rounded-l-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"><button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-r-md hover:bg-indigo-700">Subscribe</button></form><p id="subscribeMessage" class="text-sm mt-2 h-4"></p></div>
+                <div><h3 class="font-semibold text-lg mb-2 text-white">Have Feedback?</h3><form id="feedbackForm"><textarea id="feedbackText" rows="2" placeholder="Tell us what you think..." required class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea><button type="submit" class="w-full mt-2 bg-gray-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-700">Submit Feedback</button></form><p id="feedbackMessage" class="text-sm mt-2 h-4"></p></div>
+            </div>
+            <p class="text-sm text-gray-500 mt-8">© 2025 Daily Interview Prep. Made with ❤️ for developers.</p>
         </footer>
     </div>
 
-    <script>
-        // DOM element references
+    <!-- Welcome & Sign-In Modal -->
+    <div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-8 text-center max-w-sm w-full">
+            <h2 class="text-3xl font-bold text-white mb-2">Welcome!</h2>
+            <p class="text-lg text-gray-400 mb-6">Sign in to get started with your AI study buddy.</p>
+            <button id="signInModalBtn" class="w-full btn-gradient text-white font-semibold py-3 px-6 rounded-lg hover:scale-105 transition-transform">
+                Sign In with Google
+            </button>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
+
+        // =====================================================================================
+        // FIX FOR 'auth/configuration-not-found' ERROR:
+        // This error means you have NOT enabled Google Sign-In in your Firebase project.
+        //
+        // HOW TO FIX:
+        // 1. Go to the Firebase Console: https://console.firebase.google.com/
+        // 2. Select your project ("ncert-9a73b").
+        // 3. In the left menu, go to "Authentication".
+        // 4. Click the "Sign-in method" tab.
+        // 5. Click on "Google" in the list of providers.
+        // 6. Enable the toggle switch, enter a project support email, and click "Save".
+        //
+        // After doing this, refresh your app and the error will be gone.
+        // =====================================================================================
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBYntqXgeATCEoTGkYbyEhVK4yukN2R4I",
+            authDomain: "ncert-9a73b.firebaseapp.com",
+            projectId: "ncert-9a73b",
+            storageBucket: "ncert-9a73b.appspot.com",
+            messagingSenderId: "209748577506",
+            appId: "1:209748577506:web:55744200c716edfa39e2bb",
+            measurementId: "G-DYT8FYG75T"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- DOM Elements ---
+        const mainAppContainer = document.getElementById('mainAppContainer');
         const getAnswerBtn = document.getElementById('getAnswerBtn');
         const questionScanner = document.getElementById('questionScanner');
         const resultContainer = document.getElementById('resultContainer');
         const loader = document.getElementById('loader');
         const answerDiv = document.getElementById('answer');
-        const fileDisplay = document.getElementById('file-display');
         const fileText = document.getElementById('file-text');
         const errorBox = document.getElementById('errorBox');
         const errorMessage = document.getElementById('errorMessage');
@@ -152,113 +133,49 @@
         const typeContent = document.getElementById('typeContent');
         const manualQuestion = document.getElementById('manualQuestion');
         const welcomeModal = document.getElementById('welcomeModal');
-        const getStartedBtn = document.getElementById('getStartedBtn');
-        const modalContent = document.getElementById('modalContent');
-
-        // Camera elements
+        const signInModalBtn = document.getElementById('signInModalBtn');
         const openCameraBtn = document.getElementById('openCameraBtn');
         const cameraModal = document.getElementById('cameraModal');
         const cameraView = document.getElementById('cameraView');
         const cameraCanvas = document.getElementById('cameraCanvas');
         const captureBtn = document.getElementById('captureBtn');
         const closeCameraBtn = document.getElementById('closeCameraBtn');
-        let stream;
-
+        const authBtn = document.getElementById('authBtn');
+        const userNameSpan = document.getElementById('userName');
+        const subscribeForm = document.getElementById('subscribeForm');
+        const feedbackForm = document.getElementById('feedbackForm');
 
         let base64ImageData = null;
         let activeTab = 'scan';
+        let stream;
 
-        // --- Modal Logic ---
-        getStartedBtn.addEventListener('click', () => {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            welcomeModal.classList.add('opacity-0');
-            setTimeout(() => {
-                welcomeModal.classList.add('hidden');
-            }, 300);
-        });
+        // --- Core App Logic ---
+        scanTab.addEventListener('click', () => switchTab('scan'));
+        typeTab.addEventListener('click', () => switchTab('type'));
 
-
-        // --- Camera Logic ---
-        openCameraBtn.addEventListener('click', async () => {
-            cameraModal.classList.remove('hidden');
-            cameraModal.classList.add('flex');
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                cameraView.srcObject = stream;
-            } catch (err) {
-                console.error("Error accessing camera: ", err);
-                showError("Could not access the camera. Please check permissions.");
-                closeCamera();
-            }
-        });
-
-        closeCameraBtn.addEventListener('click', () => {
-            closeCamera();
-        });
-
-        function closeCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            cameraModal.classList.add('hidden');
-            cameraModal.classList.remove('flex');
+        function switchTab(tabName) {
+            activeTab = tabName;
+            const isScan = tabName === 'scan';
+            scanTab.classList.toggle('text-blue-500', isScan);
+            scanTab.classList.toggle('border-blue-500', isScan);
+            scanTab.classList.toggle('text-gray-400', !isScan);
+            typeTab.classList.toggle('text-blue-500', !isScan);
+            typeTab.classList.toggle('border-blue-500', !isScan);
+            typeTab.classList.toggle('text-gray-400', isScan);
+            scanContent.classList.toggle('hidden', !isScan);
+            typeContent.classList.toggle('hidden', isScan);
         }
-
-        captureBtn.addEventListener('click', () => {
-            const context = cameraCanvas.getContext('2d');
-            cameraCanvas.width = cameraView.videoWidth;
-            cameraCanvas.height = cameraView.videoHeight;
-            context.drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
-            
-            const dataUrl = cameraCanvas.toDataURL('image/jpeg');
-            base64ImageData = dataUrl.split(',')[1];
-            
-            fileText.textContent = 'Image captured from camera.';
-            closeCamera();
-        });
-
-
-        // --- Tab Switching Logic ---
-        scanTab.addEventListener('click', () => {
-            if (activeTab === 'scan') return;
-            activeTab = 'scan';
-            scanTab.classList.add('text-blue-600', 'border-blue-600');
-            scanTab.classList.remove('text-gray-500');
-            typeTab.classList.remove('text-blue-600', 'border-blue-600');
-            typeTab.classList.add('text-gray-500');
-            scanContent.classList.remove('hidden');
-            typeContent.classList.add('hidden');
-        });
-
-        typeTab.addEventListener('click', () => {
-            if (activeTab === 'type') return;
-            activeTab = 'type';
-            typeTab.classList.add('text-blue-600', 'border-blue-600');
-            typeTab.classList.remove('text-gray-500');
-            scanTab.classList.remove('text-blue-600', 'border-blue-600');
-            scanTab.classList.add('text-gray-500');
-            typeContent.classList.remove('hidden');
-            scanContent.classList.add('hidden');
-        });
-
-        // --- File Input Logic ---
+        
         questionScanner.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
                 fileText.textContent = file.name;
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    base64ImageData = e.target.result.split(',')[1];
-                };
+                reader.onload = (e) => { base64ImageData = e.target.result.split(',')[1]; };
                 reader.readAsDataURL(file);
-            } else {
-                fileText.textContent = 'Click to upload an image';
-                base64ImageData = null;
             }
         });
 
-        // --- Main 'Get Answer' Button Logic ---
         getAnswerBtn.addEventListener('click', async () => {
             answerDiv.innerHTML = '';
             resultContainer.classList.remove('hidden');
@@ -268,113 +185,125 @@
             hideError();
 
             try {
-                // START OF MODIFIED CODE: Get selected curriculum
                 const selectedCurriculum = document.querySelector('input[name="curriculum"]:checked').value;
-                // END OF MODIFIED CODE
-
                 let prompt;
                 if (activeTab === 'scan') {
-                    if (!base64ImageData) {
-                        showError("Please upload or capture an image of the question first.");
-                        resetButtonState();
-                        return;
-                    }
-                    // START OF MODIFIED CODE: Updated prompt for image input
-                    prompt = `First, analyze the provided image to identify the question. Then, determine if the question is suitable for a 10-12th grade ${selectedCurriculum} student. If it is, provide a simple and easy-to-understand solution based on the ${selectedCurriculum} syllabus. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.'`;
-                    // END OF MODIFIED CODE
+                    if (!base64ImageData) throw new Error("Please upload or capture an image of the question first.");
+                    prompt = `Analyze the provided image to identify the question. Then, determine if it's suitable for a 10-12th grade ${selectedCurriculum} student. If it is, provide a simple, easy-to-understand solution based on the ${selectedCurriculum} syllabus. If not, respond with only this exact text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.'`;
                     await getSolution(prompt, base64ImageData);
                 } else {
                     const questionText = manualQuestion.value.trim();
-                    if (!questionText) {
-                        showError("Please type your question in the text box.");
-                        resetButtonState();
-                        return;
-                    }
-                    // START OF MODIFIED CODE: Updated prompt for text input
-                    prompt = `First, determine if the following question is suitable for a 10-12th grade ${selectedCurriculum} student. If it is, provide a simple and easy-to-understand solution based on the ${selectedCurriculum} syllabus. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.' The question is: "${questionText}"`;
-                    // END OF MODIFIED CODE
+                    if (!questionText) throw new Error("Please type your question in the text box.");
+                    prompt = `Is the following question suitable for a 10-12th grade ${selectedCurriculum} student? If it is, provide a simple, easy-to-understand solution based on the ${selectedCurriculum} syllabus. If not, respond with only this exact text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.' The question is: "${questionText}"`;
                     await getSolution(prompt);
                 }
+
+                const user = auth.currentUser;
+                if (user && answerDiv.innerHTML.length > 5) {
+                    const questionToSave = (activeTab === 'scan') ? "Image Question" : manualQuestion.value.trim();
+                    const questionsCol = collection(db, 'questions');
+                    await addDoc(questionsCol, { userId: user.uid, userEmail: user.email, question: questionToSave, answer: answerDiv.innerHTML, curriculum: selectedCurriculum, timestamp: serverTimestamp() });
+                }
+
             } catch (error) {
-                console.error('Error:', error);
-                showError('Failed to fetch the solution. Please try again.');
+                showError(error.message);
             } finally {
-                resetButtonState();
+                loader.classList.add('hidden');
+                getAnswerBtn.disabled = false;
+                getAnswerBtn.textContent = 'Get Answer';
             }
         });
-
-        /**
-         * Fetches the solution from the Gemini API.
-         * @param {string} prompt - The question/prompt for the model.
-         * @param {string|null} imageData - Base64 encoded image data, or null for text-only.
-         */
+        
         async function getSolution(prompt, imageData = null) {
-            // IMPORTANT: Replace with your actual API Key.
-            // The key in the original code is a placeholder and will not work.
-            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // <<<<<<<<<<< REPLACE THIS WITH YOUR GEMINI API KEY
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-            const parts = [{ text: prompt }];
-            if (imageData) {
-                parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
-            }
-
-            const payload = {
-                contents: [{ parts: parts }],
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorBody = await response.json();
-                    console.error("API Error Response:", errorBody);
-                    // Check for specific API key error
-                    if (errorBody.error && errorBody.error.message.includes('API key not valid')) {
-                       throw new Error('API Key is not valid. Please check your key in the script.');
-                    }
-                    throw new Error(`API request failed: ${errorBody.error.message}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
-                    const solutionText = result.candidates[0].content.parts[0].text;
-                    let formattedSolution = solutionText
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                        .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>')
-                        .replace(/\n/g, '<br>');
-                    answerDiv.innerHTML = formattedSolution;
-                } else {
-                    console.warn("API Result Warning:", result);
-                    answerDiv.textContent = 'Sorry, a solution could not be generated. The response from the AI was empty or the question may have violated safety policies.';
-                }
-            } catch (error) {
-                console.error("API call failed:", error);
-                showError(error.message || "There was an issue connecting to the AI service.");
+            const functionUrl = "YOUR_FIREBASE_FUNCTION_URL_HERE"; 
+            const payload = { prompt, imageData };
+            const response = await fetch(functionUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`Function request failed with status: ${response.status}`);
+            const result = await response.json();
+            if (result.solution) {
+                answerDiv.innerHTML = result.solution.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/```(.*?)```/gs, '<pre class="bg-gray-700 p-3 rounded-md"><code>$1</code></pre>').replace(/\n/g, '<br>');
+            } else {
+                answerDiv.textContent = 'Sorry, a solution could not be generated.';
             }
         }
         
-        function resetButtonState() {
-            loader.classList.add('hidden');
-            getAnswerBtn.disabled = false;
-            getAnswerBtn.textContent = 'Get Answer';
-        }
+        function showError(message) { errorMessage.textContent = message; errorBox.classList.remove('hidden'); }
+        function hideError() { errorBox.classList.add('hidden'); }
 
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorBox.classList.remove('hidden');
+        // --- Camera Logic ---
+        openCameraBtn.addEventListener('click', async () => {
+            cameraModal.classList.remove('hidden');
+            cameraModal.classList.add('flex');
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                cameraView.srcObject = stream;
+            } catch (err) { showError("Could not access the camera. Please check permissions."); closeCamera(); }
+        });
+        closeCameraBtn.addEventListener('click', closeCamera);
+        function closeCamera() {
+            if (stream) stream.getTracks().forEach(track => track.stop());
+            cameraModal.classList.add('hidden');
+            cameraModal.classList.remove('flex');
         }
+        captureBtn.addEventListener('click', () => {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraView.videoWidth;
+            cameraCanvas.height = cameraView.videoHeight;
+            context.drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
+            base64ImageData = cameraCanvas.toDataURL('image/jpeg').split(',')[1];
+            fileText.textContent = 'Image captured from camera.';
+            closeCamera();
+        });
 
-        function hideError() {
-            errorBox.classList.add('hidden');
+        // --- Authentication & User Data ---
+        signInModalBtn.addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .catch(error => {
+                    console.error("Detailed Auth Error:", error);
+                    alert("Sign-in failed. Please ensure you have enabled Google Sign-In in your Firebase project settings. Error: " + error.message);
+                });
+        });
+
+        authBtn.addEventListener('click', () => signOut(auth));
+
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                // User is signed in
+                welcomeModal.classList.add('hidden');
+                mainAppContainer.classList.remove('hidden');
+                
+                userNameSpan.textContent = `Hi, ${user.displayName.split(' ')[0]}`;
+                
+                const q = query(collection(db, "questions"), where("userId", "==", user.uid));
+                onSnapshot(q, (querySnapshot) => {
+                    document.getElementById('userQuestionsSolved').textContent = querySnapshot.size;
+                });
+            } else {
+                // User is signed out
+                welcomeModal.classList.remove('hidden');
+                mainAppContainer.classList.add('hidden');
+                document.getElementById('userQuestionsSolved').textContent = 0;
+            }
+        });
+
+        // --- Forms Logic ---
+        subscribeForm.addEventListener('submit', async (e) => { e.preventDefault(); handleFormSubmit(collection(db, 'subscriptions'), { email: document.getElementById('subscribeEmail').value }, 'subscribeMessage', 'Thanks for subscribing!', subscribeForm); });
+        feedbackForm.addEventListener('submit', async (e) => { e.preventDefault(); handleFormSubmit(collection(db, 'feedback'), { feedback: document.getElementById('feedbackText').value, userId: auth.currentUser ? auth.currentUser.uid : 'anonymous' }, 'feedbackMessage', 'Thank you for your feedback!', feedbackForm); });
+        
+        async function handleFormSubmit(collectionRef, data, messageId, successText, formElement) {
+            const messageP = document.getElementById(messageId);
+            try {
+                await addDoc(collectionRef, { ...data, timestamp: serverTimestamp() });
+                messageP.textContent = successText;
+                messageP.className = 'text-sm mt-2 h-4 text-green-400';
+                formElement.reset();
+            } catch (error) {
+                messageP.textContent = 'Something went wrong.';
+                messageP.className = 'text-sm mt-2 h-4 text-red-400';
+            }
+            setTimeout(() => messageP.textContent = '', 3000);
         }
     </script>
-
 </body>
 </html>
