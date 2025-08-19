@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBSE Question Solver</title>
+    <title>CBSE & NCERT Question Solver</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -29,11 +30,9 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Simple transition for tab content */
         .tab-content {
             transition: opacity 0.3s ease-in-out;
         }
-        /* Modal styles */
         .modal-overlay {
             transition: opacity 0.3s ease-in-out;
         }
@@ -43,22 +42,20 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Main App Container -->
     <div id="mainAppContainer">
-        <!-- Welcome Modal -->
         <div id="welcomeModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-xl shadow-2xl p-6 sm:p-8 text-center max-w-sm w-full transform transition-all scale-100 opacity-100" id="modalContent">
                 <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome!</h2>
-                <p id="welcomeMessage" class="text-md sm:text-lg text-gray-600 mb-6">Hi Hanshika, you can ask any question.</p>
+                <p id="welcomeMessage" class="text-md sm:text-lg text-gray-600 mb-6">Hi Buddy, you can ask any question.</p>
                 <button id="getStartedBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
                     Get Started
                 </button>
             </div>
         </div>
         
-        <!-- Camera Modal -->
         <div id="cameraModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
             <video id="cameraView" autoplay playsinline class="mb-4"></video>
             <canvas id="cameraCanvas" class="hidden"></canvas>
@@ -70,7 +67,7 @@
 
         <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
             <header class="text-center mb-8 relative">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">CBSE Question Solver</h1>
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">CBSE & NCERT Question Solver</h1>
                 <p class="text-md sm:text-lg text-gray-600 mt-2">Your AI-powered study buddy for grades 10-12</p>
             </header>
 
@@ -102,6 +99,19 @@
                         <textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Type your question here..."></textarea>
                     </div>
 
+                    <div id="curriculumSelector" class="mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Select Curriculum</h3>
+                        <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
+                            <div class="flex items-center">
+                                <input id="cbseOption" type="radio" name="curriculum" value="CBSE" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
+                                <label for="cbseOption" class="ml-2 block text-sm font-medium text-gray-700">CBSE</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="ncertOption" type="radio" name="curriculum" value="NCERT" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <label for="ncertOption" class="ml-2 block text-sm font-medium text-gray-700">NCERT</label>
+                            </div>
+                        </div>
+                    </div>
                     <button id="getAnswerBtn" class="w-full mt-6 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
                         Get Answer
                     </button>
@@ -258,6 +268,10 @@
             hideError();
 
             try {
+                // START OF MODIFIED CODE: Get selected curriculum
+                const selectedCurriculum = document.querySelector('input[name="curriculum"]:checked').value;
+                // END OF MODIFIED CODE
+
                 let prompt;
                 if (activeTab === 'scan') {
                     if (!base64ImageData) {
@@ -265,7 +279,9 @@
                         resetButtonState();
                         return;
                     }
-                    prompt = "First, analyze the provided image to identify the question. Then, determine if the question is suitable for a 10-12th grade CBSE student. If it is, provide a simple and easy-to-understand solution. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade CBSE level.'";
+                    // START OF MODIFIED CODE: Updated prompt for image input
+                    prompt = `First, analyze the provided image to identify the question. Then, determine if the question is suitable for a 10-12th grade ${selectedCurriculum} student. If it is, provide a simple and easy-to-understand solution based on the ${selectedCurriculum} syllabus. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.'`;
+                    // END OF MODIFIED CODE
                     await getSolution(prompt, base64ImageData);
                 } else {
                     const questionText = manualQuestion.value.trim();
@@ -274,7 +290,9 @@
                         resetButtonState();
                         return;
                     }
-                    prompt = `First, determine if the following question is suitable for a 10-12th grade CBSE student. If it is, provide a simple and easy-to-understand solution. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade CBSE level.' The question is: "${questionText}"`;
+                    // START OF MODIFIED CODE: Updated prompt for text input
+                    prompt = `First, determine if the following question is suitable for a 10-12th grade ${selectedCurriculum} student. If it is, provide a simple and easy-to-understand solution based on the ${selectedCurriculum} syllabus. If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.' The question is: "${questionText}"`;
+                    // END OF MODIFIED CODE
                     await getSolution(prompt);
                 }
             } catch (error) {
@@ -291,8 +309,10 @@
          * @param {string|null} imageData - Base64 encoded image data, or null for text-only.
          */
         async function getSolution(prompt, imageData = null) {
-            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            // IMPORTANT: Replace with your actual API Key.
+            // The key in the original code is a placeholder and will not work.
+            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // <<<<<<<<<<< REPLACE THIS WITH YOUR GEMINI API KEY
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             const parts = [{ text: prompt }];
             if (imageData) {
@@ -313,6 +333,10 @@
                 if (!response.ok) {
                     const errorBody = await response.json();
                     console.error("API Error Response:", errorBody);
+                    // Check for specific API key error
+                    if (errorBody.error && errorBody.error.message.includes('API key not valid')) {
+                       throw new Error('API Key is not valid. Please check your key in the script.');
+                    }
                     throw new Error(`API request failed: ${errorBody.error.message}`);
                 }
 
@@ -328,7 +352,7 @@
                     answerDiv.innerHTML = formattedSolution;
                 } else {
                     console.warn("API Result Warning:", result);
-                    answerDiv.textContent = 'Sorry, a solution could not be generated. The question may have violated safety policies.';
+                    answerDiv.textContent = 'Sorry, a solution could not be generated. The response from the AI was empty or the question may have violated safety policies.';
                 }
             } catch (error) {
                 console.error("API call failed:", error);
