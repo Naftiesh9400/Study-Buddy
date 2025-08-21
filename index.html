@@ -13,12 +13,14 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background-color: #f3f4f6;
+            background-image: linear-gradient(to top, #f3f4f6 0%, #e5e7eb 100%);
         }
         .container-main {
             flex-grow: 1;
         }
         .loader {
-            border-top-color: #3498db;
+            border-top-color: #3b82f6;
             -webkit-animation: spin 1s linear infinite;
             animation: spin 1s linear infinite;
         }
@@ -30,25 +32,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .tab-content {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
+        .page {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
         #cameraView {
             max-width: 100%;
             border-radius: 0.5rem;
         }
-        /* Added for video player */
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%; /* 16:9 */
             height: 0;
             overflow: hidden;
             max-width: 100%;
             background: #000;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem; /* More rounded */
         }
         .video-container iframe {
             position: absolute;
@@ -57,132 +55,287 @@
             width: 100%;
             height: 100%;
         }
+        /* Hide scrollbar for aesthetics */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Enhanced focus for inputs */
+        input[type="email"], input[type="password"], input[type="text"], textarea {
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body class="text-gray-800">
 
-    <div id="mainAppContainer">
-        <div id="welcomeModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-xl shadow-2xl p-6 sm:p-8 text-center max-w-sm w-full transform transition-all scale-100 opacity-100" id="modalContent">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome!</h2>
-                <p id="welcomeMessage" class="text-md sm:text-lg text-gray-600 mb-6">Hi Buddy, you can ask any question.</p>
-                <button id="getStartedBtn" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105">
-                    Get Started
-                </button>
+    <!-- This container will hold all the different "pages" of the app -->
+    <div id="appContainer">
+
+        <!-- LOGIN PAGE -->
+        <div id="loginPage" class="page min-h-screen flex items-center justify-center bg-gray-100 p-4">
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-900">Welcome Back!</h2>
+                    <p class="text-gray-500 mt-2">Sign in to continue</p>
+                </div>
+                <div class="space-y-4">
+                    <input id="loginEmail" type="email" placeholder="Email Address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input id="loginPassword" type="password" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button id="loginBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">Login</button>
+                    <p class="text-center text-sm text-gray-600 pt-2">
+                        Don't have an account? <a href="#" id="showSignup" class="font-medium text-blue-600 hover:underline">Sign up</a>
+                    </p>
+                </div>
             </div>
         </div>
-        
-        <div id="cameraModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
-            <video id="cameraView" autoplay playsinline class="mb-4"></video>
-            <canvas id="cameraCanvas" class="hidden"></canvas>
-            <div class="flex space-x-4">
-                <button id="captureBtn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700">Capture</button>
-                <button id="closeCameraBtn" class="bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-700">Close</button>
+
+        <!-- SIGNUP PAGE -->
+        <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+                 <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-900">Create Account</h2>
+                    <p class="text-gray-500 mt-2">Get started with your study buddy</p>
+                </div>
+                <div class="space-y-4">
+                    <input id="signupName" type="text" placeholder="Full Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input id="signupEmail" type="email" placeholder="Email Address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <input id="signupPassword" type="password" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button id="signupBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">Sign Up</button>
+                    <p class="text-center text-sm text-gray-600 pt-2">
+                        Already have an account? <a href="#" id="showLogin" class="font-medium text-blue-600 hover:underline">Login</a>
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
-            <header class="text-center mb-8 relative">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">CBSE & NCERT Question Solver</h1>
-                <p class="text-md sm:text-lg text-gray-600 mt-2">Your AI-powered study buddy for grades 10-12</p>
-            </header>
-
-            <main>
-                <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-                    <div class="flex border-b border-gray-200 mb-6">
-                        <button id="scanTab" class="py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none w-1/2 text-center">Scan</button>
-                        <button id="typeTab" class="py-2 px-4 font-semibold text-gray-500 focus:outline-none w-1/2 text-center">Type</button>
-                    </div>
-
-                    <div id="scanContent" class="tab-content">
-                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Upload Your Question</h2>
-                        <div class="relative w-full">
-                            <input type="file" id="questionScanner" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
-                            <div id="file-display" class="flex items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                                <div class="text-center px-2">
-                                    <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <p id="file-text" class="mt-1 text-sm text-gray-600 truncate">Click to upload an image</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="openCameraBtn" class="w-full mt-4 bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800">Scan with Camera</button>
-                    </div>
-
-                    <div id="typeContent" class="hidden tab-content">
-                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Enter Your Question</h2>
-                        <textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Type your question here..."></textarea>
-                    </div>
-
-                    <div id="optionsSelector" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Select Curriculum</h3>
-                            <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center">
-                                    <input id="cbseOption" type="radio" name="curriculum" value="CBSE" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
-                                    <label for="cbseOption" class="ml-2 block text-sm font-medium text-gray-700">CBSE</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="ncertOption" type="radio" name="curriculum" value="NCERT" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                    <label for="ncertOption" class="ml-2 block text-sm font-medium text-gray-700">NCERT</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Answer Length</h3>
-                            <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center">
-                                    <input id="shortAnswerOption" type="radio" name="answerLength" value="short" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
-                                    <label for="shortAnswerOption" class="ml-2 block text-sm font-medium text-gray-700">Short</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="longAnswerOption" type="radio" name="answerLength" value="long" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                    <label for="longAnswerOption" class="ml-2 block text-sm font-medium text-gray-700">Long</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button id="getAnswerBtn" class="w-full mt-6 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
-                        Get Answer
-                    </button>
+        <!-- MAIN APP PAGE -->
+        <div id="mainAppPage" class="page hidden">
+            <div id="cameraModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
+                <video id="cameraView" autoplay playsinline class="mb-4"></video>
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+                <div class="flex space-x-4">
+                    <button id="captureBtn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700">Capture</button>
+                    <button id="closeCameraBtn" class="bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-700">Close</button>
                 </div>
+            </div>
 
-                <div id="resultContainer" class="mt-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 hidden">
-                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Solution</h2>
-                    <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto my-4 hidden"></div>
-                    <div id="answer" class="text-gray-700 leading-relaxed prose max-w-none"></div>
-                </div>
+            <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
+                <!-- === NEW HEADER START === -->
+                <header class="mb-8">
+                    <nav class="bg-white rounded-full shadow-xl p-3 flex items-center justify-between">
+                        <!-- Left Side: Logo and Title -->
+                        <div class="flex items-center space-x-3 ml-2">
+                            <!-- Simple Book SVG Icon -->
+                            <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6-2.292m0 0v14.25" />
+                            </svg>
+                            <h1 class="text-xl font-bold text-gray-800 hidden sm:block">Study Buddy</h1>
+                        </div>
                 
-                <div id="videoContainer" class="mt-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 hidden">
-                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Recommended Video</h2>
-                    <div id="videoPlayerWrapper" class="video-container">
-                        <iframe id="videoPlayer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <!-- Right Side: Buttons -->
+                        <div class="flex items-center space-x-2">
+                            <button id="profileBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Profile</button>
+                            <button id="logoutBtn" class="bg-red-500 text-white font-semibold py-2 px-5 rounded-full hover:bg-red-600 transition shadow-md">Logout</button>
+                        </div>
+                    </nav>
+                    <!-- Subtitle below the header bar -->
+                    <p class="text-center text-md sm:text-lg text-gray-600 mt-4">Your AI-powered study buddy for grades 10-12</p>
+                </header>
+                <!-- === NEW HEADER END === -->
+
+                <main>
+                    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+                        <div class="flex border-b border-gray-200 mb-6">
+                            <button id="scanTab" class="py-3 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none w-1/2 text-center transition-colors">Scan</button>
+                            <button id="typeTab" class="py-3 px-4 font-semibold text-gray-500 focus:outline-none w-1/2 text-center transition-colors hover:text-blue-500">Type</button>
+                        </div>
+
+                        <div id="scanContent" class="tab-content">
+                            <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Upload Your Question</h2>
+                            <div class="relative w-full">
+                                <input type="file" id="questionScanner" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                                <div id="file-display" class="flex items-center justify-center w-full h-32 sm:h-40 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <div class="text-center px-2">
+                                        <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <p id="file-text" class="mt-2 text-sm text-gray-600 truncate">Click to upload an image</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="openCameraBtn" class="w-full mt-4 bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-md">Scan with Camera</button>
+                        </div>
+
+                        <div id="typeContent" class="hidden tab-content">
+                            <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Enter Your Question</h2>
+                            <textarea id="manualQuestion" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Type your question here..."></textarea>
+                        </div>
+
+                        <div id="optionsSelector" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Select Curriculum</h3>
+                                <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center"><input id="cbseOption" type="radio" name="curriculum" value="CBSE" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked><label for="cbseOption" class="ml-2 block text-sm font-medium text-gray-700">CBSE</label></div>
+                                    <div class="flex items-center"><input id="ncertOption" type="radio" name="curriculum" value="NCERT" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="ncertOption" class="ml-2 block text-sm font-medium text-gray-700">NCERT</label></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Answer Length</h3>
+                                <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center"><input id="shortAnswerOption" type="radio" name="answerLength" value="short" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked><label for="shortAnswerOption" class="ml-2 block text-sm font-medium text-gray-700">Short</label></div>
+                                    <div class="flex items-center"><input id="longAnswerOption" type="radio" name="answerLength" value="long" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="longAnswerOption" class="ml-2 block text-sm font-medium text-gray-700">Long</label></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="getAnswerBtn" class="w-full mt-8 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">Get Answer</button>
                     </div>
-                </div>
-                
-                <div id="errorBox" class="hidden mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
-                    <strong class="font-bold">Error:</strong>
-                    <span class="block sm:inline" id="errorMessage"></span>
-                </div>
-            </main>
+
+                    <div id="resultContainer" class="mt-8 bg-white rounded-2xl shadow-xl p-6 sm:p-8 hidden">
+                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Solution</h2>
+                        <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto my-4 hidden"></div>
+                        <div id="answer" class="text-gray-700 leading-relaxed prose max-w-none"></div>
+                    </div>
+                    
+                    <div id="videoContainer" class="mt-8 bg-white rounded-2xl shadow-xl p-6 sm:p-8 hidden">
+                        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-800">Recommended Video</h2>
+                        <div id="videoPlayerWrapper" class="video-container">
+                            <iframe id="videoPlayer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div id="errorBox" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                        <strong class="font-bold">Error:</strong>
+                        <span class="block sm:inline" id="errorMessage"></span>
+                    </div>
+                </main>
+            </div>
+            <footer class="text-center py-6 mt-8">
+                <p class="text-sm text-gray-500">© 2025 Naresh. All rights reserved.</p>
+            </footer>
         </div>
 
-        <footer class="text-center py-6 mt-8">
-            <p class="text-sm text-gray-500">© 2025 Naresh. All rights reserved.</p>
-        </footer>
+        <!-- USER PROFILE PAGE -->
+        <div id="profilePage" class="page hidden p-4 sm:p-6 md:p-8">
+             <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">User Profile</h2>
+                    <button id="backToAppBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to App</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Your Details</h3>
+                    <div class="space-y-4">
+                        <input id="profileName" type="text" placeholder="Your Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input id="profileEmail" type="email" placeholder="Your Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed" disabled>
+                        <button id="updateProfileBtn" class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md">Update Name</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-semibold mb-4">Your Past Questions</h3>
+                    <div id="historyContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar">
+                        <p class="text-gray-500">You haven't asked any questions yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD PAGE -->
+        <div id="adminDashboardPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
+                    <button id="adminLogoutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition shadow-sm">Logout</button>
+                </div>
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Users</p>
+                            <p id="totalUsersStat" class="text-3xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="bg-blue-100 text-blue-600 rounded-full p-3">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Total Questions Asked</p>
+                            <p id="totalQuestionsStat" class="text-3xl font-bold text-gray-900">0</p>
+                        </div>
+                         <div class="bg-green-100 text-green-600 rounded-full p-3">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-semibold mb-4">Recent Questions</h3>
+                    <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar">
+                         <p class="text-gray-500">No questions have been asked yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <script>
-        // DOM element references
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- START: YOUR FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAFBbsNLT4TdPT_ufuo6dYG_nqCCoVYEa0",
+          authDomain: "cbse-4fbf5.firebaseapp.com",
+          projectId: "cbse-4fbf5",
+          storageBucket: "cbse-4fbf5.appspot.com",
+          messagingSenderId: "81006126716",
+          appId: "1:81006126716:web:7ec193f5f32424c3460bf9",
+          measurementId: "G-FK9D0L8T75"
+        };
+        // --- END: YOUR FIREBASE CONFIG ---
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Element References ---
+        const allPages = document.querySelectorAll('.page');
+        const loginPage = document.getElementById('loginPage');
+        const signupPage = document.getElementById('signupPage');
+        const mainAppPage = document.getElementById('mainAppPage');
+        const profilePage = document.getElementById('profilePage');
+        const adminDashboardPage = document.getElementById('adminDashboardPage');
+
+        // Auth elements
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const showSignup = document.getElementById('showSignup');
+        const showLogin = document.getElementById('showLogin');
+
+        // Profile elements
+        const profileBtn = document.getElementById('profileBtn');
+        const backToAppBtn = document.getElementById('backToAppBtn');
+        const updateProfileBtn = document.getElementById('updateProfileBtn');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const historyContainer = document.getElementById('historyContainer');
+
+        // Admin elements
+        const totalUsersStat = document.getElementById('totalUsersStat');
+        const totalQuestionsStat = document.getElementById('totalQuestionsStat');
+        const adminHistoryContainer = document.getElementById('adminHistoryContainer');
+
+        // Main app elements (from original script)
         const getAnswerBtn = document.getElementById('getAnswerBtn');
         const questionScanner = document.getElementById('questionScanner');
         const resultContainer = document.getElementById('resultContainer');
         const loader = document.getElementById('loader');
         const answerDiv = document.getElementById('answer');
-        const fileDisplay = document.getElementById('file-display');
         const fileText = document.getElementById('file-text');
         const errorBox = document.getElementById('errorBox');
         const errorMessage = document.getElementById('errorMessage');
@@ -191,35 +344,190 @@
         const scanContent = document.getElementById('scanContent');
         const typeContent = document.getElementById('typeContent');
         const manualQuestion = document.getElementById('manualQuestion');
-        const welcomeModal = document.getElementById('welcomeModal');
-        const getStartedBtn = document.getElementById('getStartedBtn');
-        const modalContent = document.getElementById('modalContent');
-        
-        // New video elements
         const videoContainer = document.getElementById('videoContainer');
         const videoPlayer = document.getElementById('videoPlayer');
-
-        // Camera elements
         const openCameraBtn = document.getElementById('openCameraBtn');
         const cameraModal = document.getElementById('cameraModal');
         const cameraView = document.getElementById('cameraView');
         const cameraCanvas = document.getElementById('cameraCanvas');
         const captureBtn = document.getElementById('captureBtn');
         const closeCameraBtn = document.getElementById('closeCameraBtn');
-        let stream;
 
+        let stream;
         let base64ImageData = null;
         let activeTab = 'scan';
 
-        // --- Modal Logic ---
-        getStartedBtn.addEventListener('click', () => {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            welcomeModal.classList.add('opacity-0');
-            setTimeout(() => {
-                welcomeModal.classList.add('hidden');
-            }, 300);
+        // --- Page Navigation Logic ---
+        const showPage = (pageToShow) => {
+            allPages.forEach(page => page.classList.add('hidden'));
+            pageToShow.classList.remove('hidden');
+        };
+
+        showSignup.addEventListener('click', (e) => { e.preventDefault(); showPage(signupPage); });
+        showLogin.addEventListener('click', (e) => { e.preventDefault(); showPage(loginPage); });
+        profileBtn.addEventListener('click', () => { showPage(profilePage); loadUserProfile(); });
+        backToAppBtn.addEventListener('click', () => showPage(mainAppPage));
+
+        // --- Authentication State Observer ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                // Check if admin
+                if (user.email === 'admin@admin.com') { // <-- UPDATED ADMIN EMAIL
+                    showPage(adminDashboardPage);
+                    loadAdminDashboard();
+                } else {
+                    showPage(mainAppPage);
+                }
+            } else {
+                // User is signed out
+                showPage(loginPage);
+            }
         });
+
+        // --- Authentication Logic ---
+        signupBtn.addEventListener('click', async () => {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            if (!name || !email || !password) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                await updateProfile(user, { displayName: name });
+                // Create a user document in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: email,
+                    history: []
+                });
+                console.log("User created and profile stored.");
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        loginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Hardcoded admin login
+            if (email === 'admin' && password === 'admin@123') {
+                 try {
+                    // We sign in with a real admin account you created in Firebase console
+                    await signInWithEmailAndPassword(auth, 'admin@admin.com', 'admin@123'); // <-- UPDATED ADMIN EMAIL
+                 } catch (error) {
+                     // If admin account doesn't exist, this will fail.
+                     // You should create an account in Firebase Auth with email: admin@admin.com pass: admin@123
+                     alert("Admin account not found in Firebase. Please create it first.");
+                     console.error("Admin Login Error:", error);
+                 }
+                 return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        const performLogout = async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                alert(error.message);
+            }
+        };
+
+        logoutBtn.addEventListener('click', performLogout);
+        adminLogoutBtn.addEventListener('click', performLogout);
+
+        // --- User Profile Logic ---
+        async function loadUserProfile() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            profileName.value = user.displayName || '';
+            profileEmail.value = user.email || '';
+
+            const userDocRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                historyContainer.innerHTML = ''; // Clear previous history
+                if (userData.history && userData.history.length > 0) {
+                    userData.history.reverse().forEach(item => { // Show most recent first
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'p-4 border rounded-lg bg-gray-50';
+                        historyItem.innerHTML = `
+                            <p class="font-semibold text-gray-800">${item.question}</p>
+                            <p class="text-sm text-gray-600 mt-2">${item.answer.substring(0, 150)}...</p>
+                            <p class="text-xs text-gray-400 mt-2">${new Date(item.timestamp).toLocaleString()}</p>
+                        `;
+                        historyContainer.appendChild(historyItem);
+                    });
+                } else {
+                     historyContainer.innerHTML = '<p class="text-gray-500">You haven\'t asked any questions yet.</p>';
+                }
+            }
+        }
+
+        updateProfileBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            const newName = profileName.value;
+            if (!user || !newName) return;
+
+            try {
+                await updateProfile(user, { displayName: newName });
+                const userDocRef = doc(db, "users", user.uid);
+                await updateDoc(userDocRef, { name: newName });
+                alert("Profile updated successfully!");
+            } catch (error) {
+                alert("Failed to update profile: " + error.message);
+            }
+        });
+
+
+        // --- Admin Dashboard Logic ---
+        function loadAdminDashboard() {
+            // Listener for user stats
+            const usersCollection = collection(db, "users");
+            onSnapshot(usersCollection, (snapshot) => {
+                totalUsersStat.textContent = snapshot.size;
+            });
+
+            // Listener for questions stats and history
+            const questionsCollection = collection(db, "questions");
+            onSnapshot(query(questionsCollection), (snapshot) => {
+                totalQuestionsStat.textContent = snapshot.size;
+                adminHistoryContainer.innerHTML = '';
+                if (snapshot.empty) {
+                     adminHistoryContainer.innerHTML = '<p class="text-gray-500">No questions have been asked yet.</p>';
+                     return;
+                }
+                let allQuestions = [];
+                snapshot.forEach(doc => allQuestions.push(doc.data()));
+                // Sort by timestamp descending
+                allQuestions.sort((a, b) => b.timestamp - a.timestamp);
+
+                allQuestions.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'p-4 border rounded-lg bg-gray-50';
+                    historyItem.innerHTML = `
+                        <p class="font-semibold text-gray-800">${item.question}</p>
+                        <p class="text-sm text-gray-500 mt-1">by: ${item.userEmail}</p>
+                        <p class="text-xs text-gray-400 mt-2">${new Date(item.timestamp).toLocaleString()}</p>
+                    `;
+                    adminHistoryContainer.appendChild(historyItem);
+                });
+            });
+        }
+
 
         // --- Camera Logic ---
         openCameraBtn.addEventListener('click', async () => {
@@ -235,9 +543,7 @@
             }
         });
 
-        closeCameraBtn.addEventListener('click', () => {
-            closeCamera();
-        });
+        closeCameraBtn.addEventListener('click', () => closeCamera());
 
         function closeCamera() {
             if (stream) {
@@ -252,10 +558,8 @@
             cameraCanvas.width = cameraView.videoWidth;
             cameraCanvas.height = cameraView.videoHeight;
             context.drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
-            
             const dataUrl = cameraCanvas.toDataURL('image/jpeg');
             base64ImageData = dataUrl.split(',')[1];
-            
             fileText.textContent = 'Image captured from camera.';
             closeCamera();
         });
@@ -265,9 +569,9 @@
             if (activeTab === 'scan') return;
             activeTab = 'scan';
             scanTab.classList.add('text-blue-600', 'border-blue-600');
-            scanTab.classList.remove('text-gray-500');
+            scanTab.classList.remove('text-gray-500', 'hover:text-blue-500');
             typeTab.classList.remove('text-blue-600', 'border-blue-600');
-            typeTab.classList.add('text-gray-500');
+            typeTab.classList.add('text-gray-500', 'hover:text-blue-500');
             scanContent.classList.remove('hidden');
             typeContent.classList.add('hidden');
         });
@@ -276,9 +580,9 @@
             if (activeTab === 'type') return;
             activeTab = 'type';
             typeTab.classList.add('text-blue-600', 'border-blue-600');
-            typeTab.classList.remove('text-gray-500');
+            typeTab.classList.remove('text-gray-500', 'hover:text-blue-500');
             scanTab.classList.remove('text-blue-600', 'border-blue-600');
-            scanTab.classList.add('text-gray-500');
+            scanTab.classList.add('text-gray-500', 'hover:text-blue-500');
             typeContent.classList.remove('hidden');
             scanContent.classList.add('hidden');
         });
@@ -303,7 +607,7 @@
         getAnswerBtn.addEventListener('click', async () => {
             answerDiv.innerHTML = '';
             resultContainer.classList.remove('hidden');
-            videoContainer.classList.add('hidden'); // Hide video on new request
+            videoContainer.classList.add('hidden');
             loader.classList.remove('hidden');
             getAnswerBtn.disabled = true;
             getAnswerBtn.textContent = 'Fetching Solution...';
@@ -318,15 +622,18 @@
                 If it is not, please respond with only the text: 'This question does not appear to be for the 10-12th grade ${selectedCurriculum} level.'
                 After providing the solution, on a completely new line, write the text "VIDEO_URL:" followed immediately by a single, relevant YouTube video URL that would help a student understand this topic. Do not add any text after the URL.`;
 
+                let userQuestion;
                 let prompt;
+
                 if (activeTab === 'scan') {
                     if (!base64ImageData) {
                         showError("Please upload or capture an image of the question first.");
                         resetButtonState();
                         return;
                     }
+                    userQuestion = "Question from image"; // Placeholder for logging
                     prompt = `Analyze the provided image to identify the question. Then, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt, base64ImageData);
+                    await getSolution(prompt, base64ImageData, userQuestion);
                 } else {
                     const questionText = manualQuestion.value.trim();
                     if (!questionText) {
@@ -334,8 +641,9 @@
                         resetButtonState();
                         return;
                     }
+                    userQuestion = questionText;
                     prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt);
+                    await getSolution(prompt, null, userQuestion);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -346,29 +654,25 @@
         });
 
         /**
-         * Fetches the solution from the Gemini API.
-         * @param {string} prompt - The question/prompt for the model.
-         * @param {string|null} imageData - Base64 encoded image data, or null for text-only.
+         * Fetches the solution from the Gemini API and logs it.
          */
-        async function getSolution(prompt, imageData = null) {
-            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA";
-            if (!apiKey) {
-                showError("API Key is missing. Please add your Gemini API key in the script.");
-                return;
+        async function getSolution(prompt, imageData = null, userQuestion) {
+            // IMPORTANT: Replace with your actual Gemini API Key
+            const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // <-- LEAVE THIS EMPTY, IT WILL BE HANDLED BY THE ENVIRONMENT
+            if (!apiKey && typeof GEMINI_API_KEY === 'undefined') {
+                 showError("API Key is missing. The app cannot function without it.");
+                 return;
             }
-            // START OF MODIFIED CODE: Updated the model name in the API URL
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            // END OF MODIFIED CODE
+            const finalApiKey = apiKey || GEMINI_API_KEY;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${finalApiKey}`;
 
             const parts = [{ text: prompt }];
             if (imageData) {
                 parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
             }
 
-            const payload = {
-                contents: [{ parts: parts }],
-            };
-
+            const payload = { contents: [{ parts: parts }] };
+5
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -378,16 +682,12 @@
 
                 if (!response.ok) {
                     const errorBody = await response.json();
-                    console.error("API Error Response:", errorBody);
-                    if (errorBody.error && errorBody.error.message.includes('API key not valid')) {
-                       throw new Error('API Key is not valid. Please check your key in the script.');
-                    }
                     throw new Error(`API request failed: ${errorBody.error.message}`);
                 }
 
                 const result = await response.json();
                 
-                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                if (result.candidates && result.candidates[0].content.parts[0]) {
                     const fullResponseText = result.candidates[0].content.parts[0].text;
                     
                     let solutionText = fullResponseText;
@@ -399,19 +699,18 @@
                         videoUrl = parts[1].trim();
                     }
 
-                    let formattedSolution = solutionText
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                        .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>')
-                        .replace(/\n/g, '<br>');
+                    // Display the solution
+                    let formattedSolution = solutionText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>').replace(/\n/g, '<br>');
                     answerDiv.innerHTML = formattedSolution;
 
                     if (videoUrl) {
                         displayVideo(videoUrl);
                     }
 
+                    // Log the question for user and admin
+                    await logQuestion(userQuestion, solutionText);
+
                 } else {
-                    console.warn("API Result Warning:", result);
                     answerDiv.textContent = 'Sorry, a solution could not be generated. The response from the AI was empty or the question may have violated safety policies.';
                 }
             } catch (error) {
@@ -419,10 +718,46 @@
                 showError(error.message || "There was an issue connecting to the AI service.");
             }
         }
+
+        /**
+         * Logs the question to Firestore for both user history and admin analytics.
+         */
+        async function logQuestion(question, answer) {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const logEntry = {
+                question: question,
+                answer: answer,
+                timestamp: Date.now(),
+                userId: user.uid,
+                userEmail: user.email
+            };
+
+            // Add to general questions collection for admin
+            try {
+                await addDoc(collection(db, "questions"), logEntry);
+            } catch (error) {
+                console.error("Error logging to admin collection:", error);
+            }
+
+            // Add to user's personal history
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                await updateDoc(userDocRef, {
+                    history: arrayUnion({
+                        question: logEntry.question,
+                        answer: logEntry.answer,
+                        timestamp: logEntry.timestamp
+                    })
+                });
+            } catch (error) {
+                console.error("Error updating user history:", error);
+            }
+        }
         
         /**
          * Displays the YouTube video in the player.
-         * @param {string} url - The original YouTube URL.
          */
         function displayVideo(url) {
             let videoId = null;
@@ -435,7 +770,7 @@
                 }
             } catch (e) {
                 console.error("Invalid video URL:", url);
-                return; // Don't show video container if URL is bad
+                return;
             }
 
             if (videoId) {
@@ -454,8 +789,8 @@
         function showError(message) {
             errorMessage.textContent = message;
             errorBox.classList.remove('hidden');
-            resultContainer.classList.add('hidden'); // Hide results on error
-            videoContainer.classList.add('hidden'); // Hide video on error
+            resultContainer.classList.add('hidden');
+            videoContainer.classList.add('hidden');
         }
 
         function hideError() {
