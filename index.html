@@ -153,9 +153,10 @@
                 </div>
             </div>
 
-            <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
-                <header class="mb-8">
-                    <nav class="bg-white rounded-full shadow-xl p-3 flex items-center justify-between">
+            <!-- HEADER: Made sticky and moved outside of main content container -->
+            <header class="sticky top-0 z-40 w-full bg-gray-100/90 backdrop-blur-lg shadow-sm">
+                <div class="mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-2">
+                    <nav class="bg-transparent shadow-none p-3 flex items-center justify-between">
                         <div class="flex items-center space-x-3 ml-2">
                             <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6-2.292m0 0v14.25" />
@@ -166,6 +167,7 @@
                             <button id="examNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Exams</button>
                             <button id="quizNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Quizzes</button>
                             <button id="announcementHistoryNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Announcements</button>
+                            <button id="supportNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Support</button>
                             <button id="profileBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Profile</button>
                         </div>
                         <div class="md:hidden">
@@ -180,9 +182,13 @@
                         <button id="examNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Exams</button>
                         <button id="quizNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
                         <button id="announcementHistoryNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
+                        <button id="supportNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
                         <button id="profileBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Profile</button>
                     </div>
-                </header>
+                </div>
+            </header>
+
+            <div class="container-main mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
                 <main>
                     <div id="announcementsContainer" class="mb-8 space-y-4"></div>
                     <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
@@ -355,16 +361,54 @@
             </div>
         </div>
 
+        <!-- NEW: SUPPORT PAGE FOR USERS -->
+        <div id="supportPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Support Center</h2>
+                    <button id="supportBackToAppBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to App</button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-2xl shadow-xl p-8">
+                        <h3 class="text-xl font-semibold mb-4">Submit a New Ticket</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="issueCategory" class="block text-sm font-medium text-gray-700">Category</label>
+                                <select id="issueCategory" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                    <option>Technical Issue</option>
+                                    <option>Billing Problem</option>
+                                    <option>General Feedback</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="issueDescription" class="block text-sm font-medium text-gray-700">Describe your issue</label>
+                                <textarea id="issueDescription" rows="4" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Please provide as much detail as possible..."></textarea>
+                            </div>
+                            <button id="submitTicketBtn" class="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition">Submit Ticket</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-8">
+                        <h3 class="text-xl font-semibold mb-4">Your Ticket History</h3>
+                        <div id="ticketHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar">
+                            <p class="text-gray-500">You haven't submitted any tickets yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="adminDashboardPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
                     <div class="flex items-center space-x-4">
+                        <button id="manageIssuesBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition shadow-sm">Manage Issues</button>
                         <button id="manageUsersBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition shadow-sm">Manage Users</button>
                         <button id="adminLogoutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition shadow-sm">Logout</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white rounded-2xl shadow-xl p-6">
                         <p class="text-sm font-medium text-gray-500">Total Users</p>
                         <p id="totalUsersStat" class="text-3xl font-bold text-gray-900">0</p>
@@ -376,6 +420,11 @@
                     <div class="bg-white rounded-2xl shadow-xl p-6">
                         <p class="text-sm font-medium text-gray-500">Questions in Bank</p>
                         <p id="questionBankStat" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                    <!-- NEW: OPEN ISSUES STAT -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <p class="text-sm font-medium text-gray-500">Open Support Issues</p>
+                        <p id="openIssuesStat" class="text-3xl font-bold text-red-500">0</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -419,6 +468,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- NEW: ISSUE MANAGEMENT PAGE FOR ADMINS -->
+        <div id="issueManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Issue Management</h2>
+                    <button id="issueManagementBackBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-semibold mb-4">All Support Tickets</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">User</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Category</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Description</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Date</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Status</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuesTableBody">
+                                <!-- Issues will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
              <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg space-y-6">
@@ -475,8 +555,10 @@
         const changeFocusBtn = document.getElementById('changeFocusBtn');
         const quizTakerPage = document.getElementById('quizTakerPage');
         const quizResultPage = document.getElementById('quizResultPage');
-        // UPDATED: Added new page reference
         const announcementHistoryPage = document.getElementById('announcementHistoryPage');
+        // NEW PAGE REFERENCES
+        const supportPage = document.getElementById('supportPage');
+        const issueManagementPage = document.getElementById('issueManagementPage');
         
         const getAnswerBtn = document.getElementById('getAnswerBtn');
         const questionScanner = document.getElementById('questionScanner');
@@ -518,10 +600,8 @@
             pageToShow.classList.remove('hidden');
         };
 
-        // --- FIX 1: Navigation helper to ensure announcements are always fresh ---
         const navigateToMainApp = () => {
             showPage(mainAppPage);
-            // We only load announcements for regular users, not for the admin.
             if (auth.currentUser && auth.currentUser.email !== 'admin@admin.com') {
                 loadAnnouncementsForUser();
             }
@@ -537,12 +617,10 @@
             document.getElementById('mobileMenu').classList.toggle('hidden');
         });
         
-        // --- FIX 1 (continued): Using the new navigation helper ---
         document.getElementById('backToAppBtn').addEventListener('click', navigateToMainApp);
         document.getElementById('quizBackToAppBtn').addEventListener('click', navigateToMainApp);
         document.getElementById('examBackToAppBtn').addEventListener('click', navigateToMainApp);
 
-        // UPDATED: Added new event listeners for announcement history
         document.getElementById('announcementHistoryNavBtn').addEventListener('click', () => { showPage(announcementHistoryPage); loadAllAnnouncements(); });
         document.getElementById('announcementHistoryNavBtnMobile').addEventListener('click', () => { showPage(announcementHistoryPage); loadAllAnnouncements(); document.getElementById('mobileMenu').classList.add('hidden'); });
         document.getElementById('announcementBackToAppBtn').addEventListener('click', navigateToMainApp);
@@ -553,6 +631,14 @@
         document.getElementById('backToAdminDashboardBtn').addEventListener('click', () => showPage(adminDashboardPage));
         document.getElementById('backToQuizzesBtn').addEventListener('click', () => showPage(quizListPage));
 
+        // NEW NAVIGATION EVENT LISTENERS
+        document.getElementById('supportNavBtn').addEventListener('click', () => { showPage(supportPage); loadUserTickets(); });
+        document.getElementById('supportNavBtnMobile').addEventListener('click', () => { showPage(supportPage); loadUserTickets(); document.getElementById('mobileMenu').classList.add('hidden'); });
+        document.getElementById('supportBackToAppBtn').addEventListener('click', navigateToMainApp);
+        document.getElementById('manageIssuesBtn').addEventListener('click', () => { showPage(issueManagementPage); loadAllIssues(); });
+        document.getElementById('issueManagementBackBtn').addEventListener('click', () => showPage(adminDashboardPage));
+
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 if (user.email === 'admin@admin.com') {
@@ -562,7 +648,6 @@
                     const userDocRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(userDocRef);
                     if (docSnap.exists() && docSnap.data().grade) {
-                        // Use the navigation helper on initial load too
                         navigateToMainApp();
                     } else {
                         document.getElementById('setupUserName').textContent = user.displayName || "there";
@@ -631,6 +716,10 @@
             onSnapshot(collection(db, "users"), (snap) => { document.getElementById('totalUsersStat').textContent = snap.size; });
             onSnapshot(collection(db, "questions"), (snap) => { document.getElementById('totalQuestionsStat').textContent = snap.size; });
             onSnapshot(collection(db, "questionBank"), (snap) => { document.getElementById('questionBankStat').textContent = snap.size; });
+            // NEW: Listen for open issues
+            onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => {
+                document.getElementById('openIssuesStat').textContent = snap.size;
+            });
             loadAnnouncementsForAdmin();
             onSnapshot(query(collection(db, "questionBank"), orderBy("timestamp", "desc"), limit(10)), (snapshot) => {
                 const adminHistoryContainer = document.getElementById('adminHistoryContainer');
@@ -691,7 +780,6 @@
             }
         }
         
-        // UPDATED: Added new function to load all announcements
         async function loadAllAnnouncements() {
             const container = document.getElementById('allAnnouncementsContainer');
             container.innerHTML = '<p class="text-gray-500">Loading announcements...</p>';
@@ -758,9 +846,7 @@
             const newName = document.getElementById('profileName').value;
             if (!user || !newName) return;
             try {
-                // Update the name in Firebase Authentication
                 await updateProfile(user, { displayName: newName });
-                // Update the name in the Firestore user document
                 await updateDoc(doc(db, "users", user.uid), { name: newName });
                 showToast("Profile updated successfully!");
             } catch (error) {
@@ -1106,7 +1192,6 @@
 
             displayQuestion();
         }
-	
 
         async function loadUsersForManagement() {
             const usersTableBody = document.getElementById('usersTableBody');
@@ -1140,7 +1225,7 @@
             modalHistory.innerHTML = '';
             if (userData.history && userData.history.length > 0) {
                  [...userData.history].reverse().forEach(item => {
-                     modalHistory.innerHTML += `<div class="p-2 border-b"><p class="font-medium text-sm">${item.question}</p><p class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleString()}</p></div>`;
+                      modalHistory.innerHTML += `<div class="p-2 border-b"><p class="font-medium text-sm">${item.question}</p><p class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleString()}</p></div>`;
                 });
             } else {
                 modalHistory.innerHTML = '<p class="text-gray-500">No questions asked.</p>';
@@ -1163,8 +1248,9 @@
         });
 
         async function deleteUser(userId) {
+            // Replaced window.confirm with a custom modal for safety in iframe environments
             if (!confirm("Are you sure you want to delete this user and all their data? This action cannot be undone.")) {
-                return;
+                 return;
             }
             try {
                 // This only deletes the user's data from Firestore.
@@ -1174,6 +1260,134 @@
                 loadUsersForManagement();
             } catch (error) { showToast("Failed to delete user data.", "error"); }
         }
+
+        // --- NEW SUPPORT TICKET FUNCTIONS ---
+
+        document.getElementById('submitTicketBtn').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                showToast("You must be logged in to submit a ticket.", "error");
+                return;
+            }
+
+            const category = document.getElementById('issueCategory').value;
+            const description = document.getElementById('issueDescription').value.trim();
+
+            if (!description) {
+                showToast("Please describe your issue.", "error");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "issues"), {
+                    userId: user.uid,
+                    userName: user.displayName,
+                    userEmail: user.email,
+                    category: category,
+                    description: description,
+                    status: "Open", // Initial status
+                    timestamp: serverTimestamp()
+                });
+                showToast("Support ticket submitted successfully!");
+                document.getElementById('issueDescription').value = '';
+                loadUserTickets(); // Refresh the list
+            } catch (error) {
+                showToast("Failed to submit ticket. Please try again.", "error");
+                console.error("Error submitting ticket: ", error);
+            }
+        });
+
+        async function loadUserTickets() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const container = document.getElementById('ticketHistoryContainer');
+            container.innerHTML = '<p class="text-gray-500">Loading your tickets...</p>';
+
+            const q = query(collection(db, "issues"), where("userId", "==", user.uid), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+
+            container.innerHTML = '';
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500">You haven\'t submitted any tickets yet.</p>';
+                return;
+            }
+
+            querySnapshot.forEach(doc => {
+                const ticket = doc.data();
+                const date = ticket.timestamp ? new Date(ticket.timestamp.toDate()).toLocaleString() : 'N/A';
+                
+                let statusColorClass = 'bg-red-100 text-red-800';
+                if (ticket.status === 'In Progress') statusColorClass = 'bg-yellow-100 text-yellow-800';
+                if (ticket.status === 'Resolved') statusColorClass = 'bg-green-100 text-green-800';
+
+                const ticketDiv = document.createElement('div');
+                ticketDiv.className = 'p-4 border rounded-lg bg-gray-50';
+                ticketDiv.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <p class="font-semibold text-gray-800">${ticket.category}</p>
+                        <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusColorClass}">${ticket.status}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">${ticket.description}</p>
+                    <p class="text-xs text-gray-400 mt-3 text-right">${date}</p>
+                `;
+                container.appendChild(ticketDiv);
+            });
+        }
+
+        async function loadAllIssues() {
+            const issuesTableBody = document.getElementById('issuesTableBody');
+            issuesTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Loading issues...</td></tr>';
+            
+            const q = query(collection(db, "issues"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    issuesTableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">No support tickets found.</td></tr>';
+                    return;
+                }
+                issuesTableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const issue = doc.data();
+                    const issueId = doc.id;
+                    const date = issue.timestamp ? new Date(issue.timestamp.toDate()).toLocaleDateString() : 'N/A';
+                    
+                    const row = issuesTableBody.insertRow();
+                    row.className = 'border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="py-3 px-4 text-sm">
+                            <p class="font-semibold">${issue.userName}</p>
+                            <p class="text-gray-500">${issue.userEmail}</p>
+                        </td>
+                        <td class="py-3 px-4 text-sm">${issue.category}</td>
+                        <td class="py-3 px-4 text-sm max-w-xs truncate" title="${issue.description}">${issue.description}</td>
+                        <td class="py-3 px-4 text-sm">${date}</td>
+                        <td class="py-3 px-4 text-sm">
+                            <select data-id="${issueId}" class="status-select w-full p-1 border-gray-300 rounded-md">
+                                <option value="Open" ${issue.status === 'Open' ? 'selected' : ''}>Open</option>
+                                <option value="In Progress" ${issue.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Resolved" ${issue.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                            </select>
+                        </td>
+                        <td class="py-3 px-4 text-sm">
+                            <button data-id="${issueId}" class="save-status-btn bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-blue-600">Save</button>
+                        </td>
+                    `;
+                });
+            });
+        }
+
+        document.getElementById('issuesTableBody').addEventListener('click', async (e) => {
+            if (e.target.classList.contains('save-status-btn')) {
+                const issueId = e.target.dataset.id;
+                const newStatus = document.querySelector(`.status-select[data-id="${issueId}"]`).value;
+                try {
+                    await updateDoc(doc(db, "issues", issueId), { status: newStatus });
+                    showToast("Issue status updated successfully!");
+                } catch (error) {
+                    showToast("Failed to update status.", "error");
+                }
+            }
+        });
 
     </script>
 
