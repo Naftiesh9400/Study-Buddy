@@ -73,10 +73,8 @@
 
 <body class="text-gray-800">
 
-    <!-- Toast Notification -->
     <div id="toast" class="px-6 py-3 rounded-full text-white font-medium shadow-lg"></div>
 
-    <!-- Confirmation Modal -->
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm space-y-5 text-center">
             <h2 id="confirmTitle" class="text-xl font-bold text-gray-900">Are you sure?</h2>
@@ -90,7 +88,6 @@
 
     <div id="appContainer">
 
-        <!-- Login Page -->
         <div id="loginPage" class="page min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -108,7 +105,6 @@
             </div>
         </div>
 
-        <!-- Signup Page -->
         <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -127,7 +123,6 @@
             </div>
         </div>
         
-        <!-- Setup Page -->
         <div id="setupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -151,19 +146,17 @@
             </div>
         </div>
         
-        <!-- Main App Layout -->
         <div id="mainAppWrapper" class="page hidden flex flex-col min-h-screen">
             <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center py-4">
                         <div class="flex items-center space-x-3">
-                            <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6-2.292m0 0v14.25" />
-                            </svg>
+                            <img id="appLogo" src="https://img.icons8.com/plasticine/100/book.png" alt="Study Buddy Logo" class="h-8 w-8">
                             <h1 class="text-2xl font-bold text-gray-800">Study Buddy</h1>
                         </div>
                         <nav class="hidden md:flex items-center space-x-2">
                             <button data-page="mainAppPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
+                            <button data-page="aboutUsPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
                             <button data-page="quizListPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
                             <button data-page="announcementHistoryPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
                             <button data-page="supportPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
@@ -179,6 +172,7 @@
                     </div>
                     <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-1">
                         <button data-page="mainAppPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
+                        <button data-page="aboutUsPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
                         <button data-page="quizListPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
                         <button data-page="announcementHistoryPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
                         <button data-page="supportPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
@@ -189,8 +183,7 @@
 
             <main class="flex-grow">
                 <div id="pageContent" class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-                    <!-- Dynamic Page Content Goes Here -->
-                </div>
+                    </div>
             </main>
 		<footer class="bg-gray-800 text-white mt-auto">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
@@ -199,41 +192,68 @@
 </footer>
         </div>
         
-        <!-- Admin Dashboard -->
         <div id="adminDashboardPage" class="page hidden p-4 sm:p-6 md:p-8">
              <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
-                    <div class="flex items-center space-x-4">
-                        <button id="manageIssuesBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition shadow-sm">Manage Issues</button>
-                        <button id="manageUsersBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition shadow-sm">Manage Users</button>
-                        <button id="adminLogoutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition shadow-sm">Logout</button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Users</p><p id="totalUsersStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Questions Asked</p><p id="totalQuestionsStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Questions in Bank</p><p id="questionBankStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Open Support Issues</p><p id="openIssuesStat" class="text-3xl font-bold text-red-500">0</p></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                 <div class="flex justify-between items-center mb-8">
+                     <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
+                     <div class="flex items-center space-x-4">
+                         <button id="manageIssuesBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition shadow-sm">Manage Issues</button>
+                         <button id="manageUsersBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition shadow-sm">Manage Users</button>
+                         <button id="adminLogoutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition shadow-sm">Logout</button>
+                     </div>
+                 </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                     <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Users</p><p id="totalUsersStat" class="text-3xl font-bold text-gray-900">0</p></div>
+                     <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Questions Asked</p><p id="totalQuestionsStat" class="text-3xl font-bold text-gray-900">0</p></div>
+                     <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Questions in Bank</p><p id="questionBankStat" class="text-3xl font-bold text-gray-900">0</p></div>
+                     <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Open Support Issues</p><p id="openIssuesStat" class="text-3xl font-bold text-red-500">0</p></div>
+                 </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Manage Announcements</h3>
-                        <div id="announcementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
-                        <div class="flex space-x-2">
-                            <input id="newAnnouncementInput" type="text" placeholder="Type announcement here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <button id="addAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                         <h3 class="text-xl font-semibold mb-4">Manage Announcements</h3>
+                         <div id="announcementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
+                         <div class="flex space-x-2">
+                             <input id="newAnnouncementInput" type="text" placeholder="Type announcement here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                             <button id="addAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                         </div>
+                     </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                         <h3 class="text-xl font-semibold mb-4">Recently Added to Question Bank</h3>
+                         <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"></div>
+                     </div>
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:col-span-2">
+                        <h3 class="text-xl font-semibold mb-4">Manage Site Content</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-gray-700">About Us Page Content</h4>
+                                <div>
+                                    <label for="aboutUsTitleAdmin" class="block text-sm font-medium text-gray-600">Page Title</label>
+                                    <input id="aboutUsTitleAdmin" type="text" placeholder="E.g., Our Mission" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="aboutUsImageUrlAdmin" class="block text-sm font-medium text-gray-600">Image URL</label>
+                                    <input id="aboutUsImageUrlAdmin" type="text" placeholder="https://example.com/image.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="aboutUsTextAdmin" class="block text-sm font-medium text-gray-600">Main Text</label>
+                                    <textarea id="aboutUsTextAdmin" rows="5" placeholder="Describe your platform..." class="mt-1 w-full px-3 py-2 border rounded-lg"></textarea>
+                                </div>
+                                <button id="saveAboutUsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save About Us Content</button>
+                            </div>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-gray-700">Global Site Settings</h4>
+                                <div>
+                                    <label for="logoUrlAdmin" class="block text-sm font-medium text-gray-600">Logo Image URL</label>
+                                    <input id="logoUrlAdmin" type="text" placeholder="https://example.com/logo.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <button id="saveLogoBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Logo</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Recently Added to Question Bank</h3>
-                        <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"></div>
-                    </div>
-                </div>
-            </div>
+                 </div>
+             </div>
         </div>
 
-        <!-- User Management Page (Admin) -->
         <div id="userManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -249,7 +269,6 @@
             </div>
         </div>
 
-        <!-- Issue Management Page (Admin) -->
         <div id="issueManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -278,7 +297,6 @@
             </div>
         </div>
 
-        <!-- Modals -->
         <div id="collegeCourseModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
             <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md space-y-6">
                 <h2 class="text-2xl font-bold text-gray-900 text-center">Select Your Course</h2>
@@ -322,9 +340,8 @@
         </div>
     </div>
 
-    <!-- Page HTML Templates -->
     <template id="mainAppPageTemplate">
-        <div id="announcementsContainer" class="mb-8 space-y-4"></div>
+        <div id="announcementsContainer" class="mb-8"></div>
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
             <div class="flex border-b border-gray-200 mb-6">
                 <button id="scanTab" class="py-3 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none w-1/2 text-center transition-colors">Scan</button>
@@ -416,17 +433,17 @@
 
     <template id="quizTakerPageTemplate">
          <div class="max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
-                <div class="text-lg font-semibold bg-red-500 text-white px-4 py-1 rounded-full"><span id="quizTimer">10:00</span></div>
-            </div>
-            <div id="quizQuestionContainer" class="pt-4">
-                <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">5</span></p>
-                <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
-                <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
-            </div>
-            <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
-        </div>
+             <div class="flex justify-between items-center">
+                 <h2 class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
+                 <div class="text-lg font-semibold bg-red-500 text-white px-4 py-1 rounded-full"><span id="quizTimer">10:00</span></div>
+             </div>
+             <div id="quizQuestionContainer" class="pt-4">
+                 <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">5</span></p>
+                 <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
+                 <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
+             </div>
+             <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
+         </div>
     </template>
 
     <template id="quizResultPageTemplate">
@@ -442,6 +459,17 @@
         <div class="bg-white rounded-2xl shadow-xl p-8 space-y-4">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Announcement History</h2>
             <div id="allAnnouncementsContainer" class="space-y-4 max-h-[70vh] overflow-y-auto no-scrollbar"><p class="text-gray-500">Loading announcements...</p></div>
+        </div>
+    </template>
+    
+    <template id="aboutUsPageTemplate">
+        <div id="aboutUsContent" class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+            <h2 id="aboutUsTitle" class="text-3xl font-bold text-gray-900 text-center">Loading...</h2>
+            <div id="aboutUsImageContainer" class="flex justify-center">
+                </div>
+            <div id="aboutUsText" class="text-gray-700 leading-relaxed prose max-w-none">
+                <p>Loading content...</p>
+            </div>
         </div>
     </template>
 
@@ -503,6 +531,10 @@
         let activeTab = 'scan';
         let quizTimerInterval;
         let confirmCallback = null;
+        let allUserAnnouncements = [];
+        let announcementIndex = 0;
+        let announcementInterval = null;
+
 
         // --- DOM Element References ---
         const pageContainer = document.getElementById('pageContent');
@@ -559,6 +591,11 @@
         };
 
         const navigateToPage = (pageId) => {
+            // Clear announcement interval if navigating away from the main page
+            if (pageId !== 'mainAppPage' && announcementInterval) {
+                clearInterval(announcementInterval);
+                announcementInterval = null;
+            }
             if (renderPage(pageId + 'Template')) {
                 // This page is part of the main app layout
                 showPage('mainAppWrapper');
@@ -578,8 +615,8 @@
                     const userDocRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(userDocRef);
                     if (docSnap.exists() && docSnap.data().grade) {
+                        loadGlobalSiteSettings(); // Load logo for user
                         navigateToPage('mainAppPage');
-                        loadAnnouncementsForUser();
                     } else {
                         document.getElementById('setupUserName').textContent = user.displayName || "there";
                         showPage('setupPage');
@@ -620,6 +657,9 @@
         });
 
         const performLogout = async () => {
+            if (announcementInterval) {
+                clearInterval(announcementInterval);
+            }
             try { await signOut(auth); } 
             catch (error) { showToast(error.message, "error"); }
         };
@@ -664,6 +704,7 @@
         function addPageSpecificEventListeners(templateId) {
             switch (templateId) {
                 case 'mainAppPageTemplate':
+                    loadAnnouncementsForUser();
                     document.getElementById('getAnswerBtn').addEventListener('click', handleGetAnswer);
                     document.getElementById('scanTab').addEventListener('click', () => switchTab('scan'));
                     document.getElementById('typeTab').addEventListener('click', () => switchTab('type'));
@@ -687,6 +728,9 @@
                     break;
                 case 'announcementHistoryPageTemplate':
                     loadAllAnnouncements();
+                    break;
+                case 'aboutUsPageTemplate':
+                    loadAboutUsPage();
                     break;
                 case 'supportPageTemplate':
                     loadUserTickets();
@@ -722,61 +766,61 @@
         
         async function handleGetAnswer() {
              const user = auth.currentUser;
-            if (!user) return;
+             if (!user) return;
 
-            const answerDiv = document.getElementById('answer');
-            const resultContainer = document.getElementById('resultContainer');
-            const videoContainer = document.getElementById('videoContainer');
-            const loader = document.getElementById('loader');
-            const getAnswerBtn = document.getElementById('getAnswerBtn');
-            
-            answerDiv.innerHTML = '';
-            resultContainer.classList.remove('hidden');
-            videoContainer.classList.add('hidden');
-            loader.classList.remove('hidden');
-            getAnswerBtn.disabled = true;
-            getAnswerBtn.textContent = 'Fetching Solution...';
-            document.getElementById('errorBox').classList.add('hidden');
+             const answerDiv = document.getElementById('answer');
+             const resultContainer = document.getElementById('resultContainer');
+             const videoContainer = document.getElementById('videoContainer');
+             const loader = document.getElementById('loader');
+             const getAnswerBtn = document.getElementById('getAnswerBtn');
+             
+             answerDiv.innerHTML = '';
+             resultContainer.classList.remove('hidden');
+             videoContainer.classList.add('hidden');
+             loader.classList.remove('hidden');
+             getAnswerBtn.disabled = true;
+             getAnswerBtn.textContent = 'Fetching Solution...';
+             document.getElementById('errorBox').classList.add('hidden');
 
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (!userDoc.exists() || !userDoc.data().targetExam) {
-                showError("Please set your focus in your profile before asking a question.");
-                resetButtonState();
-                return;
-            }
-            const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
+             const userDoc = await getDoc(doc(db, "users", user.uid));
+             if (!userDoc.exists() || !userDoc.data().targetExam) {
+                 showError("Please set your focus in your profile before asking a question.");
+                 resetButtonState();
+                 return;
+             }
+             const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
 
-            try {
-                const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
-                const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
-                const languageInstruction = answerLanguage === 'Hindi'
-                    ? `Provide the entire response in Hindi (using Devanagari script).`
-                    : `Provide the entire response in English.`;
+             try {
+                 const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
+                 const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
+                 const languageInstruction = answerLanguage === 'Hindi'
+                     ? `Provide the entire response in Hindi (using Devanagari script).`
+                     : `Provide the entire response in English.`;
 
-                const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
-                - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
-                - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
-                After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
-                Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
-                
-                let userQuestion, prompt;
-                if (activeTab === 'scan') {
-                    if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
-                    userQuestion = "Question from image";
-                    prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt, base64ImageData, userQuestion, userFocus);
-                } else {
-                    const questionText = document.getElementById('manualQuestion').value.trim();
-                    if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
-                    userQuestion = questionText;
-                    prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt, null, userQuestion, userFocus);
-                }
-            } catch (error) {
-                showError('Failed to fetch the solution.');
-            } finally {
-                resetButtonState();
-            }
+                 const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
+                 - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
+                 - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
+                 After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
+                 Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
+                 
+                 let userQuestion, prompt;
+                 if (activeTab === 'scan') {
+                     if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
+                     userQuestion = "Question from image";
+                     prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
+                     await getSolution(prompt, base64ImageData, userQuestion, userFocus);
+                 } else {
+                     const questionText = document.getElementById('manualQuestion').value.trim();
+                     if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
+                     userQuestion = questionText;
+                     prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
+                     await getSolution(prompt, null, userQuestion, userFocus);
+                 }
+             } catch (error) {
+                 showError('Failed to fetch the solution.');
+             } finally {
+                 resetButtonState();
+             }
         }
 
         async function getSolution(prompt, imageData = null, userQuestion, topic) {
@@ -1193,24 +1237,59 @@
                 });
             }
         }
-        async function loadAnnouncementsForUser() {
+
+        // --- NEW/UPDATED ANNOUNCEMENT FUNCTIONS ---
+
+        function displayCurrentAnnouncement() {
             const container = document.getElementById('announcementsContainer');
-            if (!container) return; 
-            const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"), limit(3));
+            if (!container || allUserAnnouncements.length === 0) {
+                if (container) container.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear previous announcement
+            container.style.display = 'block';
+
+            // Get the current announcement and create its HTML
+            const currentAnnouncementData = allUserAnnouncements[announcementIndex];
+            const announcementDiv = document.createElement('div');
+            announcementDiv.className = 'bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg shadow';
+            announcementDiv.innerHTML = `<p class="font-bold">📢 Announcement</p><p>${currentAnnouncementData.message}</p>`;
+            container.appendChild(announcementDiv);
+
+            // Update index for the next cycle, looping back to 0 if needed
+            announcementIndex = (announcementIndex + 1) % allUserAnnouncements.length;
+        }
+
+        async function loadAnnouncementsForUser() {
+            // Clear any existing interval to avoid duplicates
+            if (announcementInterval) {
+                clearInterval(announcementInterval);
+            }
+
+            const container = document.getElementById('announcementsContainer');
+            if (!container) return;
+
+            // Fetch ALL announcements, ordered by most recent
+            const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
             const querySnapshot = await getDocs(q);
-            container.innerHTML = '';
+
             if (querySnapshot.empty) {
                 container.style.display = 'none';
+                allUserAnnouncements = []; // Reset the array
             } else {
-                container.style.display = 'block';
-                querySnapshot.forEach(doc => {
-                    const announcementDiv = document.createElement('div');
-                    announcementDiv.className = 'bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg shadow';
-                    announcementDiv.innerHTML = `<p class="font-bold">📢 Announcement</p><p>${doc.data().message}</p>`;
-                    container.appendChild(announcementDiv);
-                });
+                // Store all announcements in our global array
+                allUserAnnouncements = querySnapshot.docs.map(doc => doc.data());
+                announcementIndex = 0; // Reset index to the start (most recent)
+
+                // Display the first announcement immediately
+                displayCurrentAnnouncement();
+
+                // Set up the interval to cycle through them every 5 minutes
+                announcementInterval = setInterval(displayCurrentAnnouncement, 300000); // 300000 ms = 5 minutes
             }
         }
+
 
         // --- Admin Functions ---
         document.getElementById('adminLogoutBtn').addEventListener('click', performLogout);
@@ -1220,6 +1299,7 @@
         document.getElementById('issueManagementBackBtn').addEventListener('click', () => showPage('adminDashboardPage'));
 
         function loadAdminDashboard() {
+            loadSiteContentForAdmin(); // Load site content for editing
             onSnapshot(collection(db, "users"), (snap) => { document.getElementById('totalUsersStat').textContent = snap.size; });
             onSnapshot(collection(db, "questions"), (snap) => { document.getElementById('totalQuestionsStat').textContent = snap.size; });
             onSnapshot(collection(db, "questionBank"), (snap) => { document.getElementById('questionBankStat').textContent = snap.size; });
@@ -1306,6 +1386,75 @@
                 } catch (error) {
                     showToast("Failed to update issue.", "error");
                 }
+            }
+        });
+
+        // --- NEW SITE CONTENT MANAGEMENT FUNCTIONS ---
+
+        async function loadGlobalSiteSettings() {
+            const docRef = doc(db, "siteContent", "global");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists() && docSnap.data().logoUrl) {
+                document.getElementById('appLogo').src = docSnap.data().logoUrl;
+            }
+        }
+        
+        async function loadAboutUsPage() {
+            const docRef = doc(db, "siteContent", "aboutUs");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('aboutUsTitle').textContent = data.title || "About Us";
+                document.getElementById('aboutUsText').innerHTML = data.text ? data.text.replace(/\n/g, '<br>') : "Content coming soon.";
+                const imageContainer = document.getElementById('aboutUsImageContainer');
+                if (data.imageUrl) {
+                    imageContainer.innerHTML = `<img src="${data.imageUrl}" alt="About Us Image" class="rounded-lg max-w-full h-auto md:max-w-md shadow-md">`;
+                } else {
+                    imageContainer.innerHTML = '';
+                }
+            }
+        }
+
+        async function loadSiteContentForAdmin() {
+            // Load About Us content
+            const aboutUsRef = doc(db, "siteContent", "aboutUs");
+            const aboutUsSnap = await getDoc(aboutUsRef);
+            if (aboutUsSnap.exists()) {
+                const data = aboutUsSnap.data();
+                document.getElementById('aboutUsTitleAdmin').value = data.title || '';
+                document.getElementById('aboutUsImageUrlAdmin').value = data.imageUrl || '';
+                document.getElementById('aboutUsTextAdmin').value = data.text || '';
+            }
+
+            // Load Global content (logo)
+            const globalRef = doc(db, "siteContent", "global");
+            const globalSnap = await getDoc(globalRef);
+            if (globalSnap.exists()) {
+                const data = globalSnap.data();
+                document.getElementById('logoUrlAdmin').value = data.logoUrl || '';
+            }
+        }
+
+        document.getElementById('saveAboutUsBtn').addEventListener('click', async () => {
+            const title = document.getElementById('aboutUsTitleAdmin').value;
+            const imageUrl = document.getElementById('aboutUsImageUrlAdmin').value;
+            const text = document.getElementById('aboutUsTextAdmin').value;
+            try {
+                await setDoc(doc(db, "siteContent", "aboutUs"), { title, imageUrl, text });
+                showToast("About Us content updated successfully!");
+            } catch (error) {
+                showToast("Failed to update content: " + error.message, "error");
+            }
+        });
+
+        document.getElementById('saveLogoBtn').addEventListener('click', async () => {
+            const logoUrl = document.getElementById('logoUrlAdmin').value;
+             try {
+                await setDoc(doc(db, "siteContent", "global"), { logoUrl });
+                showToast("Logo updated successfully!");
+            } catch (error) {
+                showToast("Failed to update logo: " + error.message, "error");
             }
         });
 
