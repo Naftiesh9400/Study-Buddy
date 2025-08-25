@@ -57,6 +57,11 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
+        .quiz-option.selected {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
     </style>
 </head>
 
@@ -66,7 +71,6 @@
 
     <div id="appContainer">
 
-        <!-- LOGIN PAGE -->
         <div id="loginPage" class="page min-h-screen flex items-center justify-center bg-gray-100 p-4">
              <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                  <div class="text-center">
@@ -84,7 +88,6 @@
              </div>
         </div>
 
-        <!-- SIGNUP PAGE -->
         <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                  <div class="text-center">
@@ -103,7 +106,6 @@
             </div>
         </div>
 
-        <!-- USER SETUP PAGE with Cards -->
         <div id="setupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -127,7 +129,6 @@
             </div>
         </div>
         
-        <!-- College Course Selection Modal -->
         <div id="collegeCourseModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
             <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md space-y-6">
                 <h2 class="text-2xl font-bold text-gray-900 text-center">Select Your Course</h2>
@@ -142,7 +143,6 @@
             </div>
         </div>
 
-        <!-- MAIN APP PAGE -->
         <div id="mainAppPage" class="page hidden">
             <div id="cameraModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
                 <video id="cameraView" autoplay playsinline class="mb-4"></video>
@@ -157,20 +157,32 @@
                 <header class="mb-8">
                     <nav class="bg-white rounded-full shadow-xl p-3 flex items-center justify-between">
                         <div class="flex items-center space-x-3 ml-2">
-                             <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6-2.292m0 0v14.25" />
+                            <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6-2.292m0 0v14.25" />
                             </svg>
                             <h1 class="text-xl font-bold text-gray-800 hidden sm:block">Study Buddy</h1>
                         </div>
-                        <div class="flex items-center space-x-2">
+                        <div class="hidden md:flex items-center space-x-2">
                             <button id="examNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Exams</button>
                             <button id="quizNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Quizzes</button>
+                            <button id="announcementHistoryNavBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Announcements</button>
                             <button id="profileBtn" class="text-gray-700 font-semibold py-2 px-5 rounded-full hover:bg-gray-100 transition">Profile</button>
-                            <button id="logoutBtn" class="bg-red-500 text-white font-semibold py-2 px-5 rounded-full hover:bg-red-600 transition shadow-md">Logout</button>
+                        </div>
+                        <div class="md:hidden">
+                            <button id="mobileMenuBtn" class="p-2 rounded-full hover:bg-gray-100">
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                                </svg>
+                            </button>
                         </div>
                     </nav>
+                    <div id="mobileMenu" class="hidden md:hidden mt-2 bg-white rounded-xl shadow-lg p-2 space-y-1">
+                        <button id="examNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Exams</button>
+                        <button id="quizNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
+                        <button id="announcementHistoryNavBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
+                        <button id="profileBtnMobile" class="w-full text-left text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Profile</button>
+                    </div>
                 </header>
-
                 <main>
                     <div id="announcementsContainer" class="mb-8 space-y-4"></div>
                     <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
@@ -202,7 +214,6 @@
                                 <div class="flex items-center"><input id="longAnswerOption" type="radio" name="answerLength" value="long" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="longAnswerOption" class="ml-2 block text-sm font-medium text-gray-700">Long</label></div>
                             </div>
                         </div>
-                        <!-- *** NEW: Language Selection *** -->
                         <div class="mt-4">
                             <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Answer Language</h3>
                             <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg">
@@ -216,7 +227,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- *** END of new section *** -->
                         <button id="getAnswerBtn" class="w-full mt-8 bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">Get Answer</button>
                     </div>
                     <div id="resultContainer" class="mt-8 bg-white rounded-2xl shadow-xl p-6 sm:p-8 hidden">
@@ -241,7 +251,6 @@
             </footer>
         </div>
 
-        <!-- USER PROFILE PAGE -->
         <div id="profilePage" class="page hidden p-4 sm:p-6 md:p-8">
              <div class="max-w-4xl mx-auto">
                  <div class="flex justify-between items-center mb-8">
@@ -265,16 +274,20 @@
                      </div>
                  </div>
 
-                 <div class="bg-white rounded-2xl shadow-xl p-8">
+                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
                      <h3 class="text-xl font-semibold mb-4">Your Past Questions</h3>
                      <div id="historyContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar">
                          <p class="text-gray-500">You haven't asked any questions yet.</p>
                      </div>
                  </div>
+
+                 <div class="bg-white rounded-2xl shadow-xl p-8">
+                     <h3 class="text-xl font-semibold mb-4">Account</h3>
+                     <button id="logoutBtn" class="w-full bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition shadow-md">Logout</button>
+                 </div>
              </div>
         </div>
 
-        <!-- EXAM LIST PAGE -->
         <div id="examListPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -289,7 +302,6 @@
             </div>
         </div>
 
-        <!-- QUIZ LIST PAGE (Updated) -->
         <div id="quizListPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -298,12 +310,11 @@
                 </div>
                 <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
                      <p class="text-gray-600 mb-4">Test your knowledge with a quick, auto-generated quiz based on your focus.</p>
-                     <button id="generateQuizBtn" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition">Generate 10-Min Quiz</button>
+                     <button id="generateQuizBtn" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition">Generate 5-Question Quiz</button>
                 </div>
             </div>
         </div>
         
-        <!-- NEW: QUIZ TAKER PAGE -->
         <div id="quizTakerPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="flex justify-between items-center">
@@ -315,26 +326,35 @@
                 <div id="quizQuestionContainer" class="pt-4">
                     <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">5</span></p>
                     <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
-                    <textarea id="quizAnswerInput" class="w-full h-32 mt-4 p-3 border border-gray-300 rounded-lg" placeholder="Type your answer here..."></textarea>
+                    <div id="quizOptionsContainer" class="space-y-3 mt-4">
+                    </div>
                 </div>
                 <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
             </div>
         </div>
 
-        <!-- NEW: QUIZ RESULTS PAGE -->
         <div id="quizResultPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 text-center">
                 <h2 class="text-3xl font-bold text-gray-900">Quiz Complete!</h2>
                 <p class="text-xl">Your Score: <span id="finalScore" class="font-bold text-green-600">0/5</span></p>
                 <div id="quizReviewContainer" class="space-y-4 text-left max-h-96 overflow-y-auto no-scrollbar pt-4">
-                    <!-- Review content will be added here -->
                 </div>
                 <button id="backToQuizzesBtn" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700">Back to Quizzes</button>
             </div>
         </div>
 
+        <div id="announcementHistoryPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Announcement History</h2>
+                    <button id="announcementBackToAppBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to App</button>
+                </div>
+                <div id="allAnnouncementsContainer" class="bg-white rounded-2xl shadow-xl p-8 space-y-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+                    <p class="text-gray-500">Loading announcements...</p>
+                </div>
+            </div>
+        </div>
 
-        <!-- ADMIN DASHBOARD PAGE -->
         <div id="adminDashboardPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -375,7 +395,6 @@
             </div>
         </div>
         
-        <!-- USER MANAGEMENT PAGE -->
         <div id="userManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
@@ -401,7 +420,6 @@
             </div>
         </div>
 
-        <!-- EDIT USER MODAL -->
         <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
              <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg space-y-6">
                  <h2 class="text-2xl font-bold text-gray-900">Edit User Details</h2>
@@ -423,7 +441,6 @@
 
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -458,6 +475,8 @@
         const changeFocusBtn = document.getElementById('changeFocusBtn');
         const quizTakerPage = document.getElementById('quizTakerPage');
         const quizResultPage = document.getElementById('quizResultPage');
+        // UPDATED: Added new page reference
+        const announcementHistoryPage = document.getElementById('announcementHistoryPage');
         
         const getAnswerBtn = document.getElementById('getAnswerBtn');
         const questionScanner = document.getElementById('questionScanner');
@@ -499,14 +518,37 @@
             pageToShow.classList.remove('hidden');
         };
 
+        // --- FIX 1: Navigation helper to ensure announcements are always fresh ---
+        const navigateToMainApp = () => {
+            showPage(mainAppPage);
+            // We only load announcements for regular users, not for the admin.
+            if (auth.currentUser && auth.currentUser.email !== 'admin@admin.com') {
+                loadAnnouncementsForUser();
+            }
+        };
+
         document.getElementById('showSignup').addEventListener('click', (e) => { e.preventDefault(); showPage(signupPage); });
         document.getElementById('showLogin').addEventListener('click', (e) => { e.preventDefault(); showPage(loginPage); });
         document.getElementById('profileBtn').addEventListener('click', () => { showPage(profilePage); loadUserProfile(); });
-        document.getElementById('backToAppBtn').addEventListener('click', () => showPage(mainAppPage));
+        document.getElementById('profileBtnMobile').addEventListener('click', () => { showPage(profilePage); loadUserProfile(); document.getElementById('mobileMenu').classList.add('hidden'); });
+        document.getElementById('quizNavBtnMobile').addEventListener('click', () => { showPage(quizListPage); document.getElementById('mobileMenu').classList.add('hidden'); });
+        document.getElementById('examNavBtnMobile').addEventListener('click', () => { showPage(examListPage); document.getElementById('mobileMenu').classList.add('hidden'); });
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+        
+        // --- FIX 1 (continued): Using the new navigation helper ---
+        document.getElementById('backToAppBtn').addEventListener('click', navigateToMainApp);
+        document.getElementById('quizBackToAppBtn').addEventListener('click', navigateToMainApp);
+        document.getElementById('examBackToAppBtn').addEventListener('click', navigateToMainApp);
+
+        // UPDATED: Added new event listeners for announcement history
+        document.getElementById('announcementHistoryNavBtn').addEventListener('click', () => { showPage(announcementHistoryPage); loadAllAnnouncements(); });
+        document.getElementById('announcementHistoryNavBtnMobile').addEventListener('click', () => { showPage(announcementHistoryPage); loadAllAnnouncements(); document.getElementById('mobileMenu').classList.add('hidden'); });
+        document.getElementById('announcementBackToAppBtn').addEventListener('click', navigateToMainApp);
+
         document.getElementById('quizNavBtn').addEventListener('click', () => showPage(quizListPage));
-        document.getElementById('quizBackToAppBtn').addEventListener('click', () => showPage(mainAppPage));
         document.getElementById('examNavBtn').addEventListener('click', () => showPage(examListPage)); 
-        document.getElementById('examBackToAppBtn').addEventListener('click', () => showPage(mainAppPage)); 
         document.getElementById('manageUsersBtn').addEventListener('click', () => { showPage(userManagementPage); loadUsersForManagement(); });
         document.getElementById('backToAdminDashboardBtn').addEventListener('click', () => showPage(adminDashboardPage));
         document.getElementById('backToQuizzesBtn').addEventListener('click', () => showPage(quizListPage));
@@ -520,8 +562,8 @@
                     const userDocRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(userDocRef);
                     if (docSnap.exists() && docSnap.data().grade) {
-                        showPage(mainAppPage);
-                        loadAnnouncementsForUser();
+                        // Use the navigation helper on initial load too
+                        navigateToMainApp();
                     } else {
                         document.getElementById('setupUserName').textContent = user.displayName || "there";
                         showPage(setupPage);
@@ -550,7 +592,7 @@
              const password = document.getElementById('loginPassword').value;
              if (email === 'admin' && password === 'admin@123') {
                  try { await signInWithEmailAndPassword(auth, 'admin@admin.com', 'admin@123'); } 
-                 catch (error) { showToast("Admin account not found in Firebase.", "error"); }
+                 catch (error) { showToast("Admin account not found. Please sign up first.", "error"); }
                  return;
              }
              try { await signInWithEmailAndPassword(auth, email, password); } 
@@ -563,8 +605,7 @@
             const userDocRef = doc(db, "users", user.uid);
             try {
                 await setDoc(userDocRef, { grade, targetExam }, { merge: true });
-                showPage(mainAppPage);
-                loadAnnouncementsForUser();
+                navigateToMainApp();
             } catch (error) { showToast("Could not save preferences: " + error.message, "error"); }
         }
 
@@ -634,15 +675,48 @@
 
         async function loadAnnouncementsForUser() {
             const container = document.getElementById('announcementsContainer');
+            const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"), limit(3));
+            const querySnapshot = await getDocs(q);
+            container.innerHTML = '';
+            if (querySnapshot.empty) {
+                container.style.display = 'none';
+            } else {
+                container.style.display = 'block';
+                 querySnapshot.forEach(doc => {
+                    const announcementDiv = document.createElement('div');
+                    announcementDiv.className = 'bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg shadow';
+                    announcementDiv.innerHTML = `<p class="font-bold">📢 Announcement</p><p>${doc.data().message}</p>`;
+                    container.appendChild(announcementDiv);
+                });
+            }
+        }
+        
+        // UPDATED: Added new function to load all announcements
+        async function loadAllAnnouncements() {
+            const container = document.getElementById('allAnnouncementsContainer');
+            container.innerHTML = '<p class="text-gray-500">Loading announcements...</p>';
             const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
             const querySnapshot = await getDocs(q);
             container.innerHTML = '';
-            querySnapshot.forEach(doc => {
-                const announcementDiv = document.createElement('div');
-                announcementDiv.className = 'bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg shadow';
-                announcementDiv.innerHTML = `<p class="font-bold">Announcement</p><p>${doc.data().message}</p>`;
-                container.appendChild(announcementDiv);
-            });
+            
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500">There are no announcements yet.</p>';
+            } else {
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Just now';
+                    const announcementDiv = document.createElement('div');
+                    announcementDiv.className = 'bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-r-lg shadow-sm';
+                    announcementDiv.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <p class="font-bold">📢 Announcement</p>
+                            <p class="text-xs text-blue-600">${date}</p>
+                        </div>
+                        <p class="mt-1">${data.message}</p>
+                    `;
+                    container.appendChild(announcementDiv);
+                });
+            }
         }
         
         async function loadUserProfile() {
@@ -684,7 +758,9 @@
             const newName = document.getElementById('profileName').value;
             if (!user || !newName) return;
             try {
+                // Update the name in Firebase Authentication
                 await updateProfile(user, { displayName: newName });
+                // Update the name in the Firestore user document
                 await updateDoc(doc(db, "users", user.uid), { name: newName });
                 showToast("Profile updated successfully!");
             } catch (error) {
@@ -750,7 +826,6 @@
             }
         });
 
-        // --- *** MODIFIED: Event Listener for Get Answer Button *** ---
         getAnswerBtn.addEventListener('click', async () => {
             const user = auth.currentUser;
             if (!user) return;
@@ -773,20 +848,16 @@
 
             try {
                 const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
-                
-                // Get the selected language from the UI
                 const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
-
-                // Create a specific instruction for the AI based on the chosen language
                 const languageInstruction = answerLanguage === 'Hindi'
                     ? `Provide the entire response in Hindi (using Devanagari script).`
                     : `Provide the entire response in English.`;
 
-                // Insert the language instruction into the main prompt
                 const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
                 - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
                 - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
-                After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.`;
+                After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
+                Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
                 
                 let userQuestion, prompt;
                 if (activeTab === 'scan') {
@@ -822,13 +893,29 @@
                 const result = await response.json();
                 if (result.candidates && result.candidates[0].content.parts[0]) {
                     const fullResponseText = result.candidates[0].content.parts[0].text;
-                    let solutionText = fullResponseText, videoUrl = null;
-                    if (fullResponseText.includes("VIDEO_URL:")) {
-                        [solutionText, videoUrl] = fullResponseText.split("VIDEO_URL:").map(s => s.trim());
+                    let solutionText = fullResponseText, videoUrl = null, quizData = null;
+                    
+                    const quizDataMatch = fullResponseText.match(/QUIZ_DATA:\s*({.*})/s);
+                    if(quizDataMatch && quizDataMatch[1]){
+                        try {
+                            quizData = JSON.parse(quizDataMatch[1]);
+                        } catch(e){
+                            console.error("Failed to parse quiz JSON", e);
+                            quizData = null;
+                        }
                     }
+
+                    const videoUrlMatch = fullResponseText.match(/VIDEO_URL:\s*(https?:\/\/[^\s]+)/);
+                    if(videoUrlMatch && videoUrlMatch[1]){
+                        videoUrl = videoUrlMatch[1];
+                    }
+
+                    solutionText = fullResponseText.split("VIDEO_URL:")[0].split("QUIZ_DATA:")[0].trim();
                     answerDiv.innerHTML = solutionText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>').replace(/\n/g, '<br>');
+                    
                     if (videoUrl) { displayVideo(videoUrl); }
-                    await logQuestion(userQuestion, solutionText, topic);
+                    
+                    await logQuestion(userQuestion, solutionText, topic, quizData);
                 } else {
                     answerDiv.textContent = 'Could not generate a solution.';
                 }
@@ -837,15 +924,32 @@
             }
         }
 
-        async function logQuestion(question, answer, topic) {
+        async function logQuestion(question, answer, topic, quizData = null) {
             const user = auth.currentUser;
             if (!user) return;
-            const logEntry = { question, answer, timestamp: Date.now(), userId: user.uid, userEmail: user.email, userName: user.displayName || 'Unknown', topic };
+            const logEntry = { 
+                question: quizData ? quizData.question : question,
+                answer, 
+                timestamp: Date.now(), 
+                userId: user.uid, 
+                userEmail: user.email, 
+                userName: user.displayName || 'Unknown', 
+                topic 
+            };
             
             await updateDoc(doc(db, "users", user.uid), { history: arrayUnion({ question, answer, timestamp: logEntry.timestamp }) });
+            await addDoc(collection(db, "questions"), logEntry);
 
-            if (!answer.includes("not seem to be a valid academic question")) {
-                await addDoc(collection(db, "questionBank"), logEntry);
+            if (!answer.includes("not seem to be a valid academic question") && quizData && quizData.options && quizData.correctAnswer) {
+                const bankEntry = {
+                    ...logEntry,
+                    question: quizData.question,
+                    options: quizData.options,
+                    correctAnswer: quizData.correctAnswer,
+                    timestamp: serverTimestamp() // Use server timestamp for better sorting
+                };
+                delete bankEntry.answer;
+                await addDoc(collection(db, "questionBank"), bankEntry);
             }
         }
         
@@ -887,46 +991,90 @@
             }
             const userFocus = `${docSnap.data().grade} - ${docSnap.data().targetExam}`;
             
-            const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(5));
+            const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), where("options", "!=", null), limit(5));
             const snapshot = await getDocs(q);
             
             if(snapshot.docs.length < 5) {
-                showToast("Not enough questions in the bank for your focus area yet. Ask more questions to build it up!", "error");
+                showToast("Not enough quiz questions in the bank for your focus area yet. Ask more questions to build it up!", "error");
                 return;
             }
 
-            const quizQuestions = snapshot.docs.map(doc => doc.data());
+            const quizQuestions = snapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
             startQuiz(quizQuestions);
         });
 
         function startQuiz(questions) {
             let currentQuestionIndex = 0;
-            let score = 0;
             let userAnswers = [];
+            let currentSelection = null;
 
             showPage(quizTakerPage);
             
             function displayQuestion() {
+                currentSelection = null;
+                const question = questions[currentQuestionIndex];
                 document.getElementById('currentQuestionNumber').textContent = currentQuestionIndex + 1;
                 document.getElementById('totalQuizQuestions').textContent = questions.length;
-                document.getElementById('quizQuestionText').innerHTML = questions[currentQuestionIndex].question.replace(/\n/g, '<br>');
-                document.getElementById('quizAnswerInput').value = '';
+                document.getElementById('quizQuestionText').innerHTML = question.question.replace(/\n/g, '<br>');
+                
+                const optionsContainer = document.getElementById('quizOptionsContainer');
+                optionsContainer.innerHTML = '';
+                
+                const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+
+                shuffledOptions.forEach(option => {
+                    const optionBtn = document.createElement('button');
+                    optionBtn.className = 'quiz-option w-full text-left p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition';
+                    optionBtn.textContent = option;
+                    optionBtn.dataset.option = option;
+                    optionsContainer.appendChild(optionBtn);
+                });
+
                 document.getElementById('nextQuestionBtn').textContent = currentQuestionIndex === questions.length - 1 ? "Finish Quiz" : "Next Question";
             }
+            
+            document.getElementById('quizOptionsContainer').onclick = (e) => {
+                if (e.target && e.target.classList.contains('quiz-option')) {
+                    const allOptions = document.querySelectorAll('.quiz-option');
+                    allOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    e.target.classList.add('selected');
+                    currentSelection = e.target.dataset.option;
+                }
+            };
 
             function finishQuiz() {
                 clearInterval(quizTimerInterval);
+                let score = 0;
+                userAnswers.forEach((ans, index) => {
+                    if (ans === questions[index].correctAnswer) {
+                        score++;
+                    }
+                });
+
                 document.getElementById('finalScore').textContent = `${score}/${questions.length}`;
                 const reviewContainer = document.getElementById('quizReviewContainer');
                 reviewContainer.innerHTML = '';
 
                 questions.forEach((q, index) => {
-                    const isCorrect = userAnswers[index] && userAnswers[index].toLowerCase() === q.answer.toLowerCase();
+                    const userAnswer = userAnswers[index];
+                    const isCorrect = userAnswer === q.correctAnswer;
+                    
+                    let optionsHtml = '';
+                    q.options.forEach(opt => {
+                        let style = 'border-gray-300';
+                        if (opt === q.correctAnswer) {
+                            style = 'bg-green-100 border-green-500 text-green-800';
+                        } else if (opt === userAnswer && !isCorrect) {
+                            style = 'bg-red-100 border-red-500 text-red-800';
+                        }
+                        optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
+                    });
+
                     reviewContainer.innerHTML += `
                         <div class="p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
-                            <p class="font-semibold">${q.question}</p>
-                            <p class="text-sm mt-2">Your Answer: ${userAnswers[index] || 'No answer'}</p>
-                            <p class="text-sm mt-1">Correct Answer: ${q.answer}</p>
+                            <p class="font-semibold">${index + 1}. ${q.question}</p>
+                            <ul class="list-none space-y-2 mt-3">${optionsHtml}</ul>
                         </div>
                     `;
                 });
@@ -934,12 +1082,7 @@
             }
 
             document.getElementById('nextQuestionBtn').onclick = () => {
-                const userAnswer = document.getElementById('quizAnswerInput').value.trim();
-                userAnswers.push(userAnswer);
-                if(userAnswer.toLowerCase() === questions[currentQuestionIndex].answer.toLowerCase()) {
-                    score++;
-                }
-
+                userAnswers.push(currentSelection);
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
                     displayQuestion();
@@ -949,11 +1092,13 @@
             };
 
             let timeLeft = 600; 
+            const timerEl = document.getElementById('quizTimer');
+            timerEl.textContent = '10:00';
             quizTimerInterval = setInterval(() => {
                 timeLeft--;
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
-                document.getElementById('quizTimer').textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timerEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                 if (timeLeft <= 0) {
                     finishQuiz();
                 }
@@ -961,7 +1106,7 @@
 
             displayQuestion();
         }
-
+	
 
         async function loadUsersForManagement() {
             const usersTableBody = document.getElementById('usersTableBody');
@@ -996,7 +1141,7 @@
             if (userData.history && userData.history.length > 0) {
                  [...userData.history].reverse().forEach(item => {
                      modalHistory.innerHTML += `<div class="p-2 border-b"><p class="font-medium text-sm">${item.question}</p><p class="text-xs text-gray-500">${new Date(item.timestamp).toLocaleString()}</p></div>`;
-                 });
+                });
             } else {
                 modalHistory.innerHTML = '<p class="text-gray-500">No questions asked.</p>';
             }
@@ -1018,9 +1163,14 @@
         });
 
         async function deleteUser(userId) {
+            if (!confirm("Are you sure you want to delete this user and all their data? This action cannot be undone.")) {
+                return;
+            }
             try {
+                // This only deletes the user's data from Firestore.
+                // A complete solution requires a Cloud Function to delete the user from Firebase Authentication.
                 await deleteDoc(doc(db, "users", userId));
-                showToast("User data deleted.");
+                showToast("User data deleted from Firestore.");
                 loadUsersForManagement();
             } catch (error) { showToast("Failed to delete user data.", "error"); }
         }
