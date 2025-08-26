@@ -168,12 +168,28 @@
                             <button data-page="supportPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
                             <button data-page="profilePage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Profile</button>
                         </nav>
-                        <div class="md:hidden">
-                            <button id="mobileMenuBtn" class="p-2 rounded-lg hover:bg-gray-100">
-                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                                </svg>
-                            </button>
+                        <div class="flex items-center">
+                            <div class="relative">
+                                <button id="notificationBellBtn" class="p-2 rounded-full hover:bg-gray-100 relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    <span id="notificationDot" class="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full hidden"></span>
+                                </button>
+                                <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
+                                    <div class="p-4 font-bold border-b">Notifications</div>
+                                    <div id="notificationList" class="max-h-96 overflow-y-auto no-scrollbar">
+                                        <!-- Notifications will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:hidden ml-2">
+                                <button id="mobileMenuBtn" class="p-2 rounded-lg hover:bg-gray-100">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-1">
@@ -223,6 +239,27 @@
                         <div class="flex space-x-2">
                             <input id="newAnnouncementInput" type="text" placeholder="Type announcement here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                             <button id="addAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                        </div>
+                    </div>
+                     <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <h3 class="text-xl font-semibold mb-4">Send Notification</h3>
+                        <div class="space-y-4">
+                            <textarea id="notificationMessageInput" rows="3" placeholder="Type notification message..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Send To:</label>
+                                <div class="mt-2 flex space-x-4">
+                                    <div class="flex items-center">
+                                        <input id="sendToAll" name="notificationTarget" type="radio" value="all" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
+                                        <label for="sendToAll" class="ml-2 block text-sm text-gray-900">All Users</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="sendToSpecific" name="notificationTarget" type="radio" value="specific" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                        <label for="sendToSpecific" class="ml-2 block text-sm text-gray-900">Specific User</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <input id="specificUserEmailInput" type="email" placeholder="Enter user's email address" class="hidden w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <button id="sendNotificationBtn" class="w-full bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700">Send Notification</button>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-xl p-6">
@@ -310,8 +347,8 @@
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold text-gray-900">Quiz Performance Analytics</h2>
                      <div class="flex items-center space-x-4">
-                        <button id="exportQuizResultsBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition shadow-sm">Export to CSV</button>
-                        <button id="analyticsBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
+                         <button id="exportQuizResultsBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition shadow-sm">Export to CSV</button>
+                         <button id="analyticsBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl shadow-xl p-8">
@@ -377,6 +414,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- CHAT MODAL - NEW -->
+        <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg flex flex-col h-[80vh]">
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Support Chat</h2>
+                    <button id="closeChatModalBtn" class="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
+                </div>
+                <div id="chatMessagesContainer" class="flex-grow space-y-4 overflow-y-auto p-2 no-scrollbar">
+                    <!-- Chat messages will be loaded here -->
+                </div>
+                <div class="mt-4 pt-4 border-t flex space-x-2">
+                    <input id="chatMessageInput" type="text" placeholder="Type your message..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <button id="sendChatMessageBtn" class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">Send</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <template id="mainAppPageTemplate">
@@ -471,16 +526,16 @@
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Quizzes</h2>
             <p class="text-gray-600 mb-6">Test your knowledge with a quick, auto-generated quiz based on your focus.</p>
              <div class="max-w-md mx-auto space-y-4">
-                <div>
-                    <label class="text-lg font-semibold text-gray-800 mb-3 text-center">Number of Questions</label>
-                    <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg mt-2">
-                        <div class="flex items-center"><input id="quizLength5" type="radio" name="quizLength" value="5" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked><label for="quizLength5" class="ml-2 block text-sm font-medium text-gray-700">5</label></div>
-                        <div class="flex items-center"><input id="quizLength10" type="radio" name="quizLength" value="10" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="quizLength10" class="ml-2 block text-sm font-medium text-gray-700">10</label></div>
-                        <div class="flex items-center"><input id="quizLengthCustom" type="radio" name="quizLength" value="custom" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="quizLengthCustom" class="ml-2 block text-sm font-medium text-gray-700">Custom</label></div>
-                    </div>
-                    <input id="customQuizLength" type="number" min="1" max="20" class="mt-2 w-24 mx-auto px-2 py-1 border border-gray-300 rounded-lg hidden" placeholder="e.g., 7">
-                </div>
-                <button id="generateQuizBtn" class="bg-green-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-green-700 transition w-full sm:w-auto disabled:bg-gray-400">Start Quiz</button>
+                 <div>
+                     <label class="text-lg font-semibold text-gray-800 mb-3 text-center">Number of Questions</label>
+                     <div class="flex justify-center space-x-4 sm:space-x-8 bg-gray-50 p-3 rounded-lg mt-2">
+                         <div class="flex items-center"><input id="quizLength5" type="radio" name="quizLength" value="5" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked><label for="quizLength5" class="ml-2 block text-sm font-medium text-gray-700">5</label></div>
+                         <div class="flex items-center"><input id="quizLength10" type="radio" name="quizLength" value="10" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="quizLength10" class="ml-2 block text-sm font-medium text-gray-700">10</label></div>
+                         <div class="flex items-center"><input id="quizLengthCustom" type="radio" name="quizLength" value="custom" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><label for="quizLengthCustom" class="ml-2 block text-sm font-medium text-gray-700">Custom</label></div>
+                     </div>
+                     <input id="customQuizLength" type="number" min="1" max="20" class="mt-2 w-24 mx-auto px-2 py-1 border border-gray-300 rounded-lg hidden" placeholder="e.g., 7">
+                 </div>
+                 <button id="generateQuizBtn" class="bg-green-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-green-700 transition w-full sm:w-auto disabled:bg-gray-400">Start Quiz</button>
             </div>
         </div>
     </template>
@@ -497,7 +552,7 @@
                  <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
              </div>
              <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
-         </div>
+        </div>
     </template>
 
     <template id="quizResultPageTemplate">
@@ -627,6 +682,8 @@
     let allUserAnnouncements = [];
     let announcementIndex = 0;
     let announcementInterval = null;
+    let unsubscribeFromChat = null;
+    let notificationListenerUnsubscribe = null;
 
 
     // --- DOM Element References ---
@@ -716,6 +773,7 @@
                 const docSnap = await getDoc(userDocRef);
                 if (docSnap.exists() && docSnap.data().grade) {
                     loadGlobalSiteSettings(); 
+                    listenForNotifications(user.uid);
                     navigateToPage('mainAppPage');
                 } else {
                     document.getElementById('setupUserName').textContent = user.displayName || "there";
@@ -759,6 +817,10 @@
     const performLogout = async () => {
         if (announcementInterval) {
             clearInterval(announcementInterval);
+        }
+        if (notificationListenerUnsubscribe) {
+            notificationListenerUnsubscribe();
+            notificationListenerUnsubscribe = null;
         }
         try { await signOut(auth); } 
         catch (error) { showToast(error.message, "error"); }
@@ -1050,7 +1112,7 @@
         }
     }
 
-    // --- Support Page Functions ---
+    // --- Support Page Functions (with Chat integration) ---
     async function submitSupportTicket() {
         const user = auth.currentUser;
         if (!user) { showToast("You must be logged in to submit a ticket.", "error"); return; }
@@ -1097,12 +1159,13 @@
             
             const tickets = [];
             querySnapshot.forEach(doc => {
-                tickets.push(doc.data());
+                tickets.push({ id: doc.id, data: doc.data() });
             });
 
-            tickets.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
+            tickets.sort((a, b) => (b.data.timestamp?.toDate() || 0) - (a.data.timestamp?.toDate() || 0));
 
-            tickets.forEach(ticket => {
+            tickets.forEach(ticketData => {
+                const ticket = ticketData.data;
                 const date = ticket.timestamp ? new Date(ticket.timestamp.toDate()).toLocaleString() : 'N/A';
                 
                 let statusColorClass = 'bg-red-100 text-red-800';
@@ -1110,8 +1173,9 @@
                 if (ticket.status === 'Resolved') statusColorClass = 'bg-green-100 text-green-800';
 
                 const ticketDiv = document.createElement('div');
-                ticketDiv.className = 'p-4 border rounded-lg bg-gray-50';
-                
+                ticketDiv.className = 'p-4 border rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition';
+                ticketDiv.dataset.issueId = ticketData.id;
+
                 let adminNotesHTML = '';
                 if (ticket.adminNotes) {
                     adminNotesHTML = `
@@ -1133,6 +1197,15 @@
                 `;
                 container.appendChild(ticketDiv);
             });
+            
+            container.addEventListener('click', (e) => {
+                const ticketDiv = e.target.closest('[data-issue-id]');
+                if (ticketDiv) {
+                    const issueId = ticketDiv.dataset.issueId;
+                    openChatForTicket(issueId, 'user');
+                }
+            });
+
         } catch (error) {
             console.error("Error loading user tickets: ", error);
             container.innerHTML = '<p class="text-red-500 font-medium">Could not load tickets. Please try again later.</p>';
@@ -1183,11 +1256,9 @@
                 return;
             }
 
-            // Simplified query to avoid needing a composite index
             const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(50));
             const snapshot = await getDocs(q);
             
-            // Client-side filter for questions that are valid MCQs
             const allAvailableQuestions = snapshot.docs
                 .map(doc => ({...doc.data(), id: doc.id}))
                 .filter(q => q.options && q.options.length > 0 && q.correctAnswer);
@@ -1649,6 +1720,7 @@
         loadAdminAnnouncements();
         loadAdminRecentQuestions();
         loadSiteContentForAdmin(); 
+        setupAdminNotificationListeners();
         onSnapshot(collection(db, "users"), (snap) => { document.getElementById('totalUsersStat').textContent = snap.size; });
         onSnapshot(collection(db, "questions"), (snap) => { document.getElementById('totalQuestionsStat').textContent = snap.size; });
         onSnapshot(collection(db, "questionBank"), (snap) => { document.getElementById('questionBankStat').textContent = snap.size; });
@@ -1712,8 +1784,9 @@
                             <option value="Resolved" ${issue.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
                         </select>
                     </td>
-                    <td class="py-3 px-4 text-sm">
+                    <td class="py-3 px-4 text-sm space-x-2">
                         <button data-id="${issueId}" class="save-status-btn bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-blue-600">Update</button>
+                        <button data-id="${issueId}" class="chat-btn bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-green-600">Chat</button>
                     </td>
                 `;
             });
@@ -1721,8 +1794,10 @@
     }
     
     document.getElementById('issuesTableBody').addEventListener('click', async (e) => {
+        const issueId = e.target.dataset.id;
+        if (!issueId) return;
+
         if (e.target.classList.contains('save-status-btn')) {
-            const issueId = e.target.dataset.id;
             const newStatus = document.querySelector(`.status-select[data-id="${issueId}"]`).value;
             const adminNotes = document.querySelector(`.admin-notes-input[data-id="${issueId}"]`).value;
             try {
@@ -1734,6 +1809,9 @@
             } catch (error) {
                 showToast("Failed to update issue.", "error");
             }
+        }
+        if (e.target.classList.contains('chat-btn')) {
+            openChatForTicket(issueId, 'admin');
         }
     });
     
@@ -1857,6 +1935,236 @@
             showToast("Failed to update logo: " + error.message, "error");
         }
     });
+
+    // --- CHAT FUNCTIONS ---
+    function openChatForTicket(issueId, role) {
+        const chatModal = document.getElementById('chatModal');
+        const messagesContainer = document.getElementById('chatMessagesContainer');
+        const sendBtn = document.getElementById('sendChatMessageBtn');
+
+        messagesContainer.innerHTML = '<p class="text-center text-gray-500">Loading chat...</p>';
+        chatModal.classList.remove('hidden');
+
+        sendBtn.dataset.issueId = issueId;
+        sendBtn.dataset.role = role;
+
+        const messagesQuery = query(
+            collection(db, "issues", issueId, "messages"),
+            orderBy("timestamp", "asc")
+        );
+
+        if (unsubscribeFromChat) {
+            unsubscribeFromChat();
+        }
+
+        unsubscribeFromChat = onSnapshot(messagesQuery, (snapshot) => {
+            messagesContainer.innerHTML = '';
+            if (snapshot.empty) {
+                messagesContainer.innerHTML = '<p class="text-center text-gray-400 text-sm">No messages yet. Start the conversation!</p>';
+            } else {
+                snapshot.forEach(doc => {
+                    const msg = doc.data();
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('flex', 'flex-col', 'max-w-[80%]', 'p-2', 'rounded-lg');
+
+                    if (msg.sender === role) {
+                        messageDiv.classList.add('bg-blue-500', 'text-white', 'self-end', 'rounded-br-none');
+                    } else {
+                        messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'self-start', 'rounded-bl-none');
+                    }
+
+                    messageDiv.innerHTML = `<p class="px-2">${msg.text}</p>`;
+                    messagesContainer.appendChild(messageDiv);
+                });
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+    }
+
+    document.getElementById('sendChatMessageBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('sendChatMessageBtn');
+        const issueId = btn.dataset.issueId;
+        const role = btn.dataset.role;
+        const input = document.getElementById('chatMessageInput');
+        const text = input.value.trim();
+
+        if (!text || !issueId || !role) return;
+
+        try {
+            await addDoc(collection(db, "issues", issueId, "messages"), {
+                text: text,
+                sender: role,
+                timestamp: serverTimestamp()
+            });
+            input.value = '';
+        } catch (error) {
+            console.error("Error sending message:", error);
+            showToast("Could not send message.", "error");
+        }
+    });
+
+    document.getElementById('closeChatModalBtn').addEventListener('click', () => {
+        if (unsubscribeFromChat) {
+            unsubscribeFromChat();
+            unsubscribeFromChat = null;
+        }
+        document.getElementById('chatModal').classList.add('hidden');
+    });
+
+    // --- NOTIFICATION FUNCTIONS ---
+    async function listenForNotifications(userId) {
+        if (notificationListenerUnsubscribe) {
+            notificationListenerUnsubscribe();
+        }
+
+        const q = query(collection(db, "notifications"), where('target', 'in', ['all', userId]));
+
+        notificationListenerUnsubscribe = onSnapshot(q, (snapshot) => {
+            const allNotifications = [];
+            let unreadCount = 0;
+            
+            snapshot.forEach(doc => {
+                const notification = { id: doc.id, ...doc.data() };
+                allNotifications.push(notification);
+                if (!notification.readBy || !notification.readBy.includes(userId)) {
+                    unreadCount++;
+                }
+            });
+
+            allNotifications.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
+
+            const notificationDot = document.getElementById('notificationDot');
+            if (unreadCount > 0) {
+                notificationDot.classList.remove('hidden');
+            } else {
+                notificationDot.classList.add('hidden');
+            }
+
+            populateNotificationPanel(allNotifications, userId);
+        });
+    }
+
+    function populateNotificationPanel(notifications, userId) {
+        const list = document.getElementById('notificationList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        if (notifications.length === 0) {
+            list.innerHTML = '<p class="p-4 text-sm text-gray-500">No notifications yet.</p>';
+            return;
+        }
+
+        notifications.forEach(notif => {
+            const isUnread = !notif.readBy || !notif.readBy.includes(userId);
+            const item = document.createElement('div');
+            item.className = `p-3 border-b hover:bg-gray-50 ${isUnread ? 'bg-blue-50' : ''}`;
+            
+            const date = notif.timestamp ? new Date(notif.timestamp.toDate()).toLocaleString() : '';
+
+            item.innerHTML = `
+                <p class="text-sm text-gray-800">${notif.message}</p>
+                <p class="text-xs text-gray-400 mt-1">${date}</p>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    async function markNotificationsAsRead(userId) {
+        const q = query(collection(db, "notifications"), where('target', 'in', ['all', userId]));
+        const snapshot = await getDocs(q);
+
+        snapshot.forEach(doc => {
+            const notification = doc.data();
+            if (!notification.readBy || !notification.readBy.includes(userId)) {
+                updateDoc(doc.ref, {
+                    readBy: arrayUnion(userId)
+                });
+            }
+        });
+    }
+
+    document.getElementById('notificationBellBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const panel = document.getElementById('notificationPanel');
+        panel.classList.toggle('hidden');
+        
+        if (!panel.classList.contains('hidden')) {
+            const user = auth.currentUser;
+            if (user) {
+                markNotificationsAsRead(user.uid);
+            }
+        }
+    });
+
+    window.addEventListener('click', (e) => {
+        const panel = document.getElementById('notificationPanel');
+        const bell = document.getElementById('notificationBellBtn');
+        if (panel && !panel.classList.contains('hidden') && !bell.contains(e.target) && !panel.contains(e.target)) {
+            panel.classList.add('hidden');
+        }
+    });
+
+    function setupAdminNotificationListeners() {
+        document.querySelectorAll('input[name="notificationTarget"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const specificUserInput = document.getElementById('specificUserEmailInput');
+                if (e.target.value === 'specific') {
+                    specificUserInput.classList.remove('hidden');
+                } else {
+                    specificUserInput.classList.add('hidden');
+                }
+            });
+        });
+
+        document.getElementById('sendNotificationBtn').addEventListener('click', sendNotification);
+    }
+
+    async function sendNotification() {
+        const message = document.getElementById('notificationMessageInput').value.trim();
+        if (!message) {
+            showToast("Message cannot be empty.", "error");
+            return;
+        }
+
+        const targetType = document.querySelector('input[name="notificationTarget"]:checked').value;
+        let targetValue = 'all';
+
+        if (targetType === 'specific') {
+            const email = document.getElementById('specificUserEmailInput').value.trim();
+            if (!email) {
+                showToast("Please enter a user email.", "error");
+                return;
+            }
+            
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                showToast("User with that email not found.", "error");
+                return;
+            }
+            
+            const userDoc = querySnapshot.docs[0];
+            targetValue = userDoc.id;
+        }
+        
+        try {
+            await addDoc(collection(db, "notifications"), {
+                message: message,
+                target: targetValue,
+                readBy: [],
+                timestamp: serverTimestamp()
+            });
+            showToast("Notification sent successfully!");
+            document.getElementById('notificationMessageInput').value = '';
+            document.getElementById('specificUserEmailInput').value = '';
+        } catch (error) {
+            showToast("Failed to send notification.", "error");
+            console.error("Error sending notification: ", error);
+        }
+    }
+
 </script>
 
 </body>
