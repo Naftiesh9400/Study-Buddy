@@ -73,6 +73,14 @@
              color: #3b82f6;
              font-weight: 700;
         }
+        /* Keep dropdown hidden by default */
+        .dropdown-menu {
+            display: none;
+        }
+        /* Show dropdown when the 'open' class is added */
+        .dropdown.open .dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
 
@@ -134,18 +142,39 @@
                     <h2 class="text-3xl font-bold text-gray-900">Welcome, <span id="setupUserName"></span>!</h2>
                     <p class="text-gray-500 mt-2">Let's personalize your experience. What is your primary focus?</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-                    <div id="schoolCard" class="selection-card cursor-pointer bg-blue-500 text-white p-6 rounded-xl flex flex-col items-center justify-center text-center">
-                        <h3 class="font-bold text-xl">School</h3>
-                        <p class="text-sm mt-1">Class 10-12</p>
+                <div class="space-y-6 pt-4">
+                    <!-- School Options -->
+                    <div class="selection-category">
+                        <div id="schoolCard" class="selection-card cursor-pointer bg-blue-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
+                            <h3 class="font-bold text-xl">School</h3>
+                        </div>
+                        <div id="schoolOptions" class="hidden mt-4 space-y-2">
+                            <button data-grade="School" data-exam="Class 10" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">Class 10</button>
+                            <button data-grade="School" data-exam="Class 11" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">Class 11</button>
+                            <button data-grade="School" data-exam="Class 12" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">Class 12</button>
+                        </div>
                     </div>
-                    <div id="examCard" class="selection-card cursor-pointer bg-green-500 text-white p-6 rounded-xl flex flex-col items-center justify-center text-center">
-                        <h3 class="font-bold text-xl">Competitive Exams</h3>
-                        <p class="text-sm mt-1">JEE / NEET</p>
+                    <!-- Competitive Exams Options -->
+                    <div class="selection-category">
+                        <div id="examCard" class="selection-card cursor-pointer bg-green-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
+                             <h3 class="font-bold text-xl">Competitive Exams</h3>
+                        </div>
+                         <div id="examOptions" class="hidden mt-4 space-y-2">
+                            <button data-grade="Competitive Exams" data-exam="JEE" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">JEE</button>
+                            <button data-grade="Competitive Exams" data-exam="NEET" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">NEET</button>
+                        </div>
                     </div>
-                    <div id="collegeCard" class="selection-card cursor-pointer bg-indigo-500 text-white p-6 rounded-xl flex flex-col items-center justify-center text-center">
-                        <h3 class="font-bold text-xl">College</h3>
-                        <p class="text-sm mt-1">B.Tech, BCA etc.</p>
+                    <!-- College Options -->
+                    <div class="selection-category">
+                        <div id="collegeCard" class="selection-card cursor-pointer bg-indigo-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
+                           <h3 class="font-bold text-xl">College</h3>
+                        </div>
+                        <div id="collegeOptions" class="hidden mt-4 space-y-2">
+                            <button data-grade="College" data-exam="BCA Sem 1" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">BCA Sem 1</button>
+                            <button data-grade="College" data-exam="BCA Sem 2" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">BCA Sem 2</button>
+                             <button data-grade="College" data-exam="B.Tech CSE Sem 1" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">B.Tech CSE Sem 1</button>
+                            <button data-grade="College" data-exam="B.Tech CSE Sem 2" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">B.Tech CSE Sem 2</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,8 +191,19 @@
                         <nav class="hidden md:flex items-center space-x-2">
                             <button data-page="mainAppPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
                             <button data-page="aboutUsPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
-                            <button data-page="quizListPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
-                            <button data-page="leaderboardPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Leaderboard</button>
+                            <!-- Quiz Dropdown -->
+                            <div class="relative dropdown">
+                                <button id="quizzesDropdownBtn" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition flex items-center">
+                                    Quizzes
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div class="dropdown-menu absolute bg-white rounded-md shadow-lg border mt-2 py-1 w-48 z-50">
+                                    <button data-page="quizListPage" class="nav-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Practice Quizzes</button>
+                                    <button data-page="quizCompetitionPage" class="nav-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Quiz Competition</button>
+                                    <div class="border-t my-1"></div>
+                                    <button data-page="leaderboardPage" class="nav-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Leaderboard</button>
+                                </div>
+                            </div>
                             <button data-page="announcementHistoryPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
                             <button data-page="supportPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
                             <button data-page="profilePage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Profile</button>
@@ -179,7 +219,6 @@
                                 <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border z-50">
                                     <div class="p-4 font-bold border-b">Notifications</div>
                                     <div id="notificationList" class="max-h-96 overflow-y-auto no-scrollbar">
-                                        <!-- Notifications will be loaded here -->
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +234,8 @@
                     <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-1">
                         <button data-page="mainAppPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
                         <button data-page="aboutUsPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
-                        <button data-page="quizListPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quizzes</button>
+                        <button data-page="quizListPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Practice Quizzes</button>
+                        <button data-page="quizCompetitionPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quiz Competition</button>
                         <button data-page="leaderboardPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Leaderboard</button>
                         <button data-page="announcementHistoryPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Announcements</button>
                         <button data-page="supportPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Support</button>
@@ -219,7 +259,9 @@
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-4 flex-wrap">
+                        <button id="manageCompetitionBtn" class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition shadow-sm">Quiz Competition</button>
+                        <button id="managePrizeClaimsBtn" class="bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-600 transition shadow-sm">Prize Claims</button>
                         <button id="manageQuizAnalyticsBtn" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition shadow-sm">Quiz Analytics</button>
                         <button id="manageIssuesBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition shadow-sm">Manage Issues</button>
                         <button id="manageUsersBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition shadow-sm">Manage Users</button>
@@ -234,7 +276,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Manage Announcements</h3>
+                        <h3 class="text-xl font-semibold mb-4">Manage Global Announcements</h3>
                         <div id="announcementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
                         <div class="flex space-x-2">
                             <input id="newAnnouncementInput" type="text" placeholder="Type announcement here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
@@ -373,6 +415,110 @@
             </div>
         </div>
 
+        <div id="quizCompetitionAdminPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Manage Quiz Competition</h2>
+                    <button id="competitionBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Settings & Announcements -->
+                    <div class="space-y-8">
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <h3 class="text-xl font-semibold mb-4">Competition Settings</h3>
+                             <div class="space-y-4">
+                                <div>
+                                    <label for="prizePoolAdmin" class="block text-sm font-medium text-gray-700">Prize Pool (e.g., 10 RS)</label>
+                                    <input id="prizePoolAdmin" type="text" placeholder="e.g., 10 RS Paytm Cash" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="bannerImageUrlAdmin" class="block text-sm font-medium text-gray-700">Competition Banner Image URL</label>
+                                    <input id="bannerImageUrlAdmin" type="text" placeholder="https://example.com/banner.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="prizeImageUrlAdmin" class="block text-sm font-medium text-gray-700">Prize Image URL</label>
+                                    <input id="prizeImageUrlAdmin" type="text" placeholder="https://example.com/prize.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="startTimeAdmin" class="block text-sm font-medium text-gray-700">Start Time</label>
+                                    <input id="startTimeAdmin" type="datetime-local" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label for="endTimeAdmin" class="block text-sm font-medium text-gray-700">End Time</label>
+                                    <input id="endTimeAdmin" type="datetime-local" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <button id="saveCompetitionSettingsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Settings</button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <h3 class="text-xl font-semibold mb-4">Competition Controls</h3>
+                            <div id="competitionStatusAdmin" class="mb-4 p-3 rounded-lg text-center font-semibold">Loading status...</div>
+                            <div id="competitionControlButtons" class="space-y-2">
+                                <button id="startCompetitionAdminBtn" class="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 hidden">Start Competition</button>
+                                <button id="endCompetitionAdminBtn" class="w-full bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 hidden">End Competition</button>
+                                <button id="startNewCompetitionAdminBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 hidden">Start New Competition</button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-xl p-6">
+                            <h3 class="text-xl font-semibold mb-4">Competition Announcements</h3>
+                            <div id="competitionAnnouncementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
+                            <div class="flex space-x-2">
+                                <input id="newCompetitionAnnouncementInput" type="text" placeholder="Type announcement..." class="w-full px-4 py-2 border rounded-lg">
+                                <button id="addCompetitionAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column: Results & Winner -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                        <h3 class="text-xl font-semibold mb-4">Competition Results</h3>
+                        <div id="competitionWinnerDisplay" class="mb-4 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-center hidden">
+                            <p class="font-bold text-yellow-800">🏆 Winner Announced! 🏆</p>
+                            <p id="winnerInfoText" class="text-yellow-700"></p>
+                        </div>
+                        <div class="overflow-y-auto max-h-96 no-scrollbar">
+                            <table class="min-w-full bg-white">
+                                <thead class="bg-gray-100 sticky top-0">
+                                    <tr>
+                                        <th class="text-left py-2 px-3 font-semibold text-sm">User</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-sm">Score</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-sm">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="competitionResultsTableBody">
+                                    <!-- Results will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="prizeClaimsPage" class="page hidden p-4 sm:p-6 md:p-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Prize Claims</h2>
+                    <button id="claimsBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-semibold mb-4">Submitted Claims</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prizeClaimsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div id="collegeCourseModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
             <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md space-y-6">
                 <h2 class="text-2xl font-bold text-gray-900 text-center">Select Your Course</h2>
@@ -396,26 +542,6 @@
             </div>
         </div>
 
-        <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900">Edit User Details</h2>
-                <div>
-                    <label for="editUserName" class="block text-sm font-medium text-gray-700">User Name</label>
-                    <input type="text" id="editUserName" class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <input type="hidden" id="editUserId">
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button id="closeEditModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">Cancel</button>
-                    <button id="saveUserChangesBtn" class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">Save Changes</button>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mt-6 mb-2">Question History</h3>
-                    <div id="modalUserHistoryContainer" class="space-y-3 max-h-60 overflow-y-auto no-scrollbar border p-3 rounded-lg bg-gray-50"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CHAT MODAL - NEW -->
         <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
             <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg flex flex-col h-[80vh]">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
@@ -423,7 +549,6 @@
                     <button id="closeChatModalBtn" class="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
                 </div>
                 <div id="chatMessagesContainer" class="flex-grow space-y-4 overflow-y-auto p-2 no-scrollbar">
-                    <!-- Chat messages will be loaded here -->
                 </div>
                 <div class="mt-4 pt-4 border-t flex space-x-2">
                     <input id="chatMessageInput" type="text" placeholder="Type your message..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
@@ -507,6 +632,13 @@
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-semibold mb-4">Community</h3>
+                <a href="https://chat.whatsapp.com/your-group-invite-link" target="_blank" class="w-full bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition shadow-md flex items-center justify-center space-x-2">
+                    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="h-6 w-6">
+                    <span>Join WhatsApp Community</span>
+                </a>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-8">
                 <h3 class="text-xl font-semibold mb-4">Your Quiz History</h3>
                 <div id="quizHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"><p class="text-gray-500">You haven't taken any quizzes yet.</p></div>
             </div>
@@ -523,7 +655,7 @@
     
     <template id="quizListPageTemplate">
         <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Quizzes</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Practice Quizzes</h2>
             <p class="text-gray-600 mb-6">Test your knowledge with a quick, auto-generated quiz based on your focus.</p>
              <div class="max-w-md mx-auto space-y-4">
                  <div>
@@ -540,14 +672,55 @@
         </div>
     </template>
 
+    <template id="quizCompetitionPageTemplate">
+        <div class="space-y-8">
+            <div id="competitionWinnerInfo" class="p-6 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-center shadow-lg hidden">
+                <h3 class="text-2xl font-bold">🏆 A Winner has been Declared! 🏆</h3>
+                <p id="competitionWinnerDetails" class="mt-2 text-lg"></p>
+                <div id="prizeClaimSection" class="mt-4 hidden">
+                    <p class="font-semibold">Congratulations! To claim your prize of <span id="prizeAmountText" class="font-bold"></span>, please enter your Paytm number or UPI ID below:</p>
+                    <div class="flex justify-center items-center mt-4">
+                        <img src="https://img.icons8.com/color/48/000000/paytm.png" alt="Paytm" class="h-8 w-8 mr-2">
+                        <input id="paymentIdInput" type="text" placeholder="Paytm No. or UPI ID" class="px-4 py-2 rounded-l-lg text-gray-800 w-64">
+                        <button id="submitPaymentIdBtn" class="bg-green-500 text-white font-semibold px-4 py-2 rounded-r-lg hover:bg-green-600">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                <div id="competitionBannerContainer" class="mb-6 hidden">
+                    <!-- Banner image will be inserted here by JS -->
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Quiz Competition</h2>
+                <div id="prizePoolInfo" class="mb-4 flex flex-col items-center justify-center space-y-3">
+                    <!-- Prize text and image will be inserted here -->
+                </div>
+                <div id="competitionInstructions" class="text-gray-600 mb-6 prose max-w-none">
+                    <p>Loading instructions...</p>
+                </div>
+                <div class="max-w-xs mx-auto space-y-4">
+                    <button id="startCompetitionBtn" class="bg-orange-600 text-white font-bold py-4 px-10 rounded-lg hover:bg-orange-700 transition transform hover:scale-105 shadow-xl text-lg disabled:bg-gray-400 disabled:transform-none disabled:shadow-none w-full">
+                        Start 10-Minute Challenge!
+                    </button>
+                    <p id="competitionTimer" class="text-gray-500 font-semibold"></p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-semibold mb-4 text-center">Competition Announcements</h3>
+                <div id="competitionAnnouncementsContainer" class="space-y-3 max-h-60 overflow-y-auto no-scrollbar">
+                    <p class="text-gray-500 text-center">Loading announcements...</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <template id="quizTakerPageTemplate">
          <div class="max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-6">
              <div class="flex justify-between items-center">
-                 <h2 class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
+                 <h2 id="quizTakerTitle" class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
                  <div class="text-lg font-semibold bg-red-500 text-white px-4 py-1 rounded-full"><span id="quizTimer">10:00</span></div>
              </div>
              <div id="quizQuestionContainer" class="pt-4">
-                 <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">5</span></p>
+                 <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">10</span></p>
                  <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
                  <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
              </div>
@@ -583,7 +756,7 @@
     <template id="leaderboardPageTemplate">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-4 text-center">🏆 Leaderboard 🏆</h2>
-            <p class="text-center text-gray-600 mb-6">See how you stack up against other students. Rankings are based on the highest percentage score.</p>
+            <p class="text-center text-gray-600 mb-6">See how you stack up against other students. Rankings are based on the highest percentage score in practice quizzes.</p>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-100">
@@ -596,7 +769,6 @@
                         </tr>
                     </thead>
                     <tbody id="leaderboardTableBody">
-                        <!-- Ranks will be populated here -->
                     </tbody>
                 </table>
             </div>
@@ -657,7 +829,6 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion, deleteDoc, serverTimestamp, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase Configuration ---
-    // IMPORTANT: Replace with your actual Firebase configuration.
     const firebaseConfig = {
         apiKey: "AIzaSyAFBbsNLT4TdPT_ufuo6dYG_nqCCoVYEa0",
         authDomain: "cbse-4fbf5.firebaseapp.com",
@@ -684,12 +855,15 @@
     let announcementInterval = null;
     let unsubscribeFromChat = null;
     let notificationListenerUnsubscribe = null;
+    let activeQuizState = null; // IMPORTANT: Used to manage and reset quiz progress
 
 
     // --- DOM Element References ---
     const pageContainer = document.getElementById('pageContent');
     const allPages = document.querySelectorAll('.page');
     const mainAppWrapper = document.getElementById('mainAppWrapper');
+    const appContainer = document.getElementById('appContainer');
+
 
     // --- UI Helper Functions ---
     const showToast = (message, type = 'success') => {
@@ -750,6 +924,13 @@
     };
 
     const navigateToPage = (pageId) => {
+        // Reset competition quiz if navigating away
+        if (activeQuizState && activeQuizState.type === 'competition' && pageId !== 'quizTakerPage') {
+            activeQuizState = null;
+            clearInterval(quizTimerInterval);
+            showToast("Competition progress has been reset.", "error");
+        }
+
         if (pageId !== 'mainAppPage' && announcementInterval) {
             clearInterval(announcementInterval);
             announcementInterval = null;
@@ -827,6 +1008,39 @@
     };
 
     // --- Setup Flow ---
+    function setupPageListeners() {
+        const selectionCards = document.querySelectorAll('.selection-card');
+        selectionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const optionsId = card.id.replace('Card', 'Options');
+                const optionsDiv = document.getElementById(optionsId);
+                
+                // Hide all other options
+                document.querySelectorAll('[id$="Options"]').forEach(optDiv => {
+                    if (optDiv.id !== optionsId) {
+                        optDiv.classList.add('hidden');
+                    }
+                });
+                
+                // Toggle current options
+                if (optionsDiv) {
+                    optionsDiv.classList.toggle('hidden');
+                }
+            });
+        });
+
+        const optionButtons = document.querySelectorAll('.setup-option-btn');
+        optionButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const grade = btn.dataset.grade;
+                const exam = btn.dataset.exam;
+                saveUserSetup(grade, exam);
+            });
+        });
+    }
+    setupPageListeners();
+
+
     async function saveUserSetup(grade, targetExam) {
         const user = auth.currentUser;
         if (!user) return;
@@ -836,26 +1050,17 @@
             navigateToPage('mainAppPage');
         } catch (error) { showToast("Could not save preferences: " + error.message, "error"); }
     }
-
-    document.getElementById('schoolCard').addEventListener('click', () => saveUserSetup('School (10-12)', 'School Exams'));
-    document.getElementById('examCard').addEventListener('click', () => saveUserSetup('Competitive Exams', 'JEE/NEET'));
-    document.getElementById('collegeCard').addEventListener('click', () => document.getElementById('collegeCourseModal').classList.remove('hidden'));
-    document.getElementById('courseSelectionContainer').addEventListener('click', (e) => {
-        if (e.target.classList.contains('course-btn')) {
-            const course = e.target.dataset.course;
-            saveUserSetup('College', course);
-            document.getElementById('collegeCourseModal').classList.add('hidden');
-        }
-    });
     
-    // --- Main App Navigation Listeners ---
-    document.querySelectorAll('.nav-btn, .nav-btn-mobile').forEach(btn => {
-        btn.addEventListener('click', () => {
-            navigateToPage(btn.dataset.page);
-            if (document.getElementById('mobileMenu').classList.contains('hidden') === false) {
-                document.getElementById('mobileMenu').classList.add('hidden');
+    // --- Main App Navigation Listeners (Event Delegation) ---
+    appContainer.addEventListener('click', (e) => {
+        const navBtn = e.target.closest('.nav-btn, .nav-btn-mobile');
+        if (navBtn && navBtn.dataset.page) {
+            navigateToPage(navBtn.dataset.page);
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
             }
-        });
+        }
     });
 
     document.getElementById('mobileMenuBtn').addEventListener('click', () => {
@@ -880,13 +1085,19 @@
                 document.getElementById('logoutBtn').addEventListener('click', performLogout);
                 break;
             case 'quizListPageTemplate':
-                document.getElementById('generateQuizBtn').addEventListener('click', generateQuiz);
+                document.getElementById('generateQuizBtn').addEventListener('click', () => generateQuiz('practice'));
                 document.querySelectorAll('input[name="quizLength"]').forEach(radio => {
                     radio.addEventListener('change', (e) => {
                         const customInput = document.getElementById('customQuizLength');
                         customInput.classList.toggle('hidden', e.target.value !== 'custom');
                     });
                 });
+                break;
+            case 'quizTakerPageTemplate':
+                displayQuestion(); // This is the fix for the blank page
+                break;
+            case 'quizCompetitionPageTemplate':
+                loadQuizCompetitionPage();
                 break;
             case 'quizResultPageTemplate':
                 document.getElementById('backToQuizzesBtn').addEventListener('click', () => navigateToPage('quizListPage'));
@@ -933,62 +1144,62 @@
     }
     
     async function handleGetAnswer() {
-          const user = auth.currentUser;
-          if (!user) return;
+         const user = auth.currentUser;
+         if (!user) return;
 
-          const answerDiv = document.getElementById('answer');
-          const resultContainer = document.getElementById('resultContainer');
-          const videoContainer = document.getElementById('videoContainer');
-          const loader = document.getElementById('loader');
-          const getAnswerBtn = document.getElementById('getAnswerBtn');
-          
-          answerDiv.innerHTML = '';
-          resultContainer.classList.remove('hidden');
-          videoContainer.classList.add('hidden');
-          loader.classList.remove('hidden');
-          getAnswerBtn.disabled = true;
-          getAnswerBtn.textContent = 'Fetching Solution...';
-          document.getElementById('errorBox').classList.add('hidden');
+         const answerDiv = document.getElementById('answer');
+         const resultContainer = document.getElementById('resultContainer');
+         const videoContainer = document.getElementById('videoContainer');
+         const loader = document.getElementById('loader');
+         const getAnswerBtn = document.getElementById('getAnswerBtn');
+         
+         answerDiv.innerHTML = '';
+         resultContainer.classList.remove('hidden');
+         videoContainer.classList.add('hidden');
+         loader.classList.remove('hidden');
+         getAnswerBtn.disabled = true;
+         getAnswerBtn.textContent = 'Fetching Solution...';
+         document.getElementById('errorBox').classList.add('hidden');
 
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (!userDoc.exists() || !userDoc.data().targetExam) {
-               showError("Please set your focus in your profile before asking a question.");
-               resetButtonState();
-               return;
-          }
-          const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
+         const userDoc = await getDoc(doc(db, "users", user.uid));
+         if (!userDoc.exists() || !userDoc.data().targetExam) {
+                 showError("Please set your focus in your profile before asking a question.");
+                 resetButtonState();
+                 return;
+         }
+         const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
 
-          try {
-               const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
-               const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
-               const languageInstruction = answerLanguage === 'Hindi'
-                    ? `Provide the entire response in Hindi (using Devanagari script).`
-                    : `Provide the entire response in English.`;
+         try {
+                 const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
+                 const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
+                 const languageInstruction = answerLanguage === 'Hindi'
+                     ? `Provide the entire response in Hindi (using Devanagari script).`
+                     : `Provide the entire response in English.`;
 
-               const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
-               - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
-               - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
-               After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
-               Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
-               
-               let userQuestion, prompt;
-               if (activeTab === 'scan') {
-                    if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
-                    userQuestion = "Question from image";
-                    prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt, base64ImageData, userQuestion, userFocus);
-               } else {
-                    const questionText = document.getElementById('manualQuestion').value.trim();
-                    if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
-                    userQuestion = questionText;
-                    prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
-                    await getSolution(prompt, null, userQuestion, userFocus);
-               }
-          } catch (error) {
-               showError('Failed to fetch the solution.');
-          } finally {
-               resetButtonState();
-          }
+                 const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
+                 - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
+                 - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
+                 After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
+                 Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
+                 
+                 let userQuestion, prompt;
+                 if (activeTab === 'scan') {
+                         if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
+                         userQuestion = "Question from image";
+                         prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
+                         await getSolution(prompt, base64ImageData, userQuestion, userFocus);
+                 } else {
+                         const questionText = document.getElementById('manualQuestion').value.trim();
+                         if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
+                         userQuestion = questionText;
+                         prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
+                         await getSolution(prompt, null, userQuestion, userFocus);
+                 }
+         } catch (error) {
+                 showError('Failed to fetch the solution.');
+         } finally {
+                 resetButtonState();
+         }
     }
 
     async function getSolution(prompt, imageData = null, userQuestion, topic) {
@@ -1220,12 +1431,19 @@
         }
     }
 
-    async function generateQuiz() {
-        const generateBtn = document.getElementById('generateQuizBtn');
-        if (!generateBtn) return;
-        const originalBtnText = generateBtn.textContent;
-        generateBtn.disabled = true;
-        generateBtn.textContent = 'Generating...';
+    async function generateQuiz(type = 'practice') {
+        let btnToDisable, originalBtnText;
+
+        if (type === 'practice') {
+            btnToDisable = document.getElementById('generateQuizBtn');
+        } else { // competition
+            btnToDisable = document.getElementById('startCompetitionBtn');
+        }
+        if (!btnToDisable) return;
+
+        originalBtnText = btnToDisable.textContent;
+        btnToDisable.disabled = true;
+        btnToDisable.textContent = 'Generating...';
 
         try {
             const user = auth.currentUser;
@@ -1234,169 +1452,237 @@
                 return;
             }
 
-            const userDocRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(userDocRef);
+            let numQuestions = 10;
+            let userFocus = '';
 
-            if(!docSnap.exists() || !docSnap.data().targetExam) {
-                showToast("Please set your focus in your profile first.", "error");
-                return;
+            if (type === 'practice') {
+                const userDocRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userDocRef);
+                const userData = docSnap.data();
+                if(!docSnap.exists() || !userData.targetExam) {
+                    showToast("Please set your focus in your profile first.", "error");
+                    return;
+                }
+                userFocus = `${userData.grade} - ${userData.targetExam}`;
+                const selectedLengthOption = document.querySelector('input[name="quizLength"]:checked').value;
+                if (selectedLengthOption === 'custom') {
+                    numQuestions = parseInt(document.getElementById('customQuizLength').value, 10) || 5;
+                } else {
+                    numQuestions = parseInt(selectedLengthOption, 10);
+                }
+                 const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(50));
+                const snapshot = await getDocs(q);
+                
+                const allAvailableQuestions = snapshot.docs
+                    .map(doc => ({...doc.data(), id: doc.id}))
+                    .filter(q => q.options && q.options.length > 0 && q.correctAnswer);
+
+                if(allAvailableQuestions.length < numQuestions) {
+                    showToast(`Not enough questions in the bank for '${userFocus}' to create a ${numQuestions}-question quiz. Only found ${allAvailableQuestions.length}.`, "error");
+                    return;
+                }
+
+                shuffleArray(allAvailableQuestions);
+                const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
+                startQuiz(quizQuestions, type, userFocus);
+
+            } else { // competition
+                const userDocRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userDocRef);
+                const userData = docSnap.data();
+                userFocus = `${userData.grade} - ${userData.targetExam}`;
+                
+                const questions = await generateQuestionsForTopic(userFocus, numQuestions);
+                if (questions) {
+                    startQuiz(questions, type, userFocus);
+                }
             }
-            const userFocus = `${docSnap.data().grade} - ${docSnap.data().targetExam}`;
-            
-            const selectedLengthOption = document.querySelector('input[name="quizLength"]:checked').value;
-            let numQuestions = 5;
-            if (selectedLengthOption === 'custom') {
-                numQuestions = parseInt(document.getElementById('customQuizLength').value, 10) || 5;
-            } else {
-                numQuestions = parseInt(selectedLengthOption, 10);
-            }
 
-            if (numQuestions < 1 || numQuestions > 20) {
-                showToast("Please enter a number of questions between 1 and 20.", "error");
-                return;
-            }
-
-            const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(50));
-            const snapshot = await getDocs(q);
-            
-            const allAvailableQuestions = snapshot.docs
-                .map(doc => ({...doc.data(), id: doc.id}))
-                .filter(q => q.options && q.options.length > 0 && q.correctAnswer);
-
-
-            if(allAvailableQuestions.length < numQuestions) {
-                showToast(`Not enough questions in the bank for a ${numQuestions}-question quiz. Only found ${allAvailableQuestions.length}. Ask more questions to build the bank!`, "error");
-                return;
-            }
-
-            shuffleArray(allAvailableQuestions);
-            const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
-
-            startQuiz(quizQuestions, userFocus);
         } catch (error) {
             console.error("Error generating quiz:", error);
-            showToast("Failed to generate quiz. Please check your connection and try again.", "error");
+            showToast("Failed to generate quiz. Please try again.", "error");
         } finally {
-            generateBtn.disabled = false;
-            generateBtn.textContent = originalBtnText;
+            if (btnToDisable) {
+                btnToDisable.disabled = false;
+                btnToDisable.textContent = originalBtnText;
+            }
         }
     }
 
-    function startQuiz(questions, topic) {
-        navigateToPage('quizTakerPage');
-        
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        let currentSelection = null;
-
-        function displayQuestion() {
-            currentSelection = null;
-            const question = questions[currentQuestionIndex];
-            document.getElementById('currentQuestionNumber').textContent = currentQuestionIndex + 1;
-            document.getElementById('totalQuizQuestions').textContent = questions.length;
-            document.getElementById('quizQuestionText').innerHTML = question.question.replace(/\n/g, '<br>');
-            
-            const optionsContainer = document.getElementById('quizOptionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
-
-            shuffledOptions.forEach(option => {
-                const optionBtn = document.createElement('button');
-                optionBtn.className = 'quiz-option w-full text-left p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition';
-                optionBtn.textContent = option;
-                optionBtn.dataset.option = option;
-                optionsContainer.appendChild(optionBtn);
-            });
-
-            document.getElementById('nextQuestionBtn').textContent = currentQuestionIndex === questions.length - 1 ? "Finish Quiz" : "Next Question";
+    async function generateQuestionsForTopic(topic, numQuestions) {
+        const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // Replace with your key
+        const finalApiKey = typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : apiKey;
+        if (!finalApiKey) {
+            showError("API Key is missing.");
+            return null;
         }
-        
-        document.getElementById('quizOptionsContainer').onclick = (e) => {
-            if (e.target && e.target.classList.contains('quiz-option')) {
-                const allOptions = document.querySelectorAll('.quiz-option');
-                allOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                e.target.classList.add('selected');
-                currentSelection = e.target.dataset.option;
-            }
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${finalApiKey}`;
+
+        const prompt = `Generate ${numQuestions} multiple-choice questions for an Indian student studying '${topic}'. The questions should be relevant to this curriculum. Provide the output as a valid JSON array of objects. Each object must have these keys: "question" (string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). Do not include any other text or explanations in your response, only the JSON array.`;
+
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }]
         };
 
-        async function finishQuiz() {
-            clearInterval(quizTimerInterval);
-            navigateToPage('quizResultPage');
-
-            let score = 0;
-            userAnswers.forEach((ans, index) => {
-                if (ans === questions[index].correctAnswer) {
-                    score++;
-                }
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
-
-            const totalQuestions = questions.length;
-            const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
-
-            document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
-            document.getElementById('finalAccuracy').textContent = `${percentage}%`;
-
-            const reviewContainer = document.getElementById('quizReviewContainer');
-            reviewContainer.innerHTML = '';
-
-            questions.forEach((q, index) => {
-                const userAnswer = userAnswers[index];
-                const isCorrect = userAnswer === q.correctAnswer;
-                
-                let optionsHtml = '';
-                q.options.forEach(opt => {
-                    let style = 'border-gray-300';
-                    if (opt === q.correctAnswer) {
-                        style = 'bg-green-100 border-green-500 text-green-800';
-                    } else if (opt === userAnswer && !isCorrect) {
-                        style = 'bg-red-100 border-red-500 text-red-800';
-                    }
-                    optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
-                });
-
-                reviewContainer.innerHTML += `
-                    <div class="p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
-                        <p class="font-semibold">${index + 1}. ${q.question}</p>
-                        <ul class="list-none space-y-2 mt-3">${optionsHtml}</ul>
-                    </div>
-                `;
-            });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error.message);
+            }
+            const result = await response.json();
+            const textResponse = result.candidates[0].content.parts[0].text;
             
-            await saveQuizResult(score, totalQuestions, percentage, topic);
-            const rank = await calculateRank(percentage);
-            document.getElementById('finalRank').textContent = rank;
+            // Clean the response to get only the JSON part
+            const jsonMatch = textResponse.match(/\[\s*\{[\s\S]*\}\s*\]/);
+            if (jsonMatch && jsonMatch[0]) {
+                return JSON.parse(jsonMatch[0]);
+            } else {
+                throw new Error("Invalid JSON format from AI.");
+            }
+        } catch (error) {
+            console.error("AI Question Generation Error:", error);
+            showToast("Failed to generate questions from AI. Please try again.", "error");
+            return null;
         }
+    }
 
-        document.getElementById('nextQuestionBtn').onclick = () => {
-            userAnswers.push(currentSelection);
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
+
+    function startQuiz(questions, type, topic) {
+        activeQuizState = {
+            questions: questions,
+            type: type,
+            topic: topic,
+            currentQuestionIndex: 0,
+            userAnswers: [],
+            currentSelection: null
+        };
+        navigateToPage('quizTakerPage');
+    }
+
+    function displayQuestion() {
+        if (!activeQuizState) return;
+
+        activeQuizState.currentSelection = null;
+        const question = activeQuizState.questions[activeQuizState.currentQuestionIndex];
+        document.getElementById('currentQuestionNumber').textContent = activeQuizState.currentQuestionIndex + 1;
+        document.getElementById('totalQuizQuestions').textContent = activeQuizState.questions.length;
+        document.getElementById('quizQuestionText').innerHTML = question.question.replace(/\n/g, '<br>');
+        
+        const optionsContainer = document.getElementById('quizOptionsContainer');
+        optionsContainer.innerHTML = '';
+        
+        const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+
+        shuffledOptions.forEach(option => {
+            const optionBtn = document.createElement('button');
+            optionBtn.className = 'quiz-option w-full text-left p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-100 transition';
+            optionBtn.textContent = option;
+            optionBtn.dataset.option = option;
+            optionsContainer.appendChild(optionBtn);
+        });
+
+        document.getElementById('nextQuestionBtn').textContent = activeQuizState.currentQuestionIndex === activeQuizState.questions.length - 1 ? "Finish Quiz" : "Next Question";
+
+        // Timer setup
+        if (activeQuizState.currentQuestionIndex === 0) {
+            clearInterval(quizTimerInterval);
+            let timeLeft = 600; // 10 mins
+            const timerEl = document.getElementById('quizTimer');
+            
+            quizTimerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                if(timerEl) timerEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+    }
+
+    document.getElementById('pageContent').addEventListener('click', (e) => {
+        if (e.target && e.target.classList.contains('quiz-option')) {
+            const allOptions = document.querySelectorAll('.quiz-option');
+            allOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            e.target.classList.add('selected');
+            if (activeQuizState) {
+                activeQuizState.currentSelection = e.target.dataset.option;
+            }
+        }
+        if (e.target && e.target.id === 'nextQuestionBtn') {
+            if (!activeQuizState) return;
+            activeQuizState.userAnswers.push(activeQuizState.currentSelection);
+            activeQuizState.currentQuestionIndex++;
+            if (activeQuizState.currentQuestionIndex < activeQuizState.questions.length) {
                 displayQuestion();
             } else {
                 finishQuiz();
             }
-        };
+        }
+    });
 
-        let timeLeft = 600; 
-        const timerEl = document.getElementById('quizTimer');
-        timerEl.textContent = '10:00';
-        quizTimerInterval = setInterval(() => {
-            timeLeft--;
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            if (timeLeft <= 0) {
-                finishQuiz();
+    async function finishQuiz() {
+        if (!activeQuizState) return;
+        clearInterval(quizTimerInterval);
+        
+        let score = 0;
+        activeQuizState.userAnswers.forEach((ans, index) => {
+            if (ans === activeQuizState.questions[index].correctAnswer) {
+                score++;
             }
-        }, 1000);
+        });
 
-        displayQuestion();
+        const totalQuestions = activeQuizState.questions.length;
+        const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+
+        await saveQuizResult(score, totalQuestions, percentage, activeQuizState.type, activeQuizState.topic);
+
+        if (activeQuizState.type === 'practice') {
+            navigateToPage('quizResultPage');
+            setTimeout(async () => {
+                document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
+                document.getElementById('finalAccuracy').textContent = `${percentage}%`;
+                const rank = await calculateRank(percentage);
+                document.getElementById('finalRank').textContent = rank;
+                const reviewContainer = document.getElementById('quizReviewContainer');
+                reviewContainer.innerHTML = '';
+                activeQuizState.questions.forEach((q, index) => {
+                    const userAnswer = activeQuizState.userAnswers[index];
+                    const isCorrect = userAnswer === q.correctAnswer;
+                    let optionsHtml = '';
+                    q.options.forEach(opt => {
+                        let style = 'border-gray-300';
+                        if (opt === q.correctAnswer) {
+                            style = 'bg-green-100 border-green-500 text-green-800';
+                        } else if (opt === userAnswer && !isCorrect) {
+                            style = 'bg-red-100 border-red-500 text-red-800';
+                        }
+                        optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
+                    });
+                    reviewContainer.innerHTML += `
+                        <div class="p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
+                            <p class="font-semibold">${index + 1}. ${q.question}</p>
+                            <ul class="list-none space-y-2 mt-3">${optionsHtml}</ul>
+                        </div>
+                    `;
+                });
+                activeQuizState = null;
+            }, 0);
+        } else {
+            showToast(`Competition finished! Your score: ${score}/${totalQuestions}`);
+            navigateToPage('quizCompetitionPage');
+            activeQuizState = null;
+        }
     }
     
-    async function saveQuizResult(score, totalQuestions, percentage, topic) {
+    async function saveQuizResult(score, totalQuestions, percentage, type, topic) {
         const user = auth.currentUser;
         if (!user) return;
         
@@ -1411,10 +1697,12 @@
         };
 
         try {
-            // Save to top-level collection for admin analytics
-            await addDoc(collection(db, "quizResults"), resultData);
-            // Save to user's subcollection for their personal history
-            await addDoc(collection(db, "users", user.uid, "quizHistory"), resultData);
+            if (type === 'practice') {
+                await addDoc(collection(db, "quizResults"), resultData);
+                await addDoc(collection(db, "users", user.uid, "quizHistory"), resultData);
+            } else { // competition
+                await addDoc(collection(db, "competitionResults"), resultData);
+            }
         } catch (error) {
             console.error("Error saving quiz result:", error);
             showToast("Could not save your quiz result.", "error");
@@ -1426,13 +1714,12 @@
         const snapshot = await getDocs(q);
         const allScores = snapshot.docs.map(doc => doc.data().percentage);
         
-        // Find the position of the user's score in the sorted list
         let rank = 1;
         for (const score of allScores) {
             if (userPercentage < score) {
                 rank++;
             } else {
-                break; // Found the rank
+                break;
             }
         }
         return `#${rank}`;
@@ -1466,6 +1753,121 @@
                 <td class="py-3 px-4">${date}</td>
             `;
             rank++;
+        });
+    }
+
+    // --- Quiz Competition (User) ---
+    async function loadQuizCompetitionPage() {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const startBtn = document.getElementById('startCompetitionBtn');
+        const instructionsContainer = document.getElementById('competitionInstructions');
+        const announcementsContainer = document.getElementById('competitionAnnouncementsContainer');
+        const winnerInfoContainer = document.getElementById('competitionWinnerInfo');
+        const winnerDetails = document.getElementById('competitionWinnerDetails');
+        const prizeInfoContainer = document.getElementById('prizePoolInfo');
+        const bannerContainer = document.getElementById('competitionBannerContainer');
+        const competitionTimer = document.getElementById('competitionTimer');
+        const prizeClaimSection = document.getElementById('prizeClaimSection');
+        const prizeAmountText = document.getElementById('prizeAmountText');
+        const submitPaymentIdBtn = document.getElementById('submitPaymentIdBtn');
+
+        startBtn.addEventListener('click', () => generateQuiz('competition'));
+
+        submitPaymentIdBtn.addEventListener('click', async () => {
+            const paymentId = document.getElementById('paymentIdInput').value.trim();
+            if (!paymentId) {
+                showToast("Please enter your payment details.", "error");
+                return;
+            }
+            try {
+                await addDoc(collection(db, "prizeClaims"), {
+                    winnerId: user.uid,
+                    winnerName: user.displayName,
+                    paymentId: paymentId,
+                    claimedAt: serverTimestamp()
+                });
+                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted. The prize will be sent shortly.</p>';
+                showToast("Your payment details have been submitted!");
+            } catch (error) {
+                showToast("Could not submit your details. Please try again.", "error");
+            }
+        });
+
+        const docRef = doc(db, "siteContent", "quizCompetition");
+        onSnapshot(docRef, (docSnap) => {
+            const data = docSnap.exists() ? docSnap.data() : {};
+            const status = data.status || 'not_started';
+
+            startBtn.disabled = true;
+            competitionTimer.textContent = '';
+            prizeClaimSection.classList.add('hidden');
+
+            switch (status) {
+                case 'not_started':
+                    startBtn.textContent = 'Competition Not Started';
+                    competitionTimer.textContent = 'Please wait for the admin to start the competition.';
+                    break;
+                case 'in_progress':
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Start 10-Minute Challenge!';
+                    competitionTimer.textContent = 'The competition is now live! Good luck!';
+                    break;
+                case 'ended':
+                    startBtn.textContent = 'Competition Has Ended';
+                    competitionTimer.textContent = 'The competition has finished. Please wait for the winner announcement.';
+                    break;
+                case 'winner_declared':
+                    startBtn.textContent = 'Competition Over';
+                    competitionTimer.textContent = 'A winner has been announced. Check the leaderboard!';
+                    break;
+            }
+
+            if (data.bannerImageUrl) {
+                bannerContainer.innerHTML = `<img src="${data.bannerImageUrl}" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
+                bannerContainer.classList.remove('hidden');
+            } else {
+                bannerContainer.classList.add('hidden');
+            }
+
+            prizeInfoContainer.innerHTML = '';
+            if (data.prizePool) {
+               prizeInfoContainer.innerHTML += `<p class="text-lg font-semibold text-green-600">${data.prizePool}</p>`;
+               prizeAmountText.textContent = data.prizePool;
+            }
+            if (data.prizeImageUrl) {
+               prizeInfoContainer.innerHTML += `<img src="${data.prizeImageUrl}" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
+            }
+
+            instructionsContainer.innerHTML = data.instructions ? data.instructions.replace(/\n/g, '<br>') : "<p>The admin has not set any instructions yet.</p>";
+            
+            if (data.winnerName) {
+                winnerInfoContainer.classList.remove('hidden');
+                winnerDetails.textContent = `${data.winnerName} with a score of ${data.winnerScore}!`;
+                if (data.winnerName === user.displayName) {
+                    prizeClaimSection.classList.remove('hidden');
+                }
+            } else {
+                winnerInfoContainer.classList.add('hidden');
+            }
+        });
+
+        const q = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            announcementsContainer.innerHTML = '';
+            if (snapshot.empty) {
+                announcementsContainer.innerHTML = '<p class="text-gray-500 text-center">No announcements yet.</p>';
+            } else {
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'Just now';
+                    const announcementDiv = document.createElement('div');
+                    announcementDiv.className = 'bg-orange-50 border-l-4 border-orange-500 text-orange-800 p-4 rounded-r-lg';
+                    announcementDiv.innerHTML = `<div class="flex justify-between items-center"><p class="font-bold">Announcement</p><p class="text-xs">${date}</p></div><p class="mt-1">${data.message}</p>`;
+                    announcementsContainer.appendChild(announcementDiv);
+                });
+            }
         });
     }
 
@@ -1633,7 +2035,9 @@
     document.getElementById('issueManagementBackBtn').addEventListener('click', () => showPage('adminDashboardPage'));
     document.getElementById('manageQuizAnalyticsBtn').addEventListener('click', () => { showPage('quizAnalyticsPage'); loadQuizAnalytics(); });
     document.getElementById('analyticsBackToAdminBtn').addEventListener('click', () => showPage('adminDashboardPage'));
-
+    document.getElementById('manageCompetitionBtn').addEventListener('click', () => { showPage('quizCompetitionAdminPage'); loadCompetitionAdminPage(); });
+    document.getElementById('managePrizeClaimsBtn').addEventListener('click', () => { showPage('prizeClaimsPage'); loadPrizeClaims(); });
+    document.getElementById('claimsBackToAdminBtn').addEventListener('click', () => showPage('adminDashboardPage'));
     
     function loadAdminAnnouncements() {
         const container = document.getElementById('announcementListAdmin');
@@ -1869,6 +2273,221 @@
         showToast("Results exported!");
     });
 
+    // --- Admin Competition Management ---
+    function loadCompetitionAdminPage() {
+        const backBtn = document.getElementById('competitionBackToAdminBtn');
+        backBtn.addEventListener('click', () => showPage('adminDashboardPage'));
+
+        const docRef = doc(db, "siteContent", "quizCompetition");
+
+        // Load and react to settings changes
+        onSnapshot(docRef, (docSnap) => {
+            const data = docSnap.exists() ? docSnap.data() : {};
+            
+            // Populate settings fields
+            document.getElementById('prizePoolAdmin').value = data.prizePool || '';
+            document.getElementById('bannerImageUrlAdmin').value = data.bannerImageUrl || '';
+            document.getElementById('prizeImageUrlAdmin').value = data.prizeImageUrl || '';
+            if (data.startTime) document.getElementById('startTimeAdmin').value = data.startTime;
+            if (data.endTime) document.getElementById('endTimeAdmin').value = data.endTime;
+
+            // Update competition controls based on status
+            const statusContainer = document.getElementById('competitionStatusAdmin');
+            const startBtn = document.getElementById('startCompetitionAdminBtn');
+            const endBtn = document.getElementById('endCompetitionAdminBtn');
+            const newBtn = document.getElementById('startNewCompetitionAdminBtn');
+            const winnerDisplay = document.getElementById('competitionWinnerDisplay');
+
+            startBtn.classList.add('hidden');
+            endBtn.classList.add('hidden');
+            newBtn.classList.add('hidden');
+
+            const status = data.status || 'not_started';
+
+            switch (status) {
+                case 'not_started':
+                    statusContainer.textContent = 'Competition has not started.';
+                    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-gray-100 text-gray-800';
+                    startBtn.classList.remove('hidden');
+                    break;
+                case 'in_progress':
+                    statusContainer.textContent = 'Competition is LIVE!';
+                    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-green-100 text-green-800';
+                    endBtn.classList.remove('hidden');
+                    break;
+                case 'ended':
+                    statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
+                    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-yellow-100 text-yellow-800';
+                    break;
+                case 'winner_declared':
+                    statusContainer.textContent = 'Winner has been declared. Start a new competition to clear results.';
+                    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-indigo-100 text-indigo-800';
+                    newBtn.classList.remove('hidden');
+                    break;
+            }
+
+            if (data.winnerName) {
+                winnerDisplay.classList.remove('hidden');
+                document.getElementById('winnerInfoText').textContent = `${data.winnerName} with a score of ${data.winnerScore}`;
+            } else {
+                winnerDisplay.classList.add('hidden');
+            }
+        });
+
+        // Save settings
+        document.getElementById('saveCompetitionSettingsBtn').addEventListener('click', async () => {
+            const prizePool = document.getElementById('prizePoolAdmin').value;
+            const bannerImageUrl = document.getElementById('bannerImageUrlAdmin').value;
+            const prizeImageUrl = document.getElementById('prizeImageUrlAdmin').value;
+            const startTime = document.getElementById('startTimeAdmin').value;
+            const endTime = document.getElementById('endTimeAdmin').value;
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { prizePool, bannerImageUrl, prizeImageUrl, startTime, endTime }, { merge: true });
+            showToast("Competition settings saved!");
+        });
+
+        // Load announcements
+        const announcementsContainer = document.getElementById('competitionAnnouncementListAdmin');
+        const annQuery = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"));
+        onSnapshot(annQuery, (snapshot) => {
+            announcementsContainer.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-white p-2 rounded-md shadow-sm';
+                item.innerHTML = `<p class="text-sm">${data.message}</p><button data-id="${doc.id}" class="delete-comp-ann-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
+                announcementsContainer.appendChild(item);
+            });
+        });
+
+        // Add announcement
+        document.getElementById('addCompetitionAnnouncementBtn').addEventListener('click', async () => {
+            const input = document.getElementById('newCompetitionAnnouncementInput');
+            if (input.value.trim()) {
+                await addDoc(collection(db, "competitionAnnouncements"), { message: input.value.trim(), timestamp: serverTimestamp() });
+                input.value = '';
+                showToast("Competition announcement posted.");
+            }
+        });
+
+        // Delete announcement
+        announcementsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-comp-ann-btn')) {
+                const docId = e.target.dataset.id;
+                showConfirm('Delete Announcement?', 'Are you sure?', () => {
+                    deleteDoc(doc(db, "competitionAnnouncements", docId));
+                    showToast("Announcement deleted.");
+                });
+            }
+        });
+
+        // Load results
+        const resultsTableBody = document.getElementById('competitionResultsTableBody');
+        const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
+        onSnapshot(resultsQuery, (snapshot) => {
+            resultsTableBody.innerHTML = '';
+            if (snapshot.empty) {
+                resultsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">No results yet.</td></tr>';
+                return;
+            }
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const row = resultsTableBody.insertRow();
+                row.innerHTML = `
+                    <td class="py-2 px-3">${data.userName}</td>
+                    <td class="py-2 px-3 font-semibold">${data.percentage}% (${data.score}/${data.totalQuestions})</td>
+                    <td class="py-2 px-3"><button data-name="${data.userName}" data-score="${data.percentage}%" class="announce-winner-btn bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full hover:bg-yellow-500">Declare Winner</button></td>
+                `;
+            });
+        });
+
+        // Announce winner
+        resultsTableBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('announce-winner-btn')) {
+                const name = e.target.dataset.name;
+                const score = e.target.dataset.score;
+                showConfirm('Announce Winner?', `Declare ${name} as the winner? This will be shown to all users.`, async () => {
+                    await setDoc(doc(db, "siteContent", "quizCompetition"), { 
+                        winnerName: name, 
+                        winnerScore: score,
+                        status: 'winner_declared'
+                    }, { merge: true });
+                    showToast(`${name} is now the winner!`);
+                });
+            }
+        });
+
+        // Event listeners for new control buttons
+        document.getElementById('startCompetitionAdminBtn').addEventListener('click', async () => {
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress' }, { merge: true });
+            showToast("Competition started!");
+        });
+
+        document.getElementById('endCompetitionAdminBtn').addEventListener('click', async () => {
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'ended' }, { merge: true });
+            showToast("Competition ended!");
+        });
+
+        document.getElementById('startNewCompetitionAdminBtn').addEventListener('click', () => {
+            showConfirm(
+                'Start New Competition?',
+                'This will delete all current competition results and reset the winner. This action cannot be undone.',
+                async () => {
+                    try {
+                        const resultsSnapshot = await getDocs(collection(db, "competitionResults"));
+                        const deletePromises = resultsSnapshot.docs.map(d => deleteDoc(d.ref));
+                        await Promise.all(deletePromises);
+
+                        const competitionDocRef = doc(db, "siteContent", "quizCompetition");
+                        const competitionDoc = await getDoc(competitionDocRef);
+                        const currentData = competitionDoc.data();
+                        
+                        const dataToKeep = {
+                            prizePool: currentData.prizePool || '',
+                            bannerImageUrl: currentData.bannerImageUrl || '',
+                            prizeImageUrl: currentData.prizeImageUrl || '',
+                            startTime: currentData.startTime || '',
+                            endTime: currentData.endTime || '',
+                            instructions: currentData.instructions || '',
+                            status: 'not_started'
+                        };
+
+                        await setDoc(competitionDocRef, dataToKeep);
+
+                        showToast("New competition started. All previous data cleared.");
+                    } catch (error) {
+                        console.error("Error starting new competition: ", error);
+                        showToast("Failed to start new competition.", "error");
+                    }
+                }
+            );
+        });
+    }
+
+    async function loadPrizeClaims() {
+        const tableBody = document.getElementById('prizeClaimsTableBody');
+        tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">Loading claims...</td></tr>';
+        
+        const q = query(collection(db, "prizeClaims"), orderBy("claimedAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">No prize claims have been submitted.</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const date = data.claimedAt ? new Date(data.claimedAt.toDate()).toLocaleString() : 'N/A';
+                const row = tableBody.insertRow();
+                row.className = 'border-b';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${data.winnerName}</td>
+                    <td class="py-3 px-4 font-mono">${data.paymentId}</td>
+                    <td class="py-3 px-4">${date}</td>
+                `;
+            });
+        });
+    }
+
 
     // --- Site Content Management Functions ---
     async function loadGlobalSiteSettings() {
@@ -2096,7 +2715,18 @@
         }
     });
 
+    // --- DROPDOWN FIX ---
+    document.getElementById('quizzesDropdownBtn').addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent the window click listener from firing immediately
+        const dropdown = e.currentTarget.parentElement;
+        dropdown.classList.toggle('open');
+    });
+
     window.addEventListener('click', (e) => {
+        const openDropdown = document.querySelector('.dropdown.open');
+        if (openDropdown && !openDropdown.contains(e.target)) {
+             openDropdown.classList.remove('open');
+        }
         const panel = document.getElementById('notificationPanel');
         const bell = document.getElementById('notificationBellBtn');
         if (panel && !panel.classList.contains('hidden') && !bell.contains(e.target) && !panel.contains(e.target)) {
