@@ -1094,13 +1094,10 @@
                 });
                 break;
             case 'quizTakerPageTemplate':
-                displayQuestion(); // This is the fix for the blank page
+                displayQuestion(); 
                 break;
             case 'quizCompetitionPageTemplate':
                 loadQuizCompetitionPage();
-                break;
-            case 'quizResultPageTemplate':
-                document.getElementById('backToQuizzesBtn').addEventListener('click', () => navigateToPage('quizListPage'));
                 break;
             case 'leaderboardPageTemplate':
                 loadLeaderboard();
@@ -1643,45 +1640,56 @@
         const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
         await saveQuizResult(score, totalQuestions, percentage, activeQuizState.type, activeQuizState.topic);
+        
+        const lastQuizResults = { ...activeQuizState, score, totalQuestions, percentage };
+        const quizType = activeQuizState.type;
+        activeQuizState = null;
 
-        if (activeQuizState.type === 'practice') {
-            navigateToPage('quizResultPage');
-            setTimeout(async () => {
-                document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
-                document.getElementById('finalAccuracy').textContent = `${percentage}%`;
-                const rank = await calculateRank(percentage);
-                document.getElementById('finalRank').textContent = rank;
-                const reviewContainer = document.getElementById('quizReviewContainer');
-                reviewContainer.innerHTML = '';
-                activeQuizState.questions.forEach((q, index) => {
-                    const userAnswer = activeQuizState.userAnswers[index];
-                    const isCorrect = userAnswer === q.correctAnswer;
-                    let optionsHtml = '';
-                    q.options.forEach(opt => {
-                        let style = 'border-gray-300';
-                        if (opt === q.correctAnswer) {
-                            style = 'bg-green-100 border-green-500 text-green-800';
-                        } else if (opt === userAnswer && !isCorrect) {
-                            style = 'bg-red-100 border-red-500 text-red-800';
-                        }
-                        optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
-                    });
-                    reviewContainer.innerHTML += `
-                        <div class="p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
-                            <p class="font-semibold">${index + 1}. ${q.question}</p>
-                            <ul class="list-none space-y-2 mt-3">${optionsHtml}</ul>
-                        </div>
-                    `;
+        navigateToPage('quizResultPage');
+        
+        setTimeout(async () => {
+            document.getElementById('finalScore').textContent = `${lastQuizResults.score}/${lastQuizResults.totalQuestions}`;
+            document.getElementById('finalAccuracy').textContent = `${lastQuizResults.percentage}%`;
+            
+            const rank = quizType === 'practice' 
+                ? await calculateRank(lastQuizResults.percentage)
+                : await calculateCompetitionRank(lastQuizResults.percentage);
+            document.getElementById('finalRank').textContent = rank;
+
+            const reviewContainer = document.getElementById('quizReviewContainer');
+            reviewContainer.innerHTML = '';
+            lastQuizResults.questions.forEach((q, index) => {
+                const userAnswer = lastQuizResults.userAnswers[index];
+                const isCorrect = userAnswer === q.correctAnswer;
+                let optionsHtml = '';
+                q.options.forEach(opt => {
+                    let style = 'border-gray-300';
+                    if (opt === q.correctAnswer) {
+                        style = 'bg-green-100 border-green-500 text-green-800';
+                    } else if (opt === userAnswer && !isCorrect) {
+                        style = 'bg-red-100 border-red-500 text-red-800';
+                    }
+                    optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
                 });
-                activeQuizState = null;
-            }, 0);
-        } else {
-            showToast(`Competition finished! Your score: ${score}/${totalQuestions}`);
-            navigateToPage('quizCompetitionPage');
-            activeQuizState = null;
-        }
+                reviewContainer.innerHTML += `
+                    <div class="p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
+                        <p class="font-semibold">${index + 1}. ${q.question}</p>
+                        <ul class="list-none space-y-2 mt-3">${optionsHtml}</ul>
+                    </div>
+                `;
+            });
+
+            const backBtn = document.getElementById('backToQuizzesBtn');
+            if (quizType === 'competition') {
+                backBtn.textContent = 'Back to Competition';
+                backBtn.onclick = () => navigateToPage('quizCompetitionPage');
+            } else {
+                backBtn.textContent = 'Back to Quizzes';
+                backBtn.onclick = () => navigateToPage('quizListPage');
+            }
+        }, 0);
     }
-    
+
     async function saveQuizResult(score, totalQuestions, percentage, type, topic) {
         const user = auth.currentUser;
         if (!user) return;
@@ -1711,6 +1719,22 @@
 
     async function calculateRank(userPercentage) {
         const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"));
+        const snapshot = await getDocs(q);
+        const allScores = snapshot.docs.map(doc => doc.data().percentage);
+        
+        let rank = 1;
+        for (const score of allScores) {
+            if (userPercentage < score) {
+                rank++;
+            } else {
+                break;
+            }
+        }
+        return `#${rank}`;
+    }
+
+    async function calculateCompetitionRank(userPercentage) {
+        const q = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
         const snapshot = await getDocs(q);
         const allScores = snapshot.docs.map(doc => doc.data().percentage);
         
