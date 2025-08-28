@@ -5,8 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Buddy - AI Question Solver</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Performance: Preconnect to required origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com">
+
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -59,7 +66,7 @@
             left: 50%;
             transform: translateX(-50%);
             transition: bottom 0.5s ease-in-out;
-            z-index: 100;
+            z-index: 1000;
         }
         #toast.show { bottom: 30px; }
 
@@ -73,13 +80,189 @@
              color: #3b82f6;
              font-weight: 700;
         }
-        /* Keep dropdown hidden by default */
-        .dropdown-menu {
+        .dropdown-menu { display: none; }
+        .dropdown.open .dropdown-menu { display: block; }
+
+        #adminDashboardGrid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        #adminSidebar {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        #adminSidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        #adminSidebar .logo-text {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #3b82f6;
+        }
+
+        #adminSidebar .search-bar {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        #adminSidebar .search-bar input {
+            width: 100%;
+            padding: 0.5rem 0.5rem 0.5rem 2.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #f9fafb;
+        }
+        
+        #adminSidebar .search-bar .icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        #adminSidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        #adminSidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #4b5563;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        #adminSidebar nav a:hover {
+            background-color: #f3f4f6;
+        }
+
+        #adminSidebar nav a.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        #adminSidebar nav a .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        #adminSidebar nav details summary {
+            cursor: pointer;
+            list-style: none;
+        }
+        #adminSidebar nav details summary::-webkit-details-marker {
             display: none;
         }
-        /* Show dropdown when the 'open' class is added */
-        .dropdown.open .dropdown-menu {
-            display: block;
+        #adminSidebar nav details[open] summary > a {
+            background-color: #f3f4f6;
+        }
+        #adminSidebar nav .sub-menu {
+            margin-top: 0.5rem;
+            margin-left: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        #adminSidebar nav .sub-menu a {
+            padding: 0.5rem 1rem;
+        }
+
+        #adminMainContent {
+            background-color: #f7fafc;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .stat-card {
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .stat-card .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+        .stat-card .label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        .bg-custom-blue { background-color: #3b82f6; }
+        .bg-custom-green { background-color: #22c55e; }
+        .bg-custom-purple { background-color: #a855f7; }
+        .bg-custom-orange { background-color: #f97316; }
+        
+        .chart-card {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .chart-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        #admin-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        #adminMobileHeader {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            #adminDashboardGrid {
+                display: block;
+            }
+            #adminSidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 1000;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            }
+            body.admin-sidebar-open #adminSidebar {
+                transform: translateX(0);
+            }
+            #adminMainContent {
+                padding: 1rem;
+                padding-top: 5rem;
+            }
+            #adminMobileHeader {
+                display: flex;
+            }
+            .stat-card .value {
+                font-size: 1.75rem;
+            }
         }
     </style>
 </head>
@@ -143,7 +326,6 @@
                     <p class="text-gray-500 mt-2">Let's personalize your experience. What is your primary focus?</p>
                 </div>
                 <div class="space-y-6 pt-4">
-                    <!-- School Options -->
                     <div class="selection-category">
                         <div id="schoolCard" class="selection-card cursor-pointer bg-blue-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
                             <h3 class="font-bold text-xl">School</h3>
@@ -154,7 +336,6 @@
                             <button data-grade="School" data-exam="Class 12" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">Class 12</button>
                         </div>
                     </div>
-                    <!-- Competitive Exams Options -->
                     <div class="selection-category">
                         <div id="examCard" class="selection-card cursor-pointer bg-green-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
                              <h3 class="font-bold text-xl">Competitive Exams</h3>
@@ -164,7 +345,6 @@
                             <button data-grade="Competitive Exams" data-exam="NEET" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">NEET</button>
                         </div>
                     </div>
-                    <!-- College Options -->
                     <div class="selection-category">
                         <div id="collegeCard" class="selection-card cursor-pointer bg-indigo-500 text-white p-4 rounded-xl flex items-center justify-center text-center">
                            <h3 class="font-bold text-xl">College</h3>
@@ -191,7 +371,7 @@
                         <nav class="hidden md:flex items-center space-x-2">
                             <button data-page="mainAppPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
                             <button data-page="aboutUsPage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
-                            <!-- Quiz Dropdown -->
+                            <button data-page="donatePage" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Donate</button>
                             <div class="relative dropdown">
                                 <button id="quizzesDropdownBtn" class="nav-btn text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition flex items-center">
                                     Quizzes
@@ -234,6 +414,7 @@
                     <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-1">
                         <button data-page="mainAppPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Home</button>
                         <button data-page="aboutUsPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">About Us</button>
+                        <button data-page="donatePage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Donate</button>
                         <button data-page="quizListPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Practice Quizzes</button>
                         <button data-page="quizCompetitionPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Quiz Competition</button>
                         <button data-page="leaderboardPage" class="nav-btn-mobile w-full text-left font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition">Leaderboard</button>
@@ -250,286 +431,282 @@
             </main>
             <footer class="bg-gray-800 text-white mt-auto">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
-                    <p>&copy; 2025 Study Buddy. All Rights Reserved. Made by Naresh for Students</p>
+                    <p>&copy; 2025 Study Buddy. All Rights Reserved. </p>
                 </div>
             </footer>
         </div>
         
-        <div id="adminDashboardPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Admin Dashboard</h2>
-                    <div class="flex items-center space-x-4 flex-wrap">
-                        <button id="manageCompetitionBtn" class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 transition shadow-sm">Quiz Competition</button>
-                        <button id="managePrizeClaimsBtn" class="bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-600 transition shadow-sm">Prize Claims</button>
-                        <button id="manageQuizAnalyticsBtn" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition shadow-sm">Quiz Analytics</button>
-                        <button id="manageIssuesBtn" class="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition shadow-sm">Manage Issues</button>
-                        <button id="manageUsersBtn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition shadow-sm">Manage Users</button>
-                        <button id="adminLogoutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition shadow-sm">Logout</button>
+        <div id="adminDashboardPage" class="page hidden">
+             <div id="admin-overlay" class="hidden md:hidden"></div>
+            <div id="adminDashboardGrid">
+                <aside id="adminSidebar">
+                    <div class="logo">
+                        <img src="https://img.icons8.com/plasticine/100/book.png" alt="Study Buddy Logo" class="h-8 w-8">
+                        <span class="logo-text">Study Buddy</span>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Users</p><p id="totalUsersStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Total Questions Asked</p><p id="totalQuestionsStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Questions in Bank</p><p id="questionBankStat" class="text-3xl font-bold text-gray-900">0</p></div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6"><p class="text-sm font-medium text-gray-500">Open Support Issues</p><p id="openIssuesStat" class="text-3xl font-bold text-red-500">0</p></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Manage Global Announcements</h3>
-                        <div id="announcementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
-                        <div class="flex space-x-2">
-                            <input id="newAnnouncementInput" type="text" placeholder="Type announcement here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <button id="addAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                    <div class="search-bar">
+                         <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                         </span>
+                         <input type="text" placeholder="Search">
+                    </div>
+                    <nav>
+                        <ul>
+                            <li><a href="#" class="admin-nav-link active" data-target="adminDashboardMain">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                                <span>Dashboard</span></a></li>
+                            <li><a href="#" class="admin-nav-link" data-target="userManagementPage">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M12 3.375c-3.418 0-6.167 2.749-6.167 6.167s2.749 6.167 6.167 6.167 6.167-2.749 6.167-6.167S15.418 3.375 12 3.375z" /></svg>
+                                <span>User Management</span></a></li>
+                            <li><a href="#" class="admin-nav-link" data-target="issueManagementPage">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                                <span>Manage Issues</span></a></li>
+                            <li><a href="#" class="admin-nav-link" data-target="donationManagementPage">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a2.25 2.25 0 01-2.25 2.25H5.25a2.25 2.25 0 01-2.25-2.25v-8.25M12 4.875A2.625 2.625 0 1012 10.125A2.625 2.625 0 0012 4.875z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.125a2.625 2.625 0 110-5.25 2.625 2.625 0 010 5.25z" /></svg>
+                                <span>Manage Donations</span></a></li>
+                            <li>
+                                <details>
+                                    <summary>
+                                        <a>
+                                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                                            <span>Quizzes & Content</span>
+                                        </a>
+                                    </summary>
+                                    <ul class="sub-menu">
+                                        <li><a href="#" class="admin-nav-link" data-target="quizAnalyticsPage">Quiz Analytics</a></li>
+                                        <li><a href="#" class="admin-nav-link" data-target="quizCompetitionAdminPage">Quiz Competition</a></li>
+                                        <li><a href="#" class="admin-nav-link" data-target="prizeClaimsPage">Prize Claims</a></li>
+                                    </ul>
+                                </details>
+                            </li>
+                            <li><a href="#" id="adminLogoutBtn">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+                                <span>Logout</span></a></li>
+                        </ul>
+                    </nav>
+                </aside>
+                
+                <main id="adminMainContent">
+                    <header id="adminMobileHeader" class="md:hidden flex justify-between items-center mb-4 sticky top-0 bg-white/80 backdrop-blur-sm py-2 px-4 -mx-4 -mt-4 z-50 border-b">
+                        <button id="mobileAdminMenuBtn" class="p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
+                        </button>
+                        <div class="logo">
+                            <span class="logo-text">Admin</span>
                         </div>
-                    </div>
-                     <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Send Notification</h3>
-                        <div class="space-y-4">
-                            <textarea id="notificationMessageInput" rows="3" placeholder="Type notification message..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Send To:</label>
-                                <div class="mt-2 flex space-x-4">
-                                    <div class="flex items-center">
-                                        <input id="sendToAll" name="notificationTarget" type="radio" value="all" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
-                                        <label for="sendToAll" class="ml-2 block text-sm text-gray-900">All Users</label>
+                        <div class="w-8"></div>
+                    </header>
+                    
+                    <div id="adminDashboardMain" class="admin-content-section">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="stat-card bg-custom-blue">
+                                <p class="value" id="totalUsersStat">0</p>
+                                <p class="label">Total Users</p>
+                            </div>
+                            <div class="stat-card bg-custom-green">
+                                <p class="value" id="totalQuestionsStat">0</p>
+                                <p class="label">Total Questions Asked</p>
+                            </div>
+                            <div class="stat-card bg-custom-purple">
+                                <p class="value" id="questionBankStat">0</p>
+                                <p class="label">Questions in Bank</p>
+                            </div>
+                            <div class="stat-card bg-custom-orange">
+                                <p class="value" id="openIssuesStat">0</p>
+                                <p class="label">Open Support Issues</p>
+                            </div>
+                        </div>
+                
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 space-y-6">
+                               <div class="chart-card">
+                                    <h3 class="text-xl font-semibold mb-4">Recently Added to Question Bank</h3>
+                                    <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"></div>
+                                </div>
+                                 <div class="chart-card">
+                                    <h3 class="text-xl font-semibold mb-4">Manage Site Content</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="space-y-4">
+                                            <h4 class="font-semibold text-gray-700">About Us Page Content</h4>
+                                            <div>
+                                                <label for="aboutUsTitleAdmin" class="block text-sm font-medium text-gray-600">Page Title</label>
+                                                <input id="aboutUsTitleAdmin" type="text" placeholder="E.g., Our Mission" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <div>
+                                                <label for="aboutUsImageUrlAdmin" class="block text-sm font-medium text-gray-600">Image URL</label>
+                                                <input id="aboutUsImageUrlAdmin" type="text" placeholder="https://example.com/image.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <div>
+                                                <label for="aboutUsTextAdmin" class="block text-sm font-medium text-gray-600">Main Text</label>
+                                                <textarea id="aboutUsTextAdmin" rows="5" placeholder="Describe your platform..." class="mt-1 w-full px-3 py-2 border rounded-lg"></textarea>
+                                            </div>
+                                            <button id="saveAboutUsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save About Us Content</button>
+                                        </div>
+                                        <div class="space-y-4">
+                                            <h4 class="font-semibold text-gray-700">Global Site Settings</h4>
+                                            <div>
+                                                <label for="logoUrlAdmin" class="block text-sm font-medium text-gray-600">Logo Image URL</label>
+                                                <input id="logoUrlAdmin" type="text" placeholder="https://example.com/logo.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <button id="saveLogoBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Logo</button>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center">
-                                        <input id="sendToSpecific" name="notificationTarget" type="radio" value="specific" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                                        <label for="sendToSpecific" class="ml-2 block text-sm text-gray-900">Specific User</label>
+                                 </div>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="chart-card">
+                                    <h3 class="text-xl font-semibold mb-4">Manage Global Announcements</h3>
+                                    <div id="announcementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
+                                    <div class="flex space-x-2">
+                                        <input id="newAnnouncementInput" type="text" placeholder="Type announcement..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <button id="addAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                                    </div>
+                                </div>
+                                <div class="chart-card">
+                                    <h3 class="text-xl font-semibold mb-4">Send Notification</h3>
+                                    <div class="space-y-4">
+                                        <textarea id="notificationMessageInput" rows="3" placeholder="Type notification message..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Send To:</label>
+                                            <div class="mt-2 flex space-x-4">
+                                                <div class="flex items-center">
+                                                    <input id="sendToAll" name="notificationTarget" type="radio" value="all" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" checked>
+                                                    <label for="sendToAll" class="ml-2 block text-sm text-gray-900">All Users</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input id="sendToSpecific" name="notificationTarget" type="radio" value="specific" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                    <label for="sendToSpecific" class="ml-2 block text-sm text-gray-900">Specific User</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input id="specificUserEmailInput" type="email" placeholder="Enter user's email address" class="hidden w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <button id="sendNotificationBtn" class="w-full bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700">Send Notification</button>
                                     </div>
                                 </div>
                             </div>
-                            <input id="specificUserEmailInput" type="email" placeholder="Enter user's email address" class="hidden w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <button id="sendNotificationBtn" class="w-full bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700">Send Notification</button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Recently Added to Question Bank</h3>
-                        <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"></div>
+
+                    <div id="userManagementPage" class="admin-content-section hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">User Management</h2>
+                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white"><thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Email</th><th class="text-left py-3 px-4 font-semibold text-sm">Questions Asked</th><th class="text-left py-3 px-4 font-semibold text-sm">Actions</th></tr></thead><tbody id="usersTableBody"></tbody></table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-xl p-6 md:col-span-2">
-                        <h3 class="text-xl font-semibold mb-4">Manage Site Content</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div id="issueManagementPage" class="admin-content-section hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">Issue Management</h2>
+                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white">
+                                    <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">User</th><th class="text-left py-3 px-4 font-semibold text-sm">Category</th><th class="text-left py-3 px-4 font-semibold text-sm">Description</th><th class="text-left py-3 px-4 font-semibold text-sm">Admin Notes</th><th class="text-left py-3 px-4 font-semibold text-sm">Date</th><th class="text-left py-3 px-4 font-semibold text-sm">Status</th><th class="text-left py-3 px-4 font-semibold text-sm">Action</th></tr></thead>
+                                    <tbody id="issuesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="donationManagementPage" class="admin-content-section hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">Manage Donations Page</h2>
+                        <div class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+                            <h3 class="text-xl font-semibold">Donation Page Content</h3>
                             <div class="space-y-4">
-                                <h4 class="font-semibold text-gray-700">About Us Page Content</h4>
                                 <div>
-                                    <label for="aboutUsTitleAdmin" class="block text-sm font-medium text-gray-600">Page Title</label>
-                                    <input id="aboutUsTitleAdmin" type="text" placeholder="E.g., Our Mission" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                    <label for="donateTitleAdmin" class="block text-sm font-medium text-gray-600">Page Title</label>
+                                    <input id="donateTitleAdmin" type="text" placeholder="e.g., Support Study Buddy" class="mt-1 w-full px-3 py-2 border rounded-lg">
                                 </div>
                                 <div>
-                                    <label for="aboutUsImageUrlAdmin" class="block text-sm font-medium text-gray-600">Image URL</label>
-                                    <input id="aboutUsImageUrlAdmin" type="text" placeholder="https://example.com/image.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                    <label for="donateTextAdmin" class="block text-sm font-medium text-gray-600">Descriptive Text</label>
+                                    <textarea id="donateTextAdmin" rows="4" placeholder="Explain why users should donate..." class="mt-1 w-full px-3 py-2 border rounded-lg"></textarea>
                                 </div>
                                 <div>
-                                    <label for="aboutUsTextAdmin" class="block text-sm font-medium text-gray-600">Main Text</label>
-                                    <textarea id="aboutUsTextAdmin" rows="5" placeholder="Describe your platform..." class="mt-1 w-full px-3 py-2 border rounded-lg"></textarea>
+                                    <label for="donateQrUrlAdmin" class="block text-sm font-medium text-gray-600">QR Code Image URL</label>
+                                    <input id="donateQrUrlAdmin" type="text" placeholder="https://example.com/qr.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
                                 </div>
-                                <button id="saveAboutUsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save About Us Content</button>
-                            </div>
-                            <div class="space-y-4">
-                                <h4 class="font-semibold text-gray-700">Global Site Settings</h4>
-                                <div>
-                                    <label for="logoUrlAdmin" class="block text-sm font-medium text-gray-600">Logo Image URL</label>
-                                    <input id="logoUrlAdmin" type="text" placeholder="https://example.com/logo.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <button id="saveLogoBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Logo</button>
+                                <button id="saveDonationContentBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Donation Content</button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="userManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">User Management</h2>
-                    <button id="backToAdminDashboardBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
-                </div>
-                <div class="bg-white rounded-2xl shadow-xl p-8">
-                    <h3 class="text-xl font-semibold mb-4">All Users</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white"><thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Email</th><th class="text-left py-3 px-4 font-semibold text-sm">Questions Asked</th><th class="text-left py-3 px-4 font-semibold text-sm">Actions</th></tr></thead><tbody id="usersTableBody"></tbody></table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="issueManagementPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Issue Management</h2>
-                    <button id="issueManagementBackBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
-                </div>
-                <div class="bg-white rounded-2xl shadow-xl p-8">
-                    <h3 class="text-xl font-semibold mb-4">All Support Tickets</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">User</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Category</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Description</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Admin Notes</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Date</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Status</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="issuesTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="quizAnalyticsPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Quiz Performance Analytics</h2>
-                     <div class="flex items-center space-x-4">
-                         <button id="exportQuizResultsBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition shadow-sm">Export to CSV</button>
-                         <button id="analyticsBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl shadow-xl p-8">
-                    <h3 class="text-xl font-semibold mb-4">All Quiz Results</h3>
-                    <p class="text-sm text-gray-500 mb-4">Results are sorted by most recent. High scores (>= 80%) are highlighted.</p>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">User Name</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Score</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Percentage</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Focus / Topic</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="quizAnalyticsTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="quizCompetitionAdminPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Manage Quiz Competition</h2>
-                    <button id="competitionBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left Column: Settings & Announcements -->
-                    <div class="space-y-8">
-                        <div class="bg-white rounded-2xl shadow-xl p-6">
-                            <h3 class="text-xl font-semibold mb-4">Competition Settings</h3>
-                             <div class="space-y-4">
-                                <div>
-                                    <label for="prizePoolAdmin" class="block text-sm font-medium text-gray-700">Prize Pool (e.g., 10 RS)</label>
-                                    <input id="prizePoolAdmin" type="text" placeholder="e.g., 10 RS Paytm Cash" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label for="bannerImageUrlAdmin" class="block text-sm font-medium text-gray-700">Competition Banner Image URL</label>
-                                    <input id="bannerImageUrlAdmin" type="text" placeholder="https://example.com/banner.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label for="prizeImageUrlAdmin" class="block text-sm font-medium text-gray-700">Prize Image URL</label>
-                                    <input id="prizeImageUrlAdmin" type="text" placeholder="https://example.com/prize.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label for="startTimeAdmin" class="block text-sm font-medium text-gray-700">Start Time</label>
-                                    <input id="startTimeAdmin" type="datetime-local" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <div>
-                                    <label for="endTimeAdmin" class="block text-sm font-medium text-gray-700">End Time</label>
-                                    <input id="endTimeAdmin" type="datetime-local" class="mt-1 w-full px-3 py-2 border rounded-lg">
-                                </div>
-                                <button id="saveCompetitionSettingsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Settings</button>
-                            </div>
+                    <div id="quizAnalyticsPage" class="admin-content-section hidden">
+                        <div class="flex justify-between items-center mb-8">
+                             <h2 class="text-3xl font-bold text-gray-900">Quiz Performance Analytics</h2>
+                             <button id="exportQuizResultsBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition shadow-sm">Export to CSV</button>
                         </div>
-                        <div class="bg-white rounded-2xl shadow-xl p-6">
-                            <h3 class="text-xl font-semibold mb-4">Competition Controls</h3>
-                            <div id="competitionStatusAdmin" class="mb-4 p-3 rounded-lg text-center font-semibold">Loading status...</div>
-                            <div id="competitionControlButtons" class="space-y-2">
-                                <button id="startCompetitionAdminBtn" class="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 hidden">Start Competition</button>
-                                <button id="endCompetitionAdminBtn" class="w-full bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 hidden">End Competition</button>
-                                <button id="startNewCompetitionAdminBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 hidden">Start New Competition</button>
-                            </div>
+                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                             <div class="overflow-x-auto"><table class="min-w-full bg-white"><thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">User Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Score</th><th class="text-left py-3 px-4 font-semibold text-sm">Percentage</th><th class="text-left py-3 px-4 font-semibold text-sm">Focus / Topic</th><th class="text-left py-3 px-4 font-semibold text-sm">Date</th></tr></thead><tbody id="quizAnalyticsTableBody"></tbody></table></div>
                         </div>
-                        <div class="bg-white rounded-2xl shadow-xl p-6">
-                            <h3 class="text-xl font-semibold mb-4">Competition Announcements</h3>
-                            <div id="competitionAnnouncementListAdmin" class="space-y-2 mb-4 max-h-48 overflow-y-auto no-scrollbar border rounded-lg p-2 bg-gray-50"></div>
-                            <div class="flex space-x-2">
-                                <input id="newCompetitionAnnouncementInput" type="text" placeholder="Type announcement..." class="w-full px-4 py-2 border rounded-lg">
-                                <button id="addCompetitionAnnouncementBtn" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Post</button>
+                    </div>
+                    <div id="quizCompetitionAdminPage" class="admin-content-section hidden">
+                        <div class="max-w-7xl mx-auto">
+                            <div class="flex justify-between items-center mb-8">
+                                <h2 class="text-3xl font-bold text-gray-900">Manage Quiz Competition</h2>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-8">
+                                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                                        <h3 class="text-xl font-semibold mb-4">Competition Settings</h3>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label for="prizePoolAdmin" class="block text-sm font-medium text-gray-700">Prize Pool (e.g., 10 RS)</label>
+                                                <input id="prizePoolAdmin" type="text" placeholder="e.g., 10 RS Paytm Cash" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <div>
+                                                <label for="bannerImageUrlAdmin" class="block text-sm font-medium text-gray-700">Competition Banner Image URL</label>
+                                                <input id="bannerImageUrlAdmin" type="text" placeholder="https://example.com/banner.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <div>
+                                                <label for="prizeImageUrlAdmin" class="block text-sm font-medium text-gray-700">Prize Image URL</label>
+                                                <input id="prizeImageUrlAdmin" type="text" placeholder="https://example.com/prize.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <button id="saveCompetitionSettingsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Settings</button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white rounded-2xl shadow-xl p-6">
+                                        <h3 class="text-xl font-semibold mb-4">Competition Controls</h3>
+                                        <div id="competitionStatusAdmin" class="mb-4 p-3 rounded-lg text-center font-semibold">Loading status...</div>
+                                        <div id="competitionControlButtons" class="space-y-2">
+                                            <button id="startCompetitionAdminBtn" class="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 hidden">Start Competition</button>
+                                            <button id="endCompetitionAdminBtn" class="w-full bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 hidden">End Competition</button>
+                                            <button id="startNewCompetitionAdminBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 hidden">Start New Competition</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-2xl shadow-xl p-6">
+                                    <h3 class="text-xl font-semibold mb-4">Competition Results</h3>
+                                    <div id="competitionWinnerDisplay" class="mb-4 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-center hidden">
+                                        <p class="font-bold text-yellow-800">🏆 Winner Announced! 🏆</p>
+                                        <p id="winnerInfoText" class="text-yellow-700"></p>
+                                    </div>
+                                    <div class="overflow-y-auto max-h-96 no-scrollbar">
+                                        <table class="min-w-full bg-white">
+                                            <thead class="bg-gray-100 sticky top-0"><tr><th class="text-left py-2 px-3 font-semibold text-sm">User</th><th class="text-left py-2 px-3 font-semibold text-sm">Score</th><th class="text-left py-2 px-3 font-semibold text-sm">Action</th></tr></thead>
+                                            <tbody id="competitionResultsTableBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Right Column: Results & Winner -->
-                    <div class="bg-white rounded-2xl shadow-xl p-6">
-                        <h3 class="text-xl font-semibold mb-4">Competition Results</h3>
-                        <div id="competitionWinnerDisplay" class="mb-4 p-4 rounded-lg bg-yellow-100 border border-yellow-300 text-center hidden">
-                            <p class="font-bold text-yellow-800">🏆 Winner Announced! 🏆</p>
-                            <p id="winnerInfoText" class="text-yellow-700"></p>
-                        </div>
-                        <div class="overflow-y-auto max-h-96 no-scrollbar">
-                            <table class="min-w-full bg-white">
-                                <thead class="bg-gray-100 sticky top-0">
-                                    <tr>
-                                        <th class="text-left py-2 px-3 font-semibold text-sm">User</th>
-                                        <th class="text-left py-2 px-3 font-semibold text-sm">Score</th>
-                                        <th class="text-left py-2 px-3 font-semibold text-sm">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="competitionResultsTableBody">
-                                    <!-- Results will be populated here -->
-                                </tbody>
-                            </table>
+                    <div id="prizeClaimsPage" class="admin-content-section hidden">
+                         <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
+                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white">
+                                    <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th><th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th></tr></thead>
+                                    <tbody id="prizeClaimsTableBody"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="prizeClaimsPage" class="page hidden p-4 sm:p-6 md:p-8">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Prize Claims</h2>
-                    <button id="claimsBackToAdminBtn" class="bg-white text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition shadow-sm">Back to Dashboard</button>
-                </div>
-                <div class="bg-white rounded-2xl shadow-xl p-8">
-                    <h3 class="text-xl font-semibold mb-4">Submitted Claims</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th>
-                                    <th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th>
-                                </tr>
-                            </thead>
-                            <tbody id="prizeClaimsTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div id="collegeCourseModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 text-center">Select Your Course</h2>
-                <div id="courseSelectionContainer" class="grid grid-cols-2 gap-4">
-                    <button data-course="B.Tech CSE" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">B.Tech CSE</button>
-                    <button data-course="B.Tech ECE" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">B.Tech ECE</button>
-                    <button data-course="BCA" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">BCA</button>
-                    <button data-course="BBA" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">BBA</button>
-                    <button data-course="B.Sc" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">B.Sc</button>
-                    <button data-course="Other" class="course-btn bg-gray-100 hover:bg-gray-200 font-semibold py-3 rounded-lg">Other</button>
-                </div>
+                </main>
             </div>
         </div>
 
@@ -633,8 +810,8 @@
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <h3 class="text-xl font-semibold mb-4">Community</h3>
-                <a href="https://chat.whatsapp.com/Ip4Vx8YjOHg3gkTlhuyTOm" target="_blank" class="w-full bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition shadow-md flex items-center justify-center space-x-2">
-                    <img src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="h-6 w-6">
+                <a href="https://chat.whatsapp.com/your-group-invite-link" target="_blank" class="w-full bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition shadow-md flex items-center justify-center space-x-2">
+                    <img loading="lazy" src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="h-6 w-6">
                     <span>Join WhatsApp Community</span>
                 </a>
             </div>
@@ -680,7 +857,7 @@
                 <div id="prizeClaimSection" class="mt-4 hidden">
                     <p class="font-semibold">Congratulations! To claim your prize of <span id="prizeAmountText" class="font-bold"></span>, please enter your Paytm number or UPI ID below:</p>
                     <div class="flex justify-center items-center mt-4">
-                        <img src="https://img.icons8.com/color/48/000000/paytm.png" alt="Paytm" class="h-8 w-8 mr-2">
+                        <img loading="lazy" src="https://img.icons8.com/color/48/000000/paytm.png" alt="Paytm" class="h-8 w-8 mr-2">
                         <input id="paymentIdInput" type="text" placeholder="Paytm No. or UPI ID" class="px-4 py-2 rounded-l-lg text-gray-800 w-64">
                         <button id="submitPaymentIdBtn" class="bg-green-500 text-white font-semibold px-4 py-2 rounded-r-lg hover:bg-green-600">Submit</button>
                     </div>
@@ -688,11 +865,9 @@
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
                 <div id="competitionBannerContainer" class="mb-6 hidden">
-                    <!-- Banner image will be inserted here by JS -->
                 </div>
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Quiz Competition</h2>
                 <div id="prizePoolInfo" class="mb-4 flex flex-col items-center justify-center space-y-3">
-                    <!-- Prize text and image will be inserted here -->
                 </div>
                 <div id="competitionInstructions" class="text-gray-600 mb-6 prose max-w-none">
                     <p>Loading instructions...</p>
@@ -786,9 +961,23 @@
         <div id="aboutUsContent" class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
             <h2 id="aboutUsTitle" class="text-3xl font-bold text-gray-900 text-center">Loading...</h2>
             <div id="aboutUsImageContainer" class="flex justify-center">
+                 <img loading="lazy" src="https://placehold.co/600x400/a855f7/ffffff?text=Our+Mission" alt="About Us Image" class="rounded-lg max-w-full h-auto md:max-w-md shadow-md">
             </div>
             <div id="aboutUsText" class="text-gray-700 leading-relaxed prose max-w-none">
                 <p>Loading content...</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="donatePageTemplate">
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center space-y-6">
+            <h2 id="donateTitle" class="text-3xl font-bold text-gray-900">Support Study Buddy</h2>
+            <div id="donateText" class="text-gray-600 max-w-lg mx-auto">
+                <p>Your contributions help us keep Study Buddy free for all students. By donating, you support server costs, development of new features, and our mission to provide accessible education tools. Thank you for your support!</p>
+            </div>
+            <div id="donateQrContainer" class="flex flex-col items-center">
+                <p class="font-semibold mb-4">You can scan the QR code below to donate.</p>
+                <img loading="lazy" id="donateQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=paytmmp%3A%2F%2Fupi" alt="Donation QR Code" class="w-48 h-48 rounded-lg shadow-md">
             </div>
         </div>
     </template>
@@ -855,59 +1044,75 @@
     let announcementInterval = null;
     let unsubscribeFromChat = null;
     let notificationListenerUnsubscribe = null;
-    let activeQuizState = null; // IMPORTANT: Used to manage and reset quiz progress
+    let activeQuizState = null;
 
-
-    // --- DOM Element References ---
-    const pageContainer = document.getElementById('pageContent');
-    const allPages = document.querySelectorAll('.page');
-    const mainAppWrapper = document.getElementById('mainAppWrapper');
-    const appContainer = document.getElementById('appContainer');
-
+    // --- Performance: Cache DOM Elements ---
+    const domElements = {
+        pageContent: document.getElementById('pageContent'),
+        allPages: document.querySelectorAll('.page'),
+        mainAppWrapper: document.getElementById('mainAppWrapper'),
+        appContainer: document.getElementById('appContainer'),
+        toast: document.getElementById('toast'),
+        confirmationModal: document.getElementById('confirmationModal'),
+        confirmTitle: document.getElementById('confirmTitle'),
+        confirmMessage: document.getElementById('confirmMessage'),
+        setupUserName: document.getElementById('setupUserName'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        notificationPanel: document.getElementById('notificationPanel'),
+        notificationDot: document.getElementById('notificationDot'),
+        notificationList: document.getElementById('notificationList'),
+        admin: {
+            totalUsersStat: document.getElementById('totalUsersStat'),
+            totalQuestionsStat: document.getElementById('totalQuestionsStat'),
+            questionBankStat: document.getElementById('questionBankStat'),
+            openIssuesStat: document.getElementById('openIssuesStat'),
+            announcementList: document.getElementById('announcementListAdmin'),
+            newAnnouncementInput: document.getElementById('newAnnouncementInput'),
+            historyContainer: document.getElementById('adminHistoryContainer'),
+            notificationMessageInput: document.getElementById('notificationMessageInput'),
+            specificUserEmailInput: document.getElementById('specificUserEmailInput'),
+            adminOverlay: document.getElementById('admin-overlay'),
+        }
+    };
 
     // --- UI Helper Functions ---
     const showToast = (message, type = 'success') => {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = 'px-6 py-3 rounded-full text-white font-medium shadow-lg'; // Reset classes
-        toast.classList.add('show', type === 'success' ? 'bg-green-500' : 'bg-red-500');
-        setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        domElements.toast.textContent = message;
+        domElements.toast.className = 'px-6 py-3 rounded-full text-white font-medium shadow-lg';
+        domElements.toast.classList.add('show', type === 'success' ? 'bg-green-500' : 'bg-red-500');
+        setTimeout(() => { domElements.toast.classList.remove('show'); }, 3000);
     };
 
     const showConfirm = (title, message, onConfirm) => {
-        document.getElementById('confirmTitle').textContent = title;
-        document.getElementById('confirmMessage').textContent = message;
+        domElements.confirmTitle.textContent = title;
+        domElements.confirmMessage.textContent = message;
         confirmCallback = onConfirm;
-        document.getElementById('confirmationModal').classList.remove('hidden');
+        domElements.confirmationModal.classList.remove('hidden');
     };
 
     document.getElementById('confirmOkBtn').addEventListener('click', () => {
-        if (confirmCallback) {
-            confirmCallback();
-        }
-        document.getElementById('confirmationModal').classList.add('hidden');
+        if (confirmCallback) confirmCallback();
+        domElements.confirmationModal.classList.add('hidden');
         confirmCallback = null;
     });
 
     document.getElementById('confirmCancelBtn').addEventListener('click', () => {
-        document.getElementById('confirmationModal').classList.add('hidden');
+        domElements.confirmationModal.classList.add('hidden');
         confirmCallback = null;
     });
 
     // --- Page Navigation ---
     const showPage = (pageId) => {
-        allPages.forEach(page => page.classList.add('hidden'));
+        domElements.allPages.forEach(page => page.classList.add('hidden'));
         const pageToShow = document.getElementById(pageId);
-        if (pageToShow) {
-            pageToShow.classList.remove('hidden');
-        }
+        if (pageToShow) pageToShow.classList.remove('hidden');
     };
 
     const renderPage = (templateId) => {
         const template = document.getElementById(templateId);
         if (template) {
-            pageContainer.innerHTML = '';
-            pageContainer.appendChild(template.content.cloneNode(true));
+            domElements.pageContent.innerHTML = '';
+            domElements.pageContent.appendChild(template.content.cloneNode(true));
             addPageSpecificEventListeners(templateId);
             return true;
         }
@@ -917,20 +1122,16 @@
     const setActiveNav = (pageId) => {
         document.querySelectorAll('.nav-btn, .nav-btn-mobile').forEach(btn => {
             btn.classList.remove('active');
-            if (btn.dataset.page === pageId) {
-                btn.classList.add('active');
-            }
+            if (btn.dataset.page === pageId) btn.classList.add('active');
         });
     };
 
     const navigateToPage = (pageId) => {
-        // Reset competition quiz if navigating away
         if (activeQuizState && activeQuizState.type === 'competition' && pageId !== 'quizTakerPage') {
             activeQuizState = null;
             clearInterval(quizTimerInterval);
             showToast("Competition progress has been reset.", "error");
         }
-
         if (pageId !== 'mainAppPage' && announcementInterval) {
             clearInterval(announcementInterval);
             announcementInterval = null;
@@ -957,7 +1158,7 @@
                     listenForNotifications(user.uid);
                     navigateToPage('mainAppPage');
                 } else {
-                    document.getElementById('setupUserName').textContent = user.displayName || "there";
+                    domElements.setupUserName.textContent = user.displayName || "there";
                     showPage('setupPage');
                 }
             }
@@ -966,7 +1167,6 @@
         }
     });
 
-    // Event Listeners for Auth Pages
     document.getElementById('showSignup').addEventListener('click', (e) => { e.preventDefault(); showPage('signupPage'); });
     document.getElementById('showLogin').addEventListener('click', (e) => { e.preventDefault(); showPage('loginPage'); });
 
@@ -996,75 +1196,55 @@
     });
 
     const performLogout = async () => {
-        if (announcementInterval) {
-            clearInterval(announcementInterval);
-        }
-        if (notificationListenerUnsubscribe) {
-            notificationListenerUnsubscribe();
-            notificationListenerUnsubscribe = null;
-        }
+        if (announcementInterval) clearInterval(announcementInterval);
+        if (notificationListenerUnsubscribe) notificationListenerUnsubscribe();
+        notificationListenerUnsubscribe = null;
         try { await signOut(auth); } 
         catch (error) { showToast(error.message, "error"); }
     };
 
     // --- Setup Flow ---
     function setupPageListeners() {
-        const selectionCards = document.querySelectorAll('.selection-card');
-        selectionCards.forEach(card => {
+        document.querySelectorAll('.selection-card').forEach(card => {
             card.addEventListener('click', () => {
                 const optionsId = card.id.replace('Card', 'Options');
                 const optionsDiv = document.getElementById(optionsId);
-                
-                // Hide all other options
                 document.querySelectorAll('[id$="Options"]').forEach(optDiv => {
-                    if (optDiv.id !== optionsId) {
-                        optDiv.classList.add('hidden');
-                    }
+                    if (optDiv.id !== optionsId) optDiv.classList.add('hidden');
                 });
-                
-                // Toggle current options
-                if (optionsDiv) {
-                    optionsDiv.classList.toggle('hidden');
-                }
+                if (optionsDiv) optionsDiv.classList.toggle('hidden');
             });
         });
-
-        const optionButtons = document.querySelectorAll('.setup-option-btn');
-        optionButtons.forEach(btn => {
+        document.querySelectorAll('.setup-option-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const grade = btn.dataset.grade;
-                const exam = btn.dataset.exam;
-                saveUserSetup(grade, exam);
+                saveUserSetup(btn.dataset.grade, btn.dataset.exam);
             });
         });
     }
     setupPageListeners();
 
-
     async function saveUserSetup(grade, targetExam) {
         const user = auth.currentUser;
         if (!user) return;
-        const userDocRef = doc(db, "users", user.uid);
         try {
-            await setDoc(userDocRef, { grade, targetExam }, { merge: true });
+            await setDoc(doc(db, "users", user.uid), { grade, targetExam }, { merge: true });
             navigateToPage('mainAppPage');
         } catch (error) { showToast("Could not save preferences: " + error.message, "error"); }
     }
     
     // --- Main App Navigation Listeners (Event Delegation) ---
-    appContainer.addEventListener('click', (e) => {
+    domElements.appContainer.addEventListener('click', (e) => {
         const navBtn = e.target.closest('.nav-btn, .nav-btn-mobile');
         if (navBtn && navBtn.dataset.page) {
             navigateToPage(navBtn.dataset.page);
-            const mobileMenu = document.getElementById('mobileMenu');
-            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
+            if (domElements.mobileMenu && !domElements.mobileMenu.classList.contains('hidden')) {
+                domElements.mobileMenu.classList.add('hidden');
             }
         }
     });
 
     document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-        document.getElementById('mobileMenu').classList.toggle('hidden');
+        domElements.mobileMenu.classList.toggle('hidden');
     });
 
     // --- Event Listener Delegation for Dynamic Content ---
@@ -1088,8 +1268,7 @@
                 document.getElementById('generateQuizBtn').addEventListener('click', () => generateQuiz('practice'));
                 document.querySelectorAll('input[name="quizLength"]').forEach(radio => {
                     radio.addEventListener('change', (e) => {
-                        const customInput = document.getElementById('customQuizLength');
-                        customInput.classList.toggle('hidden', e.target.value !== 'custom');
+                        document.getElementById('customQuizLength').classList.toggle('hidden', e.target.value !== 'custom');
                     });
                 });
                 break;
@@ -1107,6 +1286,9 @@
                 break;
             case 'aboutUsPageTemplate':
                 loadAboutUsPage();
+                break;
+            case 'donatePageTemplate':
+                loadDonatePage();
                 break;
             case 'supportPageTemplate':
                 loadUserTickets();
@@ -1141,62 +1323,62 @@
     }
     
     async function handleGetAnswer() {
-         const user = auth.currentUser;
-         if (!user) return;
+        const user = auth.currentUser;
+        if (!user) return;
 
-         const answerDiv = document.getElementById('answer');
-         const resultContainer = document.getElementById('resultContainer');
-         const videoContainer = document.getElementById('videoContainer');
-         const loader = document.getElementById('loader');
-         const getAnswerBtn = document.getElementById('getAnswerBtn');
-         
-         answerDiv.innerHTML = '';
-         resultContainer.classList.remove('hidden');
-         videoContainer.classList.add('hidden');
-         loader.classList.remove('hidden');
-         getAnswerBtn.disabled = true;
-         getAnswerBtn.textContent = 'Fetching Solution...';
-         document.getElementById('errorBox').classList.add('hidden');
+        const answerDiv = document.getElementById('answer');
+        const resultContainer = document.getElementById('resultContainer');
+        const videoContainer = document.getElementById('videoContainer');
+        const loader = document.getElementById('loader');
+        const getAnswerBtn = document.getElementById('getAnswerBtn');
+        
+        answerDiv.innerHTML = '';
+        resultContainer.classList.remove('hidden');
+        videoContainer.classList.add('hidden');
+        loader.classList.remove('hidden');
+        getAnswerBtn.disabled = true;
+        getAnswerBtn.textContent = 'Fetching Solution...';
+        document.getElementById('errorBox').classList.add('hidden');
 
-         const userDoc = await getDoc(doc(db, "users", user.uid));
-         if (!userDoc.exists() || !userDoc.data().targetExam) {
-                 showError("Please set your focus in your profile before asking a question.");
-                 resetButtonState();
-                 return;
-         }
-         const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (!userDoc.exists() || !userDoc.data().targetExam) {
+            showError("Please set your focus in your profile before asking a question.");
+            resetButtonState();
+            return;
+        }
+        const userFocus = `${userDoc.data().grade} - ${userDoc.data().targetExam}`;
 
-         try {
-                 const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
-                 const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
-                 const languageInstruction = answerLanguage === 'Hindi'
-                     ? `Provide the entire response in Hindi (using Devanagari script).`
-                     : `Provide the entire response in English.`;
+        try {
+            const answerLength = document.querySelector('input[name="answerLength"]:checked').value;
+            const answerLanguage = document.querySelector('input[name="answerLanguage"]:checked').value;
+            const languageInstruction = answerLanguage === 'Hindi'
+                ? `Provide the entire response in Hindi (using Devanagari script).`
+                : `Provide the entire response in English.`;
 
-                 const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
-                 - If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
-                 - If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
-                 After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
-                 Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
-                 
-                 let userQuestion, prompt;
-                 if (activeTab === 'scan') {
-                         if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
-                         userQuestion = "Question from image";
-                         prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
-                         await getSolution(prompt, base64ImageData, userQuestion, userFocus);
-                 } else {
-                         const questionText = document.getElementById('manualQuestion').value.trim();
-                         if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
-                         userQuestion = questionText;
-                         prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
-                         await getSolution(prompt, null, userQuestion, userFocus);
-                 }
-         } catch (error) {
-                 showError('Failed to fetch the solution.');
-         } finally {
-                 resetButtonState();
-         }
+            const promptInstruction = `You are an expert academic tutor for an Indian student whose focus is ${userFocus}. Your task is to answer the following question. ${languageInstruction} First, determine if the question is a valid, on-topic academic question relevant to this focus.
+- If it is relevant, provide a ${answerLength}, simple, step-by-step solution.
+- If the question is NOT a valid academic question (e.g., it's a joke, nonsense, or asks 'why Kattappa killed Baahubali'), you MUST respond with ONLY this exact text: 'This does not seem to be a valid academic question. Please ask a question related to your studies.'
+After providing a valid solution, on a new line, write "VIDEO_URL:" followed by a single, relevant YouTube video URL.
+Finally, on a new line, if the question can be converted into a multiple-choice question (MCQ), write "QUIZ_DATA:" followed by a valid JSON object. The JSON must have these keys: "question" (a concise string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). If it cannot be made into an MCQ, omit the QUIZ_DATA line entirely.`;
+            
+            let userQuestion, prompt;
+            if (activeTab === 'scan') {
+                if (!base64ImageData) { showError("Please upload or capture an image."); resetButtonState(); return; }
+                userQuestion = "Question from image";
+                prompt = `Analyze the image. Then, follow these instructions: ${promptInstruction}`;
+                await getSolution(prompt, base64ImageData, userQuestion, userFocus);
+            } else {
+                const questionText = document.getElementById('manualQuestion').value.trim();
+                if (!questionText) { showError("Please type your question."); resetButtonState(); return; }
+                userQuestion = questionText;
+                prompt = `The user's question is: "${questionText}". Now, follow these instructions: ${promptInstruction}`;
+                await getSolution(prompt, null, userQuestion, userFocus);
+            }
+        } catch (error) {
+            showError('Failed to fetch the solution.');
+        } finally {
+            resetButtonState();
+        }
     }
 
     async function getSolution(prompt, imageData = null, userQuestion, topic) {
@@ -1251,10 +1433,8 @@
         const docSnap = await getDoc(userDocRef);
         if (docSnap.exists()) {
             const userData = docSnap.data();
-            const currentUserFocus = document.getElementById('currentUserFocus');
-            currentUserFocus.textContent = (userData.grade && userData.targetExam) ? `${userData.grade} - ${userData.targetExam}` : 'Not set';
+            document.getElementById('currentUserFocus').textContent = (userData.grade && userData.targetExam) ? `${userData.grade} - ${userData.targetExam}` : 'Not set';
             
-            // Load Question History
             const historyContainer = document.getElementById('historyContainer');
             historyContainer.innerHTML = '';
             if (userData.history && userData.history.length > 0) {
@@ -1267,8 +1447,6 @@
             } else {
                 historyContainer.innerHTML = '<p class="text-gray-500">You haven\'t asked any questions yet.</p>';
             }
-
-            // Load Quiz History
             loadQuizHistory();
         }
     }
@@ -1409,8 +1587,7 @@
             container.addEventListener('click', (e) => {
                 const ticketDiv = e.target.closest('[data-issue-id]');
                 if (ticketDiv) {
-                    const issueId = ticketDiv.dataset.issueId;
-                    openChatForTicket(issueId, 'user');
+                    openChatForTicket(ticketDiv.dataset.issueId, 'user');
                 }
             });
 
@@ -1534,7 +1711,6 @@
             const result = await response.json();
             const textResponse = result.candidates[0].content.parts[0].text;
             
-            // Clean the response to get only the JSON part
             const jsonMatch = textResponse.match(/\[\s*\{[\s\S]*\}\s*\]/);
             if (jsonMatch && jsonMatch[0]) {
                 return JSON.parse(jsonMatch[0]);
@@ -1585,7 +1761,6 @@
 
         document.getElementById('nextQuestionBtn').textContent = activeQuizState.currentQuestionIndex === activeQuizState.questions.length - 1 ? "Finish Quiz" : "Next Question";
 
-        // Timer setup
         if (activeQuizState.currentQuestionIndex === 0) {
             clearInterval(quizTimerInterval);
             let timeLeft = 600; // 10 mins
@@ -1603,10 +1778,9 @@
         }
     }
 
-    document.getElementById('pageContent').addEventListener('click', (e) => {
+    domElements.pageContent.addEventListener('click', (e) => {
         if (e.target && e.target.classList.contains('quiz-option')) {
-            const allOptions = document.querySelectorAll('.quiz-option');
-            allOptions.forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
             
             e.target.classList.add('selected');
             if (activeQuizState) {
@@ -1786,25 +1960,22 @@
         if (!user) return;
 
         const startBtn = document.getElementById('startCompetitionBtn');
-        const instructionsContainer = document.getElementById('competitionInstructions');
-        const announcementsContainer = document.getElementById('competitionAnnouncementsContainer');
+        const prizeClaimSection = document.getElementById('prizeClaimSection');
+        const submitPaymentIdBtn = document.getElementById('submitPaymentIdBtn');
         const winnerInfoContainer = document.getElementById('competitionWinnerInfo');
         const winnerDetails = document.getElementById('competitionWinnerDetails');
-        const prizeInfoContainer = document.getElementById('prizePoolInfo');
-        const bannerContainer = document.getElementById('competitionBannerContainer');
-        const competitionTimer = document.getElementById('competitionTimer');
-        const prizeClaimSection = document.getElementById('prizeClaimSection');
-        const prizeAmountText = document.getElementById('prizeAmountText');
-        const submitPaymentIdBtn = document.getElementById('submitPaymentIdBtn');
 
         startBtn.addEventListener('click', () => generateQuiz('competition'));
 
         submitPaymentIdBtn.addEventListener('click', async () => {
-            const paymentId = document.getElementById('paymentIdInput').value.trim();
+            const paymentIdInput = document.getElementById('paymentIdInput');
+            const paymentId = paymentIdInput.value.trim();
             if (!paymentId) {
                 showToast("Please enter your payment details.", "error");
                 return;
             }
+            submitPaymentIdBtn.disabled = true;
+            submitPaymentIdBtn.textContent = 'Submitting...';
             try {
                 await addDoc(collection(db, "prizeClaims"), {
                     winnerId: user.uid,
@@ -1812,85 +1983,77 @@
                     paymentId: paymentId,
                     claimedAt: serverTimestamp()
                 });
-                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted. The prize will be sent shortly.</p>';
+                await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
+                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted.</p>';
                 showToast("Your payment details have been submitted!");
             } catch (error) {
                 showToast("Could not submit your details. Please try again.", "error");
+                submitPaymentIdBtn.disabled = false;
+                submitPaymentIdBtn.textContent = 'Submit';
             }
         });
 
         const docRef = doc(db, "siteContent", "quizCompetition");
-        onSnapshot(docRef, (docSnap) => {
+        onSnapshot(docRef, async (docSnap) => {
             const data = docSnap.exists() ? docSnap.data() : {};
             const status = data.status || 'not_started';
-
-            startBtn.disabled = true;
-            competitionTimer.textContent = '';
-            prizeClaimSection.classList.add('hidden');
-
-            switch (status) {
-                case 'not_started':
-                    startBtn.textContent = 'Competition Not Started';
-                    competitionTimer.textContent = 'Please wait for the admin to start the competition.';
-                    break;
-                case 'in_progress':
-                    startBtn.disabled = false;
-                    startBtn.textContent = 'Start 10-Minute Challenge!';
-                    competitionTimer.textContent = 'The competition is now live! Good luck!';
-                    break;
-                case 'ended':
-                    startBtn.textContent = 'Competition Has Ended';
-                    competitionTimer.textContent = 'The competition has finished. Please wait for the winner announcement.';
-                    break;
-                case 'winner_declared':
-                    startBtn.textContent = 'Competition Over';
-                    competitionTimer.textContent = 'A winner has been announced. Check the leaderboard!';
-                    break;
-            }
-
+            
+            document.getElementById('competitionInstructions').innerHTML = data.instructions ? data.instructions.replace(/\n/g, '<br>') : "<p>The admin has not set any instructions yet.</p>";
+            
+            const bannerContainer = document.getElementById('competitionBannerContainer');
             if (data.bannerImageUrl) {
-                bannerContainer.innerHTML = `<img src="${data.bannerImageUrl}" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
+                bannerContainer.innerHTML = `<img loading="lazy" src="${data.bannerImageUrl}" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
                 bannerContainer.classList.remove('hidden');
             } else {
                 bannerContainer.classList.add('hidden');
             }
-
+            
+            const prizeInfoContainer = document.getElementById('prizePoolInfo');
             prizeInfoContainer.innerHTML = '';
             if (data.prizePool) {
-               prizeInfoContainer.innerHTML += `<p class="text-lg font-semibold text-green-600">${data.prizePool}</p>`;
-               prizeAmountText.textContent = data.prizePool;
+                prizeInfoContainer.innerHTML += `<p class="text-lg font-semibold text-green-600">${data.prizePool}</p>`;
+                document.getElementById('prizeAmountText').textContent = data.prizePool;
             }
             if (data.prizeImageUrl) {
-               prizeInfoContainer.innerHTML += `<img src="${data.prizeImageUrl}" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
+                prizeInfoContainer.innerHTML += `<img loading="lazy" src="${data.prizeImageUrl}" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
             }
 
-            instructionsContainer.innerHTML = data.instructions ? data.instructions.replace(/\n/g, '<br>') : "<p>The admin has not set any instructions yet.</p>";
-            
-            if (data.winnerName) {
-                winnerInfoContainer.classList.remove('hidden');
-                winnerDetails.textContent = `${data.winnerName} with a score of ${data.winnerScore}!`;
-                if (data.winnerName === user.displayName) {
-                    prizeClaimSection.classList.remove('hidden');
-                }
-            } else {
-                winnerInfoContainer.classList.add('hidden');
-            }
-        });
+            startBtn.disabled = true;
+            prizeClaimSection.classList.add('hidden');
+            winnerInfoContainer.classList.add('hidden');
 
-        const q = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            announcementsContainer.innerHTML = '';
-            if (snapshot.empty) {
-                announcementsContainer.innerHTML = '<p class="text-gray-500 text-center">No announcements yet.</p>';
-            } else {
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'Just now';
-                    const announcementDiv = document.createElement('div');
-                    announcementDiv.className = 'bg-orange-50 border-l-4 border-orange-500 text-orange-800 p-4 rounded-r-lg';
-                    announcementDiv.innerHTML = `<div class="flex justify-between items-center"><p class="font-bold">Announcement</p><p class="text-xs">${date}</p></div><p class="mt-1">${data.message}</p>`;
-                    announcementsContainer.appendChild(announcementDiv);
-                });
+            switch (status) {
+                case 'in_progress':
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Start 10-Minute Challenge!';
+                    break;
+                case 'ended':
+                    startBtn.textContent = 'Competition Has Ended';
+                    break;
+                case 'winner_declared':
+                    startBtn.textContent = 'Competition Over';
+                    if (data.winnerName) {
+                        winnerInfoContainer.classList.remove('hidden');
+                        winnerDetails.textContent = `${data.winnerName} with a score of ${data.winnerScore}!`;
+                        if (data.winnerName === user.displayName) {
+                            const claimsQuery = query(collection(db, "prizeClaims"), where("winnerId", "==", user.uid), limit(1));
+                            const claimsSnapshot = await getDocs(claimsQuery);
+                            if (claimsSnapshot.empty) {
+                                prizeClaimSection.classList.remove('hidden');
+                                const userDoc = await getDoc(doc(db, "users", user.uid));
+                                if (userDoc.exists() && userDoc.data().paymentId) {
+                                    document.getElementById('paymentIdInput').value = userDoc.data().paymentId;
+                                }
+                            } else {
+                                prizeClaimSection.classList.remove('hidden');
+                                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Your prize claim has been submitted. Thank you!</p>';
+                            }
+                        }
+                    }
+                    break;
+                default: // not_started
+                    startBtn.textContent = 'Competition Not Started';
+                    break;
             }
         });
     }
@@ -2027,10 +2190,7 @@
     }
 
     async function loadAnnouncementsForUser() {
-        if (announcementInterval) {
-            clearInterval(announcementInterval);
-        }
-
+        if (announcementInterval) clearInterval(announcementInterval);
         const container = document.getElementById('announcementsContainer');
         if (!container) return;
 
@@ -2043,9 +2203,7 @@
         } else {
             allUserAnnouncements = querySnapshot.docs.map(doc => doc.data());
             announcementIndex = 0; 
-
             displayCurrentAnnouncement();
-
             announcementInterval = setInterval(displayCurrentAnnouncement, 300000); 
         }
     }
@@ -2053,47 +2211,69 @@
 
     // --- Admin Functions ---
     document.getElementById('adminLogoutBtn').addEventListener('click', performLogout);
-    document.getElementById('manageUsersBtn').addEventListener('click', () => { showPage('userManagementPage'); loadUsersForManagement(); });
-    document.getElementById('backToAdminDashboardBtn').addEventListener('click', () => showPage('adminDashboardPage'));
-    document.getElementById('manageIssuesBtn').addEventListener('click', () => { showPage('issueManagementPage'); loadAllIssues(); });
-    document.getElementById('issueManagementBackBtn').addEventListener('click', () => showPage('adminDashboardPage'));
-    document.getElementById('manageQuizAnalyticsBtn').addEventListener('click', () => { showPage('quizAnalyticsPage'); loadQuizAnalytics(); });
-    document.getElementById('analyticsBackToAdminBtn').addEventListener('click', () => showPage('adminDashboardPage'));
-    document.getElementById('manageCompetitionBtn').addEventListener('click', () => { showPage('quizCompetitionAdminPage'); loadCompetitionAdminPage(); });
-    document.getElementById('managePrizeClaimsBtn').addEventListener('click', () => { showPage('prizeClaimsPage'); loadPrizeClaims(); });
-    document.getElementById('claimsBackToAdminBtn').addEventListener('click', () => showPage('adminDashboardPage'));
+    
+    document.querySelectorAll('.admin-nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = e.currentTarget.dataset.target;
+
+            document.querySelectorAll('.admin-content-section').forEach(section => section.classList.add('hidden'));
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            document.querySelectorAll('.admin-nav-link').forEach(nav => nav.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            
+            switch(targetId) {
+                case 'userManagementPage': loadUsersForManagement(); break;
+                case 'issueManagementPage': loadAllIssues(); break;
+                case 'donationManagementPage': loadDonationContentForAdmin(); break;
+                case 'quizAnalyticsPage': loadQuizAnalytics(); break;
+                case 'quizCompetitionAdminPage': loadCompetitionAdminPage(); break;
+                case 'prizeClaimsPage': loadPrizeClaims(); break;
+            }
+
+            if (document.body.classList.contains('admin-sidebar-open')) {
+                document.body.classList.remove('admin-sidebar-open');
+                domElements.admin.adminOverlay.classList.add('hidden');
+            }
+        });
+    });
+
+    const mobileAdminMenuBtn = document.getElementById('mobileAdminMenuBtn');
+    mobileAdminMenuBtn.addEventListener('click', () => {
+        document.body.classList.add('admin-sidebar-open');
+        domElements.admin.adminOverlay.classList.remove('hidden');
+    });
+    domElements.admin.adminOverlay.addEventListener('click', () => {
+        document.body.classList.remove('admin-sidebar-open');
+        domElements.admin.adminOverlay.classList.add('hidden');
+    });
     
     function loadAdminAnnouncements() {
-        const container = document.getElementById('announcementListAdmin');
         const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
-
         onSnapshot(q, (snapshot) => {
-            container.innerHTML = '';
+            domElements.admin.announcementList.innerHTML = '';
             if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 p-2">No announcements posted yet.</p>';
+                domElements.admin.announcementList.innerHTML = '<p class="text-gray-500 p-2">No announcements posted yet.</p>';
                 return;
             }
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white p-2 rounded-md shadow-sm';
-                item.innerHTML = `
-                    <p class="text-sm text-gray-700">${data.message}</p>
-                    <button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>
-                `;
-                container.appendChild(item);
+                item.innerHTML = `<p class="text-sm text-gray-700">${data.message}</p><button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
+                domElements.admin.announcementList.appendChild(item);
             });
         });
     }
 
     function loadAdminRecentQuestions() {
-        const container = document.getElementById('adminHistoryContainer');
         const q = query(collection(db, "questionBank"), orderBy("timestamp", "desc"), limit(10));
-
         onSnapshot(q, (snapshot) => {
-            container.innerHTML = '';
+            domElements.admin.historyContainer.innerHTML = '';
             if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 p-2">No questions in the bank yet.</p>';
+                domElements.admin.historyContainer.innerHTML = '<p class="text-gray-500 p-2">No questions in the bank yet.</p>';
                 return;
             }
             snapshot.forEach(doc => {
@@ -2101,45 +2281,30 @@
                 const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'N/A';
                 const item = document.createElement('div');
                 item.className = 'p-3 border rounded-lg bg-gray-50';
-                item.innerHTML = `
-                    <p class="font-semibold text-gray-800">${data.question}</p>
-                    <p class="text-xs text-gray-500 mt-1">Topic: ${data.topic || 'General'}</p>
-                    <p class="text-xs text-gray-400 mt-1">Added: ${date}</p>
-                `;
-                container.appendChild(item);
+                item.innerHTML = `<p class="font-semibold text-gray-800">${data.question}</p><p class="text-xs text-gray-500 mt-1">Topic: ${data.topic || 'General'}</p><p class="text-xs text-gray-400 mt-1">Added: ${date}</p>`;
+                domElements.admin.historyContainer.appendChild(item);
             });
         });
     }
 
     document.getElementById('addAnnouncementBtn').addEventListener('click', async () => {
-        const input = document.getElementById('newAnnouncementInput');
-        const message = input.value.trim();
-        if (!message) {
-            showToast("Announcement cannot be empty.", "error");
-            return;
-        }
+        const message = domElements.admin.newAnnouncementInput.value.trim();
+        if (!message) { showToast("Announcement cannot be empty.", "error"); return; }
         try {
-            await addDoc(collection(db, "announcements"), {
-                message: message,
-                timestamp: serverTimestamp()
-            });
+            await addDoc(collection(db, "announcements"), { message, timestamp: serverTimestamp() });
             showToast("Announcement posted successfully!");
-            input.value = '';
-        } catch (error) {
-            showToast("Failed to post announcement.", "error");
-        }
+            domElements.admin.newAnnouncementInput.value = '';
+        } catch (error) { showToast("Failed to post announcement.", "error"); }
     });
     
-    document.getElementById('announcementListAdmin').addEventListener('click', (e) => {
+    domElements.admin.announcementList.addEventListener('click', (e) => {
         if (e.target.classList.contains('delete-announcement-btn')) {
             const docId = e.target.dataset.id;
             showConfirm('Delete Announcement?', 'Are you sure you want to permanently delete this announcement?', async () => {
                 try {
                     await deleteDoc(doc(db, "announcements", docId));
                     showToast("Announcement deleted.");
-                } catch (error) {
-                    showToast("Failed to delete announcement.", "error");
-                }
+                } catch (error) { showToast("Failed to delete announcement.", "error"); }
             });
         }
     });
@@ -2149,10 +2314,10 @@
         loadAdminRecentQuestions();
         loadSiteContentForAdmin(); 
         setupAdminNotificationListeners();
-        onSnapshot(collection(db, "users"), (snap) => { document.getElementById('totalUsersStat').textContent = snap.size; });
-        onSnapshot(collection(db, "questions"), (snap) => { document.getElementById('totalQuestionsStat').textContent = snap.size; });
-        onSnapshot(collection(db, "questionBank"), (snap) => { document.getElementById('questionBankStat').textContent = snap.size; });
-        onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => { document.getElementById('openIssuesStat').textContent = snap.size; });
+        onSnapshot(collection(db, "users"), (snap) => { domElements.admin.totalUsersStat.textContent = snap.size; });
+        onSnapshot(collection(db, "questions"), (snap) => { domElements.admin.totalQuestionsStat.textContent = snap.size; });
+        onSnapshot(collection(db, "questionBank"), (snap) => { domElements.admin.questionBankStat.textContent = snap.size; });
+        onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => { domElements.admin.openIssuesStat.textContent = snap.size; });
     }
 
     async function loadUsersForManagement() {
@@ -2170,7 +2335,7 @@
         });
     }
 
-    document.getElementById('usersTableBody').addEventListener('click', async (e) => {
+    document.getElementById('userManagementPage').addEventListener('click', async (e) => {
         const userId = e.target.dataset.id;
         if (!userId) return;
         if (e.target.classList.contains('delete-btn')) { 
@@ -2221,7 +2386,7 @@
         });
     }
     
-    document.getElementById('issuesTableBody').addEventListener('click', async (e) => {
+    document.getElementById('issueManagementPage').addEventListener('click', async (e) => {
         const issueId = e.target.dataset.id;
         if (!issueId) return;
 
@@ -2271,63 +2436,46 @@
         });
     }
 
-    document.getElementById('exportQuizResultsBtn')?.addEventListener('click', async () => {
-        const q = query(collection(db, "quizResults"), orderBy("timestamp", "desc"));
-        const snapshot = await getDocs(q);
-        if (snapshot.empty) {
-            showToast("No data to export.", "error");
-            return;
+    document.getElementById('quizAnalyticsPage').addEventListener('click', async (e) => {
+        if (e.target.id === 'exportQuizResultsBtn') {
+            const q = query(collection(db, "quizResults"), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) { showToast("No data to export.", "error"); return; }
+            let csvContent = "data:text/csv;charset=utf-8,User Name,Score,Total Questions,Percentage,Topic,Date\n";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'N/A';
+                const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].join(",");
+                csvContent += row + "\r\n";
+            });
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "quiz_results.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Results exported!");
         }
-
-        let csvContent = "data:text/csv;charset=utf-8,User Name,Score,Total Questions,Percentage,Topic,Date\n";
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'N/A';
-            const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].join(",");
-            csvContent += row + "\r\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "quiz_results.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast("Results exported!");
     });
 
     // --- Admin Competition Management ---
     function loadCompetitionAdminPage() {
-        const backBtn = document.getElementById('competitionBackToAdminBtn');
-        backBtn.addEventListener('click', () => showPage('adminDashboardPage'));
-
         const docRef = doc(db, "siteContent", "quizCompetition");
-
-        // Load and react to settings changes
         onSnapshot(docRef, (docSnap) => {
             const data = docSnap.exists() ? docSnap.data() : {};
-            
-            // Populate settings fields
             document.getElementById('prizePoolAdmin').value = data.prizePool || '';
             document.getElementById('bannerImageUrlAdmin').value = data.bannerImageUrl || '';
             document.getElementById('prizeImageUrlAdmin').value = data.prizeImageUrl || '';
-            if (data.startTime) document.getElementById('startTimeAdmin').value = data.startTime;
-            if (data.endTime) document.getElementById('endTimeAdmin').value = data.endTime;
-
-            // Update competition controls based on status
+            
             const statusContainer = document.getElementById('competitionStatusAdmin');
             const startBtn = document.getElementById('startCompetitionAdminBtn');
             const endBtn = document.getElementById('endCompetitionAdminBtn');
             const newBtn = document.getElementById('startNewCompetitionAdminBtn');
             const winnerDisplay = document.getElementById('competitionWinnerDisplay');
-
             startBtn.classList.add('hidden');
             endBtn.classList.add('hidden');
             newBtn.classList.add('hidden');
-
             const status = data.status || 'not_started';
-
             switch (status) {
                 case 'not_started':
                     statusContainer.textContent = 'Competition has not started.';
@@ -2349,7 +2497,6 @@
                     newBtn.classList.remove('hidden');
                     break;
             }
-
             if (data.winnerName) {
                 winnerDisplay.classList.remove('hidden');
                 document.getElementById('winnerInfoText').textContent = `${data.winnerName} with a score of ${data.winnerScore}`;
@@ -2358,18 +2505,6 @@
             }
         });
 
-        // Save settings
-        document.getElementById('saveCompetitionSettingsBtn').addEventListener('click', async () => {
-            const prizePool = document.getElementById('prizePoolAdmin').value;
-            const bannerImageUrl = document.getElementById('bannerImageUrlAdmin').value;
-            const prizeImageUrl = document.getElementById('prizeImageUrlAdmin').value;
-            const startTime = document.getElementById('startTimeAdmin').value;
-            const endTime = document.getElementById('endTimeAdmin').value;
-            await setDoc(doc(db, "siteContent", "quizCompetition"), { prizePool, bannerImageUrl, prizeImageUrl, startTime, endTime }, { merge: true });
-            showToast("Competition settings saved!");
-        });
-
-        // Load announcements
         const announcementsContainer = document.getElementById('competitionAnnouncementListAdmin');
         const annQuery = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"));
         onSnapshot(annQuery, (snapshot) => {
@@ -2383,28 +2518,6 @@
             });
         });
 
-        // Add announcement
-        document.getElementById('addCompetitionAnnouncementBtn').addEventListener('click', async () => {
-            const input = document.getElementById('newCompetitionAnnouncementInput');
-            if (input.value.trim()) {
-                await addDoc(collection(db, "competitionAnnouncements"), { message: input.value.trim(), timestamp: serverTimestamp() });
-                input.value = '';
-                showToast("Competition announcement posted.");
-            }
-        });
-
-        // Delete announcement
-        announcementsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-comp-ann-btn')) {
-                const docId = e.target.dataset.id;
-                showConfirm('Delete Announcement?', 'Are you sure?', () => {
-                    deleteDoc(doc(db, "competitionAnnouncements", docId));
-                    showToast("Announcement deleted.");
-                });
-            }
-        });
-
-        // Load results
         const resultsTableBody = document.getElementById('competitionResultsTableBody');
         const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
         onSnapshot(resultsQuery, (snapshot) => {
@@ -2423,69 +2536,39 @@
                 `;
             });
         });
-
-        // Announce winner
-        resultsTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('announce-winner-btn')) {
-                const name = e.target.dataset.name;
-                const score = e.target.dataset.score;
-                showConfirm('Announce Winner?', `Declare ${name} as the winner? This will be shown to all users.`, async () => {
-                    await setDoc(doc(db, "siteContent", "quizCompetition"), { 
-                        winnerName: name, 
-                        winnerScore: score,
-                        status: 'winner_declared'
-                    }, { merge: true });
-                    showToast(`${name} is now the winner!`);
-                });
-            }
-        });
-
-        // Event listeners for new control buttons
-        document.getElementById('startCompetitionAdminBtn').addEventListener('click', async () => {
+    }
+    
+    document.getElementById('quizCompetitionAdminPage').addEventListener('click', async (e) => {
+        const target = e.target;
+        if (target.id === 'saveCompetitionSettingsBtn') {
+            const prizePool = document.getElementById('prizePoolAdmin').value;
+            const bannerImageUrl = document.getElementById('bannerImageUrlAdmin').value;
+            const prizeImageUrl = document.getElementById('prizeImageUrlAdmin').value;
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { prizePool, bannerImageUrl, prizeImageUrl }, { merge: true });
+            showToast("Competition settings saved!");
+        } else if (target.id === 'startCompetitionAdminBtn') {
             await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress' }, { merge: true });
             showToast("Competition started!");
-        });
-
-        document.getElementById('endCompetitionAdminBtn').addEventListener('click', async () => {
+        } else if (target.id === 'endCompetitionAdminBtn') {
             await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'ended' }, { merge: true });
             showToast("Competition ended!");
-        });
-
-        document.getElementById('startNewCompetitionAdminBtn').addEventListener('click', () => {
-            showConfirm(
-                'Start New Competition?',
-                'This will delete all current competition results and reset the winner. This action cannot be undone.',
-                async () => {
-                    try {
-                        const resultsSnapshot = await getDocs(collection(db, "competitionResults"));
-                        const deletePromises = resultsSnapshot.docs.map(d => deleteDoc(d.ref));
-                        await Promise.all(deletePromises);
-
-                        const competitionDocRef = doc(db, "siteContent", "quizCompetition");
-                        const competitionDoc = await getDoc(competitionDocRef);
-                        const currentData = competitionDoc.data();
-                        
-                        const dataToKeep = {
-                            prizePool: currentData.prizePool || '',
-                            bannerImageUrl: currentData.bannerImageUrl || '',
-                            prizeImageUrl: currentData.prizeImageUrl || '',
-                            startTime: currentData.startTime || '',
-                            endTime: currentData.endTime || '',
-                            instructions: currentData.instructions || '',
-                            status: 'not_started'
-                        };
-
-                        await setDoc(competitionDocRef, dataToKeep);
-
-                        showToast("New competition started. All previous data cleared.");
-                    } catch (error) {
-                        console.error("Error starting new competition: ", error);
-                        showToast("Failed to start new competition.", "error");
-                    }
-                }
-            );
-        });
-    }
+        } else if (target.id === 'startNewCompetitionAdminBtn') {
+            showConfirm('Start New Competition?', 'This will delete all current competition results and reset the winner.', async () => {
+                const resultsSnapshot = await getDocs(collection(db, "competitionResults"));
+                const deletePromises = resultsSnapshot.docs.map(d => deleteDoc(d.ref));
+                await Promise.all(deletePromises);
+                await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'not_started', winnerName: null, winnerScore: null }, { merge: true });
+                showToast("New competition started.");
+            });
+        } else if (target.classList.contains('announce-winner-btn')) {
+            const name = target.dataset.name;
+            const score = target.dataset.score;
+            showConfirm('Announce Winner?', `Declare ${name} as the winner?`, async () => {
+                await setDoc(doc(db, "siteContent", "quizCompetition"), { winnerName: name, winnerScore: score, status: 'winner_declared' }, { merge: true });
+                showToast(`${name} is now the winner!`);
+            });
+        }
+    });
 
     async function loadPrizeClaims() {
         const tableBody = document.getElementById('prizeClaimsTableBody');
@@ -2525,14 +2608,13 @@
     async function loadAboutUsPage() {
         const docRef = doc(db, "siteContent", "aboutUs");
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
             const data = docSnap.data();
             document.getElementById('aboutUsTitle').textContent = data.title || "About Us";
             document.getElementById('aboutUsText').innerHTML = data.text ? data.text.replace(/\n/g, '<br>') : "Content coming soon.";
             const imageContainer = document.getElementById('aboutUsImageContainer');
             if (data.imageUrl) {
-                imageContainer.innerHTML = `<img src="${data.imageUrl}" alt="About Us Image" class="rounded-lg max-w-full h-auto md:max-w-md shadow-md">`;
+                imageContainer.innerHTML = `<img loading="lazy" src="${data.imageUrl}" alt="About Us Image" class="rounded-lg max-w-full h-auto md:max-w-md shadow-md">`;
             } else {
                 imageContainer.innerHTML = '';
             }
@@ -2578,6 +2660,34 @@
             showToast("Failed to update logo: " + error.message, "error");
         }
     });
+// --- Add this entire block to your script ---
+
+document.getElementById('adminDashboardPage').addEventListener('click', async (e) => {
+    // This checks if the clicked element is the save button
+    if (e.target.id === 'saveDonationContentBtn') {
+        const title = document.getElementById('donateTitleAdmin').value;
+        const text = document.getElementById('donateTextAdmin').value;
+        const qrUrl = document.getElementById('donateQrUrlAdmin').value;
+
+        if (!title || !text || !qrUrl) {
+            showToast("Please fill all donation content fields.", "error");
+            return;
+        }
+
+        try {
+            // Saves the data to the 'donationPage' document in Firestore
+            await setDoc(doc(db, "siteContent", "donationPage"), {
+                title,
+                text,
+                qrUrl
+            }, { merge: true });
+            showToast("Donation page content updated successfully!");
+        } catch (error) {
+            showToast("Failed to update donation content: " + error.message, "error");
+            console.error("Error saving donation content:", error);
+        }
+    }
+});
 
     // --- CHAT FUNCTIONS ---
     function openChatForTicket(issueId, role) {
@@ -2591,14 +2701,8 @@
         sendBtn.dataset.issueId = issueId;
         sendBtn.dataset.role = role;
 
-        const messagesQuery = query(
-            collection(db, "issues", issueId, "messages"),
-            orderBy("timestamp", "asc")
-        );
-
-        if (unsubscribeFromChat) {
-            unsubscribeFromChat();
-        }
+        const messagesQuery = query(collection(db, "issues", issueId, "messages"), orderBy("timestamp", "asc"));
+        if (unsubscribeFromChat) unsubscribeFromChat();
 
         unsubscribeFromChat = onSnapshot(messagesQuery, (snapshot) => {
             messagesContainer.innerHTML = '';
@@ -2609,13 +2713,11 @@
                     const msg = doc.data();
                     const messageDiv = document.createElement('div');
                     messageDiv.classList.add('flex', 'flex-col', 'max-w-[80%]', 'p-2', 'rounded-lg');
-
                     if (msg.sender === role) {
                         messageDiv.classList.add('bg-blue-500', 'text-white', 'self-end', 'rounded-br-none');
                     } else {
                         messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'self-start', 'rounded-bl-none');
                     }
-
                     messageDiv.innerHTML = `<p class="px-2">${msg.text}</p>`;
                     messagesContainer.appendChild(messageDiv);
                 });
@@ -2630,192 +2732,121 @@
         const role = btn.dataset.role;
         const input = document.getElementById('chatMessageInput');
         const text = input.value.trim();
-
         if (!text || !issueId || !role) return;
-
         try {
-            await addDoc(collection(db, "issues", issueId, "messages"), {
-                text: text,
-                sender: role,
-                timestamp: serverTimestamp()
-            });
+            await addDoc(collection(db, "issues", issueId, "messages"), { text, sender: role, timestamp: serverTimestamp() });
             input.value = '';
         } catch (error) {
-            console.error("Error sending message:", error);
             showToast("Could not send message.", "error");
         }
     });
 
     document.getElementById('closeChatModalBtn').addEventListener('click', () => {
-        if (unsubscribeFromChat) {
-            unsubscribeFromChat();
-            unsubscribeFromChat = null;
-        }
+        if (unsubscribeFromChat) unsubscribeFromChat();
+        unsubscribeFromChat = null;
         document.getElementById('chatModal').classList.add('hidden');
     });
 
     // --- NOTIFICATION FUNCTIONS ---
     async function listenForNotifications(userId) {
-        if (notificationListenerUnsubscribe) {
-            notificationListenerUnsubscribe();
-        }
-
+        if (notificationListenerUnsubscribe) notificationListenerUnsubscribe();
         const q = query(collection(db, "notifications"), where('target', 'in', ['all', userId]));
-
         notificationListenerUnsubscribe = onSnapshot(q, (snapshot) => {
             const allNotifications = [];
             let unreadCount = 0;
-            
             snapshot.forEach(doc => {
                 const notification = { id: doc.id, ...doc.data() };
                 allNotifications.push(notification);
-                if (!notification.readBy || !notification.readBy.includes(userId)) {
-                    unreadCount++;
-                }
+                if (!notification.readBy || !notification.readBy.includes(userId)) unreadCount++;
             });
-
             allNotifications.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
-
-            const notificationDot = document.getElementById('notificationDot');
-            if (unreadCount > 0) {
-                notificationDot.classList.remove('hidden');
-            } else {
-                notificationDot.classList.add('hidden');
-            }
-
+            domElements.notificationDot.classList.toggle('hidden', unreadCount === 0);
             populateNotificationPanel(allNotifications, userId);
         });
     }
 
     function populateNotificationPanel(notifications, userId) {
-        const list = document.getElementById('notificationList');
-        if (!list) return;
-        list.innerHTML = '';
-
+        if (!domElements.notificationList) return;
+        domElements.notificationList.innerHTML = '';
         if (notifications.length === 0) {
-            list.innerHTML = '<p class="p-4 text-sm text-gray-500">No notifications yet.</p>';
+            domElements.notificationList.innerHTML = '<p class="p-4 text-sm text-gray-500">No notifications yet.</p>';
             return;
         }
-
         notifications.forEach(notif => {
             const isUnread = !notif.readBy || !notif.readBy.includes(userId);
             const item = document.createElement('div');
             item.className = `p-3 border-b hover:bg-gray-50 ${isUnread ? 'bg-blue-50' : ''}`;
-            
             const date = notif.timestamp ? new Date(notif.timestamp.toDate()).toLocaleString() : '';
-
-            item.innerHTML = `
-                <p class="text-sm text-gray-800">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-1">${date}</p>
-            `;
-            list.appendChild(item);
+            item.innerHTML = `<p class="text-sm text-gray-800">${notif.message}</p><p class="text-xs text-gray-400 mt-1">${date}</p>`;
+            domElements.notificationList.appendChild(item);
         });
     }
 
     async function markNotificationsAsRead(userId) {
         const q = query(collection(db, "notifications"), where('target', 'in', ['all', userId]));
         const snapshot = await getDocs(q);
-
         snapshot.forEach(doc => {
             const notification = doc.data();
             if (!notification.readBy || !notification.readBy.includes(userId)) {
-                updateDoc(doc.ref, {
-                    readBy: arrayUnion(userId)
-                });
+                updateDoc(doc.ref, { readBy: arrayUnion(userId) });
             }
         });
     }
 
     document.getElementById('notificationBellBtn').addEventListener('click', (e) => {
         e.stopPropagation();
-        const panel = document.getElementById('notificationPanel');
-        panel.classList.toggle('hidden');
-        
-        if (!panel.classList.contains('hidden')) {
+        domElements.notificationPanel.classList.toggle('hidden');
+        if (!domElements.notificationPanel.classList.contains('hidden')) {
             const user = auth.currentUser;
-            if (user) {
-                markNotificationsAsRead(user.uid);
-            }
+            if (user) markNotificationsAsRead(user.uid);
         }
     });
 
-    // --- DROPDOWN FIX ---
+    // --- DROPDOWN & GLOBAL CLICK ---
     document.getElementById('quizzesDropdownBtn').addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent the window click listener from firing immediately
-        const dropdown = e.currentTarget.parentElement;
-        dropdown.classList.toggle('open');
+        e.stopPropagation();
+        e.currentTarget.parentElement.classList.toggle('open');
     });
 
     window.addEventListener('click', (e) => {
         const openDropdown = document.querySelector('.dropdown.open');
-        if (openDropdown && !openDropdown.contains(e.target)) {
-             openDropdown.classList.remove('open');
-        }
-        const panel = document.getElementById('notificationPanel');
+        if (openDropdown && !openDropdown.contains(e.target)) openDropdown.classList.remove('open');
+        
         const bell = document.getElementById('notificationBellBtn');
-        if (panel && !panel.classList.contains('hidden') && !bell.contains(e.target) && !panel.contains(e.target)) {
-            panel.classList.add('hidden');
+        if (domElements.notificationPanel && !domElements.notificationPanel.classList.contains('hidden') && !bell.contains(e.target) && !domElements.notificationPanel.contains(e.target)) {
+            domElements.notificationPanel.classList.add('hidden');
         }
     });
 
     function setupAdminNotificationListeners() {
         document.querySelectorAll('input[name="notificationTarget"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                const specificUserInput = document.getElementById('specificUserEmailInput');
-                if (e.target.value === 'specific') {
-                    specificUserInput.classList.remove('hidden');
-                } else {
-                    specificUserInput.classList.add('hidden');
-                }
+                domElements.admin.specificUserEmailInput.classList.toggle('hidden', e.target.value !== 'specific');
             });
         });
-
         document.getElementById('sendNotificationBtn').addEventListener('click', sendNotification);
     }
 
     async function sendNotification() {
-        const message = document.getElementById('notificationMessageInput').value.trim();
-        if (!message) {
-            showToast("Message cannot be empty.", "error");
-            return;
-        }
-
+        const message = domElements.admin.notificationMessageInput.value.trim();
+        if (!message) { showToast("Message cannot be empty.", "error"); return; }
         const targetType = document.querySelector('input[name="notificationTarget"]:checked').value;
         let targetValue = 'all';
-
         if (targetType === 'specific') {
-            const email = document.getElementById('specificUserEmailInput').value.trim();
-            if (!email) {
-                showToast("Please enter a user email.", "error");
-                return;
-            }
-            
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("email", "==", email));
+            const email = domElements.admin.specificUserEmailInput.value.trim();
+            if (!email) { showToast("Please enter a user email.", "error"); return; }
+            const q = query(collection(db, "users"), where("email", "==", email));
             const querySnapshot = await getDocs(q);
-            
-            if (querySnapshot.empty) {
-                showToast("User with that email not found.", "error");
-                return;
-            }
-            
-            const userDoc = querySnapshot.docs[0];
-            targetValue = userDoc.id;
+            if (querySnapshot.empty) { showToast("User with that email not found.", "error"); return; }
+            targetValue = querySnapshot.docs[0].id;
         }
-        
         try {
-            await addDoc(collection(db, "notifications"), {
-                message: message,
-                target: targetValue,
-                readBy: [],
-                timestamp: serverTimestamp()
-            });
+            await addDoc(collection(db, "notifications"), { message, target: targetValue, readBy: [], timestamp: serverTimestamp() });
             showToast("Notification sent successfully!");
-            document.getElementById('notificationMessageInput').value = '';
-            document.getElementById('specificUserEmailInput').value = '';
+            domElements.admin.notificationMessageInput.value = '';
+            domElements.admin.specificUserEmailInput.value = '';
         } catch (error) {
             showToast("Failed to send notification.", "error");
-            console.error("Error sending notification: ", error);
         }
     }
 
