@@ -36,6 +36,22 @@
             100% { transform: rotate(360deg); }
         }
 
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            background-color: #f7fafc;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #pageLoader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .page {
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
@@ -269,6 +285,11 @@
 
 <body class="text-gray-800">
 
+    <div id="pageLoader">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+        <h2 class="text-2xl font-semibold text-gray-700 mt-6">Loading Study Buddy...</h2>
+    </div>
+
     <div id="toast" class="px-6 py-3 rounded-full text-white font-medium shadow-lg"></div>
 
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
@@ -284,7 +305,7 @@
 
     <div id="appContainer">
 
-        <div id="loginPage" class="page min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <div id="loginPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold text-gray-900">Welcome Back!</h2>
@@ -1048,6 +1069,7 @@
 
     // --- Performance: Cache DOM Elements ---
     const domElements = {
+        pageLoader: document.getElementById('pageLoader'),
         pageContent: document.getElementById('pageContent'),
         allPages: document.querySelectorAll('.page'),
         mainAppWrapper: document.getElementById('mainAppWrapper'),
@@ -1105,7 +1127,9 @@
     const showPage = (pageId) => {
         domElements.allPages.forEach(page => page.classList.add('hidden'));
         const pageToShow = document.getElementById(pageId);
-        if (pageToShow) pageToShow.classList.remove('hidden');
+        if (pageToShow) {
+            pageToShow.classList.remove('hidden');
+        }
     };
 
     const renderPage = (templateId) => {
@@ -1144,7 +1168,15 @@
         setActiveNav(pageId);
     };
 
-    // --- Authentication ---
+    // --- Authentication & Initial Load ---
+    window.onload = () => {
+        setTimeout(() => {
+            if (domElements.pageLoader) {
+                domElements.pageLoader.classList.add('hidden');
+            }
+        }, 1500); 
+    };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             if (user.email === 'admin@admin.com') {
@@ -2660,34 +2692,57 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             showToast("Failed to update logo: " + error.message, "error");
         }
     });
-// --- Add this entire block to your script ---
 
-document.getElementById('adminDashboardPage').addEventListener('click', async (e) => {
-    // This checks if the clicked element is the save button
-    if (e.target.id === 'saveDonationContentBtn') {
-        const title = document.getElementById('donateTitleAdmin').value;
-        const text = document.getElementById('donateTextAdmin').value;
-        const qrUrl = document.getElementById('donateQrUrlAdmin').value;
-
-        if (!title || !text || !qrUrl) {
-            showToast("Please fill all donation content fields.", "error");
-            return;
-        }
-
-        try {
-            // Saves the data to the 'donationPage' document in Firestore
-            await setDoc(doc(db, "siteContent", "donationPage"), {
-                title,
-                text,
-                qrUrl
-            }, { merge: true });
-            showToast("Donation page content updated successfully!");
-        } catch (error) {
-            showToast("Failed to update donation content: " + error.message, "error");
-            console.error("Error saving donation content:", error);
+    // ▼▼▼ CHANGE START ▼▼▼ Added functions to load donation page content
+    async function loadDonationContentForAdmin() {
+        const docRef = doc(db, "siteContent", "donationPage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('donateTitleAdmin').value = data.title || '';
+            document.getElementById('donateTextAdmin').value = data.text || '';
+            document.getElementById('donateQrUrlAdmin').value = data.qrUrl || '';
         }
     }
-});
+
+    async function loadDonatePage() {
+        const docRef = doc(db, "siteContent", "donationPage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('donateTitle').textContent = data.title || "Support Study Buddy";
+            document.getElementById('donateText').innerHTML = data.text ? data.text.replace(/\n/g, '<br>') : "<p>Your contributions help us keep Study Buddy free...</p>";
+            if (data.qrUrl) {
+                document.getElementById('donateQrImage').src = data.qrUrl;
+            }
+        }
+    }
+    // ▲▲▲ CHANGE END ▲▲▲
+
+    document.getElementById('adminDashboardPage').addEventListener('click', async (e) => {
+        if (e.target.id === 'saveDonationContentBtn') {
+            const title = document.getElementById('donateTitleAdmin').value;
+            const text = document.getElementById('donateTextAdmin').value;
+            const qrUrl = document.getElementById('donateQrUrlAdmin').value;
+
+            if (!title || !text || !qrUrl) {
+                showToast("Please fill all donation content fields.", "error");
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "siteContent", "donationPage"), {
+                    title,
+                    text,
+                    qrUrl
+                }, { merge: true });
+                showToast("Donation page content updated successfully!");
+            } catch (error) {
+                showToast("Failed to update donation content: " + error.message, "error");
+                console.error("Error saving donation content:", error);
+            }
+        }
+    });
 
     // --- CHAT FUNCTIONS ---
     function openChatForTicket(issueId, role) {
