@@ -1218,7 +1218,7 @@
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
-        if (email === 'admin' && password === 'admin@123') {
+        if (email === 'admin' && password === 'Munni@9400') {
             try { await signInWithEmailAndPassword(auth, 'admin@admin.com', 'admin@123'); } 
             catch (error) { showToast("Admin account setup required.", "error"); }
             return;
