@@ -720,7 +720,7 @@
                         <div class="bg-white rounded-2xl shadow-xl p-8">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
-                                    <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th><th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th></tr></thead>
+                                    <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th><th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th><th class="text-left py-3 px-4 font-semibold text-sm">Status</th><th class="text-left py-3 px-4 font-semibold text-sm">Action</th></tr></thead>
                                     <tbody id="prizeClaimsTableBody"></tbody>
                                 </table>
                             </div>
@@ -826,6 +826,13 @@
                 <div class="flex items-center justify-between">
                     <p class="text-gray-700">Current focus: <strong id="currentUserFocus">Loading...</strong></p>
                     <button id="changeFocusBtn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">Change</button>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-semibold mb-4">My Rewards</h3>
+                <div class="text-center bg-green-100 text-green-800 p-4 rounded-lg">
+                    <p class="text-lg">Total Earnings</p>
+                    <p id="totalRewards" class="text-4xl font-bold">₹0</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8">
@@ -1035,7 +1042,7 @@
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion, deleteDoc, serverTimestamp, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion, deleteDoc, serverTimestamp, orderBy, where, limit, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase Configuration ---
     const firebaseConfig = {
@@ -1214,7 +1221,7 @@
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             await updateProfile(user, { displayName: name });
-            await setDoc(doc(db, "users", user.uid), { name: name, email: email, history: [] });
+            await setDoc(doc(db, "users", user.uid), { name: name, email: email, history: [], rewards: 0 });
         } catch (error) { showToast(error.message, "error"); }
     });
 
@@ -1469,6 +1476,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         if (docSnap.exists()) {
             const userData = docSnap.data();
             document.getElementById('currentUserFocus').textContent = (userData.grade && userData.targetExam) ? `${userData.grade} - ${userData.targetExam}` : 'Not set';
+            document.getElementById('totalRewards').textContent = `₹${userData.rewards || 0}`;
             
             const historyContainer = document.getElementById('historyContainer');
             historyContainer.innerHTML = '';
@@ -1852,6 +1860,18 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         
         const lastQuizResults = { ...activeQuizState, score, totalQuestions, percentage };
         const quizType = activeQuizState.type;
+        
+        if (quizType === 'competition') {
+            const user = auth.currentUser;
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                await updateDoc(userDocRef, {
+                    rewards: increment(20)
+                });
+                showToast("You've earned 20 Rs for participating!");
+            }
+        }
+
         activeQuizState = null;
 
         navigateToPage('quizResultPage');
@@ -2016,6 +2036,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     winnerId: user.uid,
                     winnerName: user.displayName,
                     paymentId: paymentId,
+                    status: 'Pending',
                     claimedAt: serverTimestamp()
                 });
                 await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
@@ -2526,7 +2547,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     const resultsQuery = query(collection(db, "competitionResults"));
                     const resultsSnapshot = await getDocs(resultsQuery);
                     if (resultsSnapshot.empty) {
-                        statusContainer.textContent = 'Competition has ended, but there were no participants.';
+                        statusContainer.textContent = 'Competition ended with no participants.';
+                        newBtn.classList.remove('hidden'); // Allow starting a new one
                     } else {
                         statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
                     }
@@ -2600,28 +2622,46 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
 
     async function loadPrizeClaims() {
         const tableBody = document.getElementById('prizeClaimsTableBody');
-        tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">Loading claims...</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Loading claims...</td></tr>';
         
         const q = query(collection(db, "prizeClaims"), orderBy("claimedAt", "desc"));
         onSnapshot(q, (snapshot) => {
             if (snapshot.empty) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="text-center p-4">No prize claims have been submitted.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">No prize claims have been submitted.</td></tr>';
                 return;
             }
             tableBody.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
+            snapshot.forEach(docHandle => {
+                const data = docHandle.data();
                 const date = data.claimedAt ? new Date(data.claimedAt.toDate()).toLocaleString() : 'N/A';
+                const status = data.status || 'Pending';
+                const isPaid = status === 'Paid';
                 const row = tableBody.insertRow();
                 row.className = 'border-b';
                 row.innerHTML = `
                     <td class="py-3 px-4">${data.winnerName}</td>
                     <td class="py-3 px-4 font-mono">${data.paymentId}</td>
                     <td class="py-3 px-4">${date}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-xs font-semibold rounded-full ${isPaid ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">${status}</span></td>
+                    <td class="py-3 px-4"><button data-id="${docHandle.id}" class="mark-paid-btn bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-md hover:bg-green-600 disabled:bg-gray-400" ${isPaid ? 'disabled' : ''}>Mark as Paid</button></td>
                 `;
             });
         });
     }
+
+    document.getElementById('prizeClaimsPage').addEventListener('click', async (e) => {
+        if(e.target.classList.contains('mark-paid-btn')) {
+            const claimId = e.target.dataset.id;
+            showConfirm('Mark as Paid?', 'Are you sure you want to mark this prize claim as paid?', async () => {
+                try {
+                    await updateDoc(doc(db, "prizeClaims", claimId), { status: 'Paid' });
+                    showToast("Claim marked as paid.");
+                } catch (error) {
+                    showToast("Failed to update claim status.", "error");
+                }
+            });
+        }
+    });
 
 
     // --- Site Content Management Functions ---
@@ -2903,3 +2943,4 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
 
 </body>
 </html>
+
