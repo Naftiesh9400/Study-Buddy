@@ -2519,10 +2519,19 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-green-100 text-green-800';
                     endBtn.classList.remove('hidden');
                     break;
-                case 'ended':
-                    statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
-                    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-yellow-100 text-yellow-800';
-                    break;
+               case 'ended':
+    // Check if there are any results before showing the message
+    const resultsQuery = query(collection(db, "competitionResults"));
+    const resultsSnapshot = await getDocs(resultsQuery);
+    
+    if (resultsSnapshot.empty) {
+        statusContainer.textContent = 'Competition has ended, but there were no participants.';
+    } else {
+        statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
+    }
+    
+    statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-yellow-100 text-yellow-800';
+    break;
                 case 'winner_declared':
                     statusContainer.textContent = 'Winner has been declared. Start a new competition to clear results.';
                     statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-indigo-100 text-indigo-800';
