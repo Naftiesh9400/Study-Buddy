@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Buddy - AI Question Solver</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com">
 
     <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -33,6 +33,22 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            background-color: #f7fafc;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #pageLoader.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .page {
@@ -268,6 +284,11 @@
 
 <body class="text-gray-800">
 
+    <div id="pageLoader">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+        <h2 class="text-2xl font-semibold text-gray-700 mt-6">Loading Study Buddy...</h2>
+    </div>
+
     <div id="toast" class="px-6 py-3 rounded-full text-white font-medium shadow-lg"></div>
 
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
@@ -283,8 +304,8 @@
 
     <div id="appContainer">
 
-        <div id="loginPage" class="page min-h-screen flex items-center justify-center bg-gray-100 p-4" style="display: none;">
-        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div id="loginPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold text-gray-900">Welcome Back!</h2>
                     <p class="text-gray-500 mt-2">Sign in to continue your journey.</p>
@@ -300,8 +321,8 @@
             </div>
         </div>
 
-        <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4" style="display: none;">
-        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold text-gray-900">Create Account</h2>
                     <p class="text-gray-500 mt-2">Get started with your new study buddy.</p>
@@ -318,8 +339,8 @@
             </div>
         </div>
         
-        <div id="setupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4" style="display: none;">
-        <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div id="setupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
+            <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold text-gray-900">Welcome, <span id="setupUserName"></span>!</h2>
                     <p class="text-gray-500 mt-2">Let's personalize your experience. What is your primary focus?</p>
@@ -359,8 +380,8 @@
             </div>
         </div>
         
-        <div id="mainAppWrapper" class="page hidden flex flex-col min-h-screen" style="display: none;">
-        <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200">
+        <div id="mainAppWrapper" class="page hidden flex flex-col min-h-screen">
+            <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center py-4">
                         <div class="flex items-center space-x-3">
@@ -435,8 +456,8 @@
             </footer>
         </div>
         
-        <div id="adminDashboardPage" class="page hidden" style="display: none;">
-        <div id="admin-overlay" class="hidden md:hidden"></div>
+        <div id="adminDashboardPage" class="page hidden">
+            <div id="admin-overlay" class="hidden md:hidden"></div>
             <div id="adminDashboardGrid">
                 <aside id="adminSidebar">
                     <div class="logo">
@@ -1047,6 +1068,7 @@
 
     // --- Performance: Cache DOM Elements ---
     const domElements = {
+        pageLoader: document.getElementById('pageLoader'),
         pageContent: document.getElementById('pageContent'),
         allPages: document.querySelectorAll('.page'),
         mainAppWrapper: document.getElementById('mainAppWrapper'),
@@ -1101,21 +1123,13 @@
     });
 
     // --- Page Navigation ---
-    // ▼▼▼ CHANGE START ▼▼▼ This function is updated to use inline styles for hiding/showing pages
     const showPage = (pageId) => {
-        // Hide all pages by setting their inline style to 'none'
-        domElements.allPages.forEach(page => {
-            page.style.display = 'none';
-        });
-
+        domElements.allPages.forEach(page => page.classList.add('hidden'));
         const pageToShow = document.getElementById(pageId);
         if (pageToShow) {
-            // Show the target page by removing the inline style.
-            // The browser will then apply the display property from the stylesheet (e.g., 'flex', 'block').
-            pageToShow.style.display = '';
+            pageToShow.classList.remove('hidden');
         }
     };
-    // ▲▲▲ CHANGE END ▲▲▲
 
     const renderPage = (templateId) => {
         const template = document.getElementById(templateId);
@@ -1153,7 +1167,15 @@
         setActiveNav(pageId);
     };
 
-    // --- Authentication ---
+    // --- Authentication & Initial Load ---
+    window.onload = () => {
+        setTimeout(() => {
+            if (domElements.pageLoader) {
+                domElements.pageLoader.classList.add('hidden');
+            }
+        }, 500); 
+    };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             if (user.email === 'admin@admin.com') {
@@ -1173,6 +1195,10 @@
             }
         } else {
             showPage('loginPage');
+        }
+        // Hide loader once auth state is determined
+        if (domElements.pageLoader && !domElements.pageLoader.classList.contains('hidden')) {
+             domElements.pageLoader.classList.add('hidden');
         }
     });
 
@@ -2470,7 +2496,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     // --- Admin Competition Management ---
     function loadCompetitionAdminPage() {
         const docRef = doc(db, "siteContent", "quizCompetition");
-        onSnapshot(docRef, (docSnap) => {
+        onSnapshot(docRef, async (docSnap) => {
             const data = docSnap.exists() ? docSnap.data() : {};
             document.getElementById('prizePoolAdmin').value = data.prizePool || '';
             document.getElementById('bannerImageUrlAdmin').value = data.bannerImageUrl || '';
@@ -2497,7 +2523,13 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     endBtn.classList.remove('hidden');
                     break;
                 case 'ended':
-                    statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
+                    const resultsQuery = query(collection(db, "competitionResults"));
+                    const resultsSnapshot = await getDocs(resultsQuery);
+                    if (resultsSnapshot.empty) {
+                        statusContainer.textContent = 'Competition has ended, but there were no participants.';
+                    } else {
+                        statusContainer.textContent = 'Competition has ended. Declare a winner from the results below.';
+                    }
                     statusContainer.className = 'mb-4 p-3 rounded-lg text-center font-semibold bg-yellow-100 text-yellow-800';
                     break;
                 case 'winner_declared':
@@ -2512,19 +2544,6 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             } else {
                 winnerDisplay.classList.add('hidden');
             }
-        });
-
-        const announcementsContainer = document.getElementById('competitionAnnouncementListAdmin');
-        const annQuery = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"));
-        onSnapshot(annQuery, (snapshot) => {
-            announcementsContainer.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-white p-2 rounded-md shadow-sm';
-                item.innerHTML = `<p class="text-sm">${data.message}</p><button data-id="${doc.id}" class="delete-comp-ann-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
-                announcementsContainer.appendChild(item);
-            });
         });
 
         const resultsTableBody = document.getElementById('competitionResultsTableBody');
@@ -2669,34 +2688,55 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             showToast("Failed to update logo: " + error.message, "error");
         }
     });
-// --- Add this entire block to your script ---
-
-document.getElementById('adminDashboardPage').addEventListener('click', async (e) => {
-    // This checks if the clicked element is the save button
-    if (e.target.id === 'saveDonationContentBtn') {
-        const title = document.getElementById('donateTitleAdmin').value;
-        const text = document.getElementById('donateTextAdmin').value;
-        const qrUrl = document.getElementById('donateQrUrlAdmin').value;
-
-        if (!title || !text || !qrUrl) {
-            showToast("Please fill all donation content fields.", "error");
-            return;
-        }
-
-        try {
-            // Saves the data to the 'donationPage' document in Firestore
-            await setDoc(doc(db, "siteContent", "donationPage"), {
-                title,
-                text,
-                qrUrl
-            }, { merge: true });
-            showToast("Donation page content updated successfully!");
-        } catch (error) {
-            showToast("Failed to update donation content: " + error.message, "error");
-            console.error("Error saving donation content:", error);
+    
+    async function loadDonationContentForAdmin() {
+        const docRef = doc(db, "siteContent", "donationPage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('donateTitleAdmin').value = data.title || '';
+            document.getElementById('donateTextAdmin').value = data.text || '';
+            document.getElementById('donateQrUrlAdmin').value = data.qrUrl || '';
         }
     }
-});
+
+    async function loadDonatePage() {
+        const docRef = doc(db, "siteContent", "donationPage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('donateTitle').textContent = data.title || "Support Study Buddy";
+            document.getElementById('donateText').innerHTML = data.text ? data.text.replace(/\n/g, '<br>') : "<p>Your contributions help us keep Study Buddy free...</p>";
+            if (data.qrUrl) {
+                document.getElementById('donateQrImage').src = data.qrUrl;
+            }
+        }
+    }
+
+    document.getElementById('adminDashboardPage').addEventListener('click', async (e) => {
+        if (e.target.id === 'saveDonationContentBtn') {
+            const title = document.getElementById('donateTitleAdmin').value;
+            const text = document.getElementById('donateTextAdmin').value;
+            const qrUrl = document.getElementById('donateQrUrlAdmin').value;
+
+            if (!title || !text || !qrUrl) {
+                showToast("Please fill all donation content fields.", "error");
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "siteContent", "donationPage"), {
+                    title,
+                    text,
+                    qrUrl
+                }, { merge: true });
+                showToast("Donation page content updated successfully!");
+            } catch (error) {
+                showToast("Failed to update donation content: " + error.message, "error");
+                console.error("Error saving donation content:", error);
+            }
+        }
+    });
 
     // --- CHAT FUNCTIONS ---
     function openChatForTicket(issueId, role) {
