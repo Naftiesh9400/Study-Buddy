@@ -589,7 +589,12 @@
                                                 <label for="logoUrlAdmin" class="block text-sm font-medium text-gray-600">Logo Image URL</label>
                                                 <input id="logoUrlAdmin" type="text" placeholder="https://example.com/logo.png" class="mt-1 w-full px-3 py-2 border rounded-lg">
                                             </div>
-                                            <button id="saveLogoBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Logo</button>
+                                            <!-- NEW: Gemini API Key Input -->
+                                            <div>
+                                                <label for="geminiApiKeyAdmin" class="block text-sm font-medium text-gray-600">Gemini API Key</label>
+                                                <input id="geminiApiKeyAdmin" type="text" placeholder="AIzaSy..." class="mt-1 w-full px-3 py-2 border rounded-lg">
+                                            </div>
+                                            <button id="saveGlobalSettingsBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Global Settings</button>
                                         </div>
                                     </div>
                                </div>
@@ -733,8 +738,8 @@
                         </div>
                     </div>
                     <div id="prizeClaimsPage" class="admin-content-section hidden">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
-                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                           <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
+                         <div class="bg-white rounded-2xl shadow-xl p-8">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
                                     <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th><th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th><th class="text-left py-3 px-4 font-semibold text-sm">Status</th><th class="text-left py-3 px-4 font-semibold text-sm">Action</th></tr></thead>
@@ -775,7 +780,6 @@
 
     </div>
 
-    <!-- Page Templates -->
     <template id="mainAppPageTemplate">
         <div id="announcementsContainer" class="mb-8"></div>
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
@@ -857,7 +861,6 @@
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <h3 class="text-xl font-semibold mb-4">Community</h3>
-                <!-- Placeholder for WhatsApp link - Replace with actual link -->
                 <a href="https://chat.whatsapp.com/your-group-invite-link" target="_blank" class="w-full bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition shadow-md flex items-center justify-center space-x-2">
                     <img loading="lazy" src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="h-6 w-6">
                     <span>Join WhatsApp Community</span>
@@ -1025,7 +1028,6 @@
             </div>
             <div id="donateQrContainer" class="flex flex-col items-center">
                 <p class="font-semibold mb-4">You can scan the QR code below to donate.</p>
-                <!-- Default QR Code for UPI/Paytm is a placeholder - Admin can update it -->
                 <img loading="lazy" id="donateQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=paytmmp%3A%2F%2Fupi" alt="Donation QR Code" class="w-48 h-48 rounded-lg shadow-md">
             </div>
         </div>
@@ -1067,8 +1069,6 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion, deleteDoc, serverTimestamp, orderBy, where, limit, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase Configuration ---
-    // NOTE: In a Canvas environment, these variables are typically provided externally.
-    // The following config is kept as is from the original file, which is assumed to be running in an environment where these keys work.
     const firebaseConfig = {
         apiKey: "AIzaSyAFBbsNLT4TdPT_ufuo6dYG_nqCCoVYEa0",
         authDomain: "cbse-4fbf5.firebaseapp.com",
@@ -1096,6 +1096,9 @@
     let unsubscribeFromChat = null;
     let notificationListenerUnsubscribe = null;
     let activeQuizState = null;
+    
+    // NEW: Global API Key variable. Default is placeholder.
+    window.GEMINI_API_KEY_GLOBAL = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA";
 
     // --- Performance: Cache DOM Elements ---
     const domElements = {
@@ -1182,7 +1185,6 @@
 
     const navigateToPage = (pageId) => {
         if (activeQuizState && activeQuizState.type === 'competition' && pageId !== 'quizTakerPage') {
-            // Cancel ongoing competition if user navigates away
             activeQuizState = null;
             clearInterval(quizTimerInterval);
             showToast("Competition progress has been reset.", "error");
@@ -1210,6 +1212,9 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            // Load global site settings (including API Key) for all users
+            await loadGlobalSiteSettings(); 
+
             if (user.email === 'admin@admin.com') {
                 showPage('adminDashboardPage');
                 loadAdminDashboard();
@@ -1217,7 +1222,6 @@
                 const userDocRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(userDocRef);
                 if (docSnap.exists() && docSnap.data().grade) {
-                    loadGlobalSiteSettings(); 
                     listenForNotifications(user.uid);
                     navigateToPage('mainAppPage');
                 } else {
@@ -1406,6 +1410,14 @@
         getAnswerBtn.disabled = true;
         getAnswerBtn.textContent = 'Fetching Solution...';
         document.getElementById('errorBox').classList.add('hidden');
+        
+        // CHECK API KEY AVAILABILITY
+        if (!window.GEMINI_API_KEY_GLOBAL || window.GEMINI_API_KEY_GLOBAL === 'AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA') {
+            showError("The Gemini API Key is missing. Please contact the administrator.");
+            resetButtonState();
+            return;
+        }
+
 
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (!userDoc.exists() || !userDoc.data().targetExam) {
@@ -1449,11 +1461,10 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     }
 
     async function getSolution(prompt, imageData = null, userQuestion, topic) {
-        const apiKey = ""; // Keep this blank. Canvas will inject the key.
-        const finalApiKey = typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : apiKey;
-        if (!finalApiKey) { showError("API Key is missing."); return; }
+        // Use the globally managed API Key
+        const finalApiKey = window.GEMINI_API_KEY_GLOBAL;
 
-        // CORRECTED MODEL NAME: Changed gemini-1.5-flash to gemini-pro-vision for v1beta multimodal support
+        // Use gemini-pro-vision for multimodal (image) support on the v1beta endpoint
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
         
         const parts = [{ text: prompt }];
@@ -1464,7 +1475,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (!response.ok) { 
                 const err = await response.json(); 
-                throw new Error(err.error.message); 
+                throw new Error(err.error.message || "Unknown API error."); 
             }
             const result = await response.json();
             
@@ -1472,26 +1483,17 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 const fullResponseText = result.candidates[0].content.parts[0].text;
                 let solutionText = fullResponseText, videoUrl = null, quizData = null;
                 
-                // Extract QUIZ_DATA
                 const quizDataMatch = fullResponseText.match(/QUIZ_DATA:\s*({.*})/s);
                 if(quizDataMatch && quizDataMatch[1]){
                     try { quizData = JSON.parse(quizDataMatch[1]); } 
                     catch(e){ console.error("Failed to parse quiz JSON", e); quizData = null; }
                 }
 
-                // Extract VIDEO_URL
                 const videoUrlMatch = fullResponseText.match(/VIDEO_URL:\s*(https?:\/\/[^\s]+)/);
                 if(videoUrlMatch && videoUrlMatch[1]){ videoUrl = videoUrlMatch[1]; }
 
-                // Clean up solution text
                 solutionText = fullResponseText.split("VIDEO_URL:")[0].split("QUIZ_DATA:")[0].trim();
-
-                // Simple markdown rendering for display
-                document.getElementById('answer').innerHTML = solutionText
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>')
-                    .replace(/\n/g, '<br>');
+                document.getElementById('answer').innerHTML = solutionText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>').replace(/\n/g, '<br>');
                 
                 if (videoUrl) { displayVideo(videoUrl); }
                 
@@ -1707,6 +1709,13 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 showToast("You must be logged in to start a quiz.", "error");
                 return;
             }
+            
+            // CHECK API KEY AVAILABILITY
+            if (!window.GEMINI_API_KEY_GLOBAL || window.GEMINI_API_KEY_GLOBAL === 'AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA') {
+                showToast("The Gemini API Key is missing. Please contact the administrator.", "error");
+                return;
+            }
+
 
             let numQuestions = 10;
             let userFocus = '';
@@ -1726,7 +1735,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 } else {
                     numQuestions = parseInt(selectedLengthOption, 10);
                 }
-                 const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(50));
+                
+                const q = query(collection(db, "questionBank"), where("topic", "==", userFocus), limit(50));
                 const snapshot = await getDocs(q);
                 
                 const allAvailableQuestions = snapshot.docs
@@ -1734,33 +1744,24 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     .filter(q => q.options && q.options.length > 0 && q.correctAnswer);
 
                 if(allAvailableQuestions.length < numQuestions) {
-                    // Fallback: If not enough bank questions, generate on the fly
-                    showToast(`Not enough practice questions in the bank. Generating ${numQuestions} questions now.`, "error");
-                    const generatedQuestions = await generateQuestionsForTopic(userFocus, numQuestions);
-                    if (generatedQuestions) {
-                         startQuiz(generatedQuestions, type, userFocus);
-                    } else {
-                        throw new Error("Failed to generate questions.");
-                    }
-                    
-                } else {
-                    // Use questions from the bank
-                    shuffleArray(allAvailableQuestions);
-                    const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
-                    startQuiz(quizQuestions, type, userFocus);
+                    // Fallback to generating live questions if the bank is small
+                    showToast(`Question bank too small. Generating live quiz (this may take a moment)...`);
+                    const questions = await generateQuestionsForTopic(userFocus, numQuestions);
+                    if (questions) startQuiz(questions, type, userFocus);
+                    return;
                 }
 
-            } else { // competition always generates questions to ensure fresh content
+                shuffleArray(allAvailableQuestions);
+                const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
+                startQuiz(quizQuestions, type, userFocus);
+
+            } else { // competition
                 const userDocRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(userDocRef);
                 const userData = docSnap.data();
-                if(!docSnap.exists() || !userData.targetExam) {
-                    showToast("Please set your focus in your profile first.", "error");
-                    return;
-                }
                 userFocus = `${userData.grade} - ${userData.targetExam}`;
                 
-                const questions = await generateQuestionsForTopic(userFocus, 10); // Competition is always 10 questions
+                const questions = await generateQuestionsForTopic(userFocus, numQuestions);
                 if (questions) {
                     startQuiz(questions, type, userFocus);
                 }
@@ -1778,14 +1779,15 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     }
 
     async function generateQuestionsForTopic(topic, numQuestions) {
-        const apiKey = ""; // Keep this blank. Canvas will inject the key.
-        const finalApiKey = typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : apiKey;
-        if (!finalApiKey) {
-            showError("API Key is missing.");
-            return null;
-        }
+        // Use the globally managed API Key
+        const finalApiKey = window.GEMINI_API_KEY_GLOBAL;
         
-        // CORRECTED MODEL NAME: Changed gemini-1.5-flash to gemini-pro-vision for v1beta output structure.
+        if (!finalApiKey || finalApiKey === 'AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA') { 
+            showToast("API Key is missing or default. Please wait for the Admin to set it.", "error"); 
+            return null; 
+        }
+
+        // Use gemini-pro-vision for the v1beta endpoint
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
 
         const prompt = `Generate ${numQuestions} multiple-choice questions for an Indian student studying '${topic}'. The questions should be relevant to this curriculum. Provide the output as a valid JSON array of objects. Each object must have these keys: "question" (string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). Do not include any other text or explanations in your response, only the JSON array.`;
@@ -1802,17 +1804,16 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             });
             if (!response.ok) {
                 const err = await response.json();
-                throw new Error(err.error.message);
+                throw new Error(err.error.message || "Unknown API error.");
             }
             const result = await response.json();
             const textResponse = result.candidates[0].content.parts[0].text;
             
-            // Attempt to find and parse the JSON array
             const jsonMatch = textResponse.match(/\[\s*\{[\s\S]*\}\s*\]/);
             if (jsonMatch && jsonMatch[0]) {
                 return JSON.parse(jsonMatch[0]);
             } else {
-                throw new Error("Invalid JSON format from AI or no questions generated.");
+                throw new Error("Invalid JSON format from AI. Response: " + textResponse.substring(0, 500));
             }
         } catch (error) {
             console.error("AI Question Generation Error:", error);
@@ -1859,9 +1860,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         document.getElementById('nextQuestionBtn').textContent = activeQuizState.currentQuestionIndex === activeQuizState.questions.length - 1 ? "Finish Quiz" : "Next Question";
 
         if (activeQuizState.currentQuestionIndex === 0) {
-            // Timer logic, starts only on the first question display
             clearInterval(quizTimerInterval);
-            let timeLeft = 600; // 10 mins (600 seconds)
+            let timeLeft = 600; // 10 mins
             const timerEl = document.getElementById('quizTimer');
             
             quizTimerInterval = setInterval(() => {
@@ -1917,7 +1917,6 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const quizType = activeQuizState.type;
         
         if (quizType === 'competition') {
-            // Reward for participation
             const user = auth.currentUser;
             if (user) {
                 const userDocRef = doc(db, "users", user.uid);
@@ -1932,14 +1931,13 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
 
         navigateToPage('quizResultPage');
         
-        // Populate results page immediately after navigation
         setTimeout(async () => {
             document.getElementById('finalScore').textContent = `${lastQuizResults.score}/${lastQuizResults.totalQuestions}`;
             document.getElementById('finalAccuracy').textContent = `${lastQuizResults.percentage}%`;
             
-            const rank = quizType === 'competition' 
-                ? await calculateCompetitionRank(lastQuizResults.percentage)
-                : await calculateRank(lastQuizResults.percentage);
+            const rank = quizType === 'practice' 
+                ? await calculateRank(lastQuizResults.percentage)
+                : await calculateCompetitionRank(lastQuizResults.percentage);
             document.getElementById('finalRank').textContent = rank;
 
             const reviewContainer = document.getElementById('quizReviewContainer');
@@ -1951,9 +1949,9 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 q.options.forEach(opt => {
                     let style = 'border-gray-300';
                     if (opt === q.correctAnswer) {
-                        style = 'bg-green-100 border-green-500 text-green-800 font-semibold';
+                        style = 'bg-green-100 border-green-500 text-green-800';
                     } else if (opt === userAnswer && !isCorrect) {
-                        style = 'bg-red-100 border-red-500 text-red-800 font-semibold';
+                        style = 'bg-red-100 border-red-500 text-red-800';
                     }
                     optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
                 });
@@ -2006,25 +2004,33 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     async function calculateRank(userPercentage) {
         const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"));
         const snapshot = await getDocs(q);
-        // Using distinct percentages for ranking based on the highest score only (simple leaderboard)
-        const uniqueScores = Array.from(new Set(snapshot.docs.map(doc => doc.data().percentage))).sort((a, b) => b - a);
+        const allScores = snapshot.docs.map(doc => doc.data().percentage);
         
-        let rank = uniqueScores.findIndex(score => userPercentage >= score) + 1;
-        if (rank === 0) rank = uniqueScores.length + 1; 
-
+        let rank = 1;
+        for (const score of allScores) {
+            if (userPercentage < score) {
+                rank++;
+            } else {
+                break;
+            }
+        }
         return `#${rank}`;
     }
 
     async function calculateCompetitionRank(userPercentage) {
-        const q = query(collection(db, "competitionResults"), orderBy("percentage", "desc"), orderBy("timestamp", "asc"));
+        const q = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
         const snapshot = await getDocs(q);
-        
-        // Find the rank based on score. Break ties using time (earlier time is better).
         const allScores = snapshot.docs.map(doc => doc.data().percentage);
         
-        let rank = allScores.findIndex(score => userPercentage === score);
-        // Note: Due to potential race conditions in real Firestore, this is a simplified ranking.
-        return rank >= 0 ? `#${rank + 1}` : '--';
+        let rank = 1;
+        for (const score of allScores) {
+            if (userPercentage < score) {
+                rank++;
+            } else {
+                break;
+            }
+        }
+        return `#${rank}`;
     }
 
     // --- Leaderboard Functions ---
@@ -2032,8 +2038,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const tableBody = document.getElementById('leaderboardTableBody');
         tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Loading leaderboard...</td></tr>';
 
-        // Fetch all practice results, sort by percentage, then keep only the highest percentage per user
-        const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"));
+        const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"), limit(20));
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
@@ -2041,31 +2046,11 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             return;
         }
 
-        const topScores = {};
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            // Only keep the best score for each user
-            if (!topScores[data.userId] || data.percentage > topScores[data.userId].percentage) {
-                 topScores[data.userId] = {
-                    ...data,
-                    timestamp: data.timestamp ? data.timestamp.toDate() : new Date()
-                 };
-            }
-        });
-
-        // Convert to array and sort by score (desc), then date (asc - for tie break)
-        const sortedLeaders = Object.values(topScores).sort((a, b) => {
-            if (b.percentage !== a.percentage) {
-                return b.percentage - a.percentage;
-            }
-            return a.timestamp.getTime() - b.timestamp.getTime(); 
-        });
-
-
         tableBody.innerHTML = '';
         let rank = 1;
-        sortedLeaders.forEach(data => {
-            const date = data.timestamp ? data.timestamp.toLocaleDateString() : 'N/A';
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'N/A';
             const row = tableBody.insertRow();
             row.className = 'border-b hover:bg-gray-50';
             row.innerHTML = `
@@ -2090,50 +2075,45 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const winnerInfoContainer = document.getElementById('competitionWinnerInfo');
         const winnerDetails = document.getElementById('competitionWinnerDetails');
 
-        startBtn.onclick = () => { generateQuiz('competition'); }; // Re-attach click listener
-        
-        // Check if event listener exists before attaching
-        if (!submitPaymentIdBtn.hasAttribute('data-listener')) {
-            submitPaymentIdBtn.setAttribute('data-listener', 'true');
-            submitPaymentIdBtn.addEventListener('click', async () => {
-                const paymentIdInput = document.getElementById('paymentIdInput');
-                const paymentId = paymentIdInput.value.trim();
-                if (!paymentId) {
-                    showToast("Please enter your payment details.", "error");
-                    return;
-                }
-                submitPaymentIdBtn.disabled = true;
-                submitPaymentIdBtn.textContent = 'Submitting...';
-                try {
-                    await addDoc(collection(db, "prizeClaims"), {
-                        winnerId: user.uid,
-                        winnerName: user.displayName,
-                        paymentId: paymentId,
-                        status: 'Pending',
-                        claimedAt: serverTimestamp()
-                    });
-                    await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
-                    prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted for processing.</p>';
-                    showToast("Your payment details have been submitted!");
-                } catch (error) {
-                    showToast("Could not submit your details. Please try again.", "error");
-                    submitPaymentIdBtn.disabled = false;
-                    submitPaymentIdBtn.textContent = 'Submit';
-                }
-            });
-        }
+        startBtn.addEventListener('click', () => generateQuiz('competition'));
+
+        submitPaymentIdBtn.addEventListener('click', async () => {
+            const paymentIdInput = document.getElementById('paymentIdInput');
+            const paymentId = paymentIdInput.value.trim();
+            if (!paymentId) {
+                showToast("Please enter your payment details.", "error");
+                return;
+            }
+            submitPaymentIdBtn.disabled = true;
+            submitPaymentIdBtn.textContent = 'Submitting...';
+            try {
+                await addDoc(collection(db, "prizeClaims"), {
+                    winnerId: user.uid,
+                    winnerName: user.displayName,
+                    paymentId: paymentId,
+                    status: 'Pending',
+                    claimedAt: serverTimestamp()
+                });
+                await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
+                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted.</p>';
+                showToast("Your payment details have been submitted!");
+            } catch (error) {
+                showToast("Could not submit your details. Please try again.", "error");
+                submitPaymentIdBtn.disabled = false;
+                submitPaymentIdBtn.textContent = 'Submit';
+            }
+        });
 
         const docRef = doc(db, "siteContent", "quizCompetition");
         onSnapshot(docRef, async (docSnap) => {
             const data = docSnap.exists() ? docSnap.data() : {};
             const status = data.status || 'not_started';
             
-            // Set Instructions and UI elements
             document.getElementById('competitionInstructions').innerHTML = data.instructions ? data.instructions.replace(/\n/g, '<br>') : "<p>The admin has not set any instructions yet.</p>";
             
             const bannerContainer = document.getElementById('competitionBannerContainer');
             if (data.bannerImageUrl) {
-                bannerContainer.innerHTML = `<img loading="lazy" src="${data.bannerImageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/600x200/f97316/ffffff?text=Competition+Banner'" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
+                bannerContainer.innerHTML = `<img loading="lazy" src="${data.bannerImageUrl}" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
                 bannerContainer.classList.remove('hidden');
             } else {
                 bannerContainer.classList.add('hidden');
@@ -2146,19 +2126,17 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 document.getElementById('prizeAmountText').textContent = data.prizePool;
             }
             if (data.prizeImageUrl) {
-                prizeInfoContainer.innerHTML += `<img loading="lazy" src="${data.prizeImageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/f97316/ffffff?text=Prize'" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
+                prizeInfoContainer.innerHTML += `<img loading="lazy" src="${data.prizeImageUrl}" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
             }
 
             startBtn.disabled = true;
             prizeClaimSection.classList.add('hidden');
             winnerInfoContainer.classList.add('hidden');
-            document.getElementById('competitionTimer').textContent = '';
 
             switch (status) {
                 case 'in_progress':
                     startBtn.disabled = false;
                     startBtn.textContent = 'Start 10-Minute Challenge!';
-                    document.getElementById('competitionTimer').textContent = '10 minutes maximum time.';
                     break;
                 case 'ended':
                     startBtn.textContent = 'Competition Has Ended';
@@ -2188,22 +2166,6 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     startBtn.textContent = 'Competition Not Started';
                     break;
             }
-            
-            // Load competition announcements
-            const annQuery = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"), limit(5));
-            onSnapshot(annQuery, (annSnapshot) => {
-                const annContainer = document.getElementById('competitionAnnouncementsContainer');
-                annContainer.innerHTML = '';
-                if (annSnapshot.empty) {
-                    annContainer.innerHTML = '<p class="text-gray-500 text-center">No competition updates yet.</p>';
-                } else {
-                    annSnapshot.forEach(doc => {
-                        const annData = doc.data();
-                        const date = annData.timestamp ? new Date(annData.timestamp.toDate()).toLocaleTimeString() : 'N/A';
-                        annContainer.innerHTML += `<div class="p-3 bg-gray-50 rounded-lg border-l-4 border-orange-400"><p class="text-sm font-medium text-gray-800">${annData.message}</p><p class="text-xs text-gray-500 mt-1">@${date}</p></div>`;
-                    });
-                }
-            });
         });
     }
 
@@ -2230,7 +2192,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             document.getElementById('cameraView').srcObject = stream;
         } catch (err) {
-            showError("Could not access the camera. Make sure permissions are granted.");
+            showError("Could not access the camera.");
             closeCamera();
         }
     }
@@ -2280,22 +2242,10 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const user = auth.currentUser;
         if (!user) return;
         const logEntry = { question: quizData ? quizData.question : question, answer, timestamp: Date.now(), userId: user.uid, userEmail: user.email, userName: user.displayName || 'Unknown', topic };
-        
-        // Log to user history (simple array merge in user document)
         await updateDoc(doc(db, "users", user.uid), { history: arrayUnion({ question, answer, timestamp: logEntry.timestamp }) });
-        
-        // Log to global questions collection
         await addDoc(collection(db, "questions"), logEntry);
-        
-        // Add to Question Bank if a valid MCQ was generated
         if (!answer.includes("not seem to be a valid academic question") && quizData && quizData.options && quizData.correctAnswer) {
-            const bankEntry = { 
-                ...logEntry, 
-                question: quizData.question, 
-                options: quizData.options, 
-                correctAnswer: quizData.correctAnswer, 
-                timestamp: serverTimestamp() 
-            };
+            const bankEntry = { ...logEntry, question: quizData.question, options: quizData.options, correctAnswer: quizData.correctAnswer, timestamp: serverTimestamp() };
             delete bankEntry.answer;
             await addDoc(collection(db, "questionBank"), bankEntry);
         }
@@ -2365,7 +2315,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             allUserAnnouncements = querySnapshot.docs.map(doc => doc.data());
             announcementIndex = 0; 
             displayCurrentAnnouncement();
-            announcementInterval = setInterval(displayCurrentAnnouncement, 300000); // Rotate every 5 minutes
+            announcementInterval = setInterval(displayCurrentAnnouncement, 300000); 
         }
     }
 
@@ -2385,19 +2335,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             document.querySelectorAll('.admin-nav-link').forEach(nav => nav.classList.remove('active'));
             e.currentTarget.classList.add('active');
             
-            // Handle sub-menu active state
-            let parentDetails = e.currentTarget.closest('details');
-            document.querySelectorAll('details').forEach(details => {
-                if (details !== parentDetails) details.open = false;
-            });
-            if (parentDetails) {
-                 parentDetails.open = true;
-            }
-
-
-            
             switch(targetId) {
-                case 'adminDashboardMain': loadAdminDashboardStats(); break; // Only reload stats/content on demand
                 case 'userManagementPage': loadUsersForManagement(); break;
                 case 'issueManagementPage': loadAllIssues(); break;
                 case 'donationManagementPage': loadDonationContentForAdmin(); break;
@@ -2428,14 +2366,14 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         onSnapshot(q, (snapshot) => {
             domElements.admin.announcementList.innerHTML = '';
             if (snapshot.empty) {
-                domElements.admin.announcementList.innerHTML = '<p class="text-gray-500 p-2 text-sm">No announcements posted yet.</p>';
+                domElements.admin.announcementList.innerHTML = '<p class="text-gray-500 p-2">No announcements posted yet.</p>';
                 return;
             }
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white p-2 rounded-md shadow-sm';
-                item.innerHTML = `<p class="text-sm text-gray-700 truncate">${data.message}</p><button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
+                item.innerHTML = `<p class="text-sm text-gray-700">${data.message}</p><button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
                 domElements.admin.announcementList.appendChild(item);
             });
         });
@@ -2481,21 +2419,16 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             });
         }
     });
-    
-    // Function to reload dashboard statistics (called on initial load and navigation to dashboard)
-    function loadAdminDashboardStats() {
-        onSnapshot(collection(db, "users"), (snap) => { domElements.admin.totalUsersStat.textContent = snap.size; });
-        onSnapshot(collection(db, "questions"), (snap) => { domElements.admin.totalQuestionsStat.textContent = snap.size; });
-        onSnapshot(collection(db, "questionBank"), (snap) => { domElements.admin.questionBankStat.textContent = snap.size; });
-        onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => { domElements.admin.openIssuesStat.textContent = snap.size; });
-    }
 
     function loadAdminDashboard() {
-        loadAdminDashboardStats();
         loadAdminAnnouncements();
         loadAdminRecentQuestions();
         loadSiteContentForAdmin(); 
         setupAdminNotificationListeners();
+        onSnapshot(collection(db, "users"), (snap) => { domElements.admin.totalUsersStat.textContent = snap.size; });
+        onSnapshot(collection(db, "questions"), (snap) => { domElements.admin.totalQuestionsStat.textContent = snap.size; });
+        onSnapshot(collection(db, "questionBank"), (snap) => { domElements.admin.questionBankStat.textContent = snap.size; });
+        onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => { domElements.admin.openIssuesStat.textContent = snap.size; });
     }
 
     async function loadUsersForManagement() {
@@ -2506,8 +2439,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         usersTableBody.innerHTML = '';
         snapshot.forEach(doc => {
             const userData = doc.data();
-            // Ensure history is treated as an array before getting length
-            const questionsCount = Array.isArray(userData.history) ? userData.history.length : 0;
+            const questionsCount = userData.history ? userData.history.length : 0;
             const row = usersTableBody.insertRow();
             row.className = 'border-b';
             row.innerHTML = `<td class="py-3 px-4">${userData.name || 'N/A'}</td><td class="py-3 px-4">${userData.email}</td><td class="py-3 px-4">${questionsCount}</td><td class="py-3 px-4"><button class="delete-btn bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full" data-id="${doc.id}">Delete</button></td>`;
@@ -2547,7 +2479,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     <td class="py-3 px-4 text-sm"><p class="font-semibold">${issue.userName}</p><p class="text-gray-500">${issue.userEmail}</p></td>
                     <td class="py-3 px-4 text-sm">${issue.category}</td>
                     <td class="py-3 px-4 text-sm max-w-xs truncate" title="${issue.description}">${issue.description}</td>
-                    <td class="py-3 px-4 text-sm"><textarea data-id="${issueId}" class="admin-notes-input w-full p-1 border border-gray-300 rounded-md" rows="2">${issue.adminNotes || ''}</textarea></td>
+                    <td class="py-3 px-4 text-sm"><textarea data-id="${issueId}" class="admin-notes-input w-full p-1 border border-gray-300 rounded-md">${issue.adminNotes || ''}</textarea></td>
                     <td class="py-3 px-4 text-sm">${date}</td>
                     <td class="py-3 px-4 text-sm">
                         <select data-id="${issueId}" class="status-select w-full p-1 border-gray-300 rounded-md">
@@ -2624,8 +2556,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'N/A';
-                // Escape commas in user data
-                const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].map(v => typeof v === 'string' ? `"${v.replace(/"/g, '""')}"` : v).join(",");
+                const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].join(",");
                 csvContent += row + "\r\n";
             });
             const link = document.createElement("a");
@@ -2693,8 +2624,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         });
 
         const resultsTableBody = document.getElementById('competitionResultsTableBody');
-        // Sort by percentage (desc) and then timestamp (asc - faster time is better for a competition)
-        const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"), orderBy("timestamp", "asc"));
+        const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
         onSnapshot(resultsQuery, (snapshot) => {
             resultsTableBody.innerHTML = '';
             if (snapshot.empty) {
@@ -2722,7 +2652,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             await setDoc(doc(db, "siteContent", "quizCompetition"), { prizePool, bannerImageUrl, prizeImageUrl }, { merge: true });
             showToast("Competition settings saved!");
         } else if (target.id === 'startCompetitionAdminBtn') {
-            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress', winnerName: null, winnerScore: null }, { merge: true });
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress' }, { merge: true });
             showToast("Competition started!");
         } else if (target.id === 'endCompetitionAdminBtn') {
             await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'ended' }, { merge: true });
@@ -2793,8 +2723,15 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     async function loadGlobalSiteSettings() {
         const docRef = doc(db, "siteContent", "global");
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().logoUrl) {
-            document.getElementById('appLogo').src = docSnap.data().logoUrl;
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.logoUrl) {
+                document.getElementById('appLogo').src = data.logoUrl;
+            }
+            // NEW: Load the API key into the global variable
+            if (data.geminiApiKey) {
+                window.GEMINI_API_KEY_GLOBAL = data.geminiApiKey;
+            }
         }
     }
     
@@ -2829,43 +2766,40 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         if (globalSnap.exists()) {
             const data = globalSnap.data();
             document.getElementById('logoUrlAdmin').value = data.logoUrl || '';
+            // NEW: Populate API Key input field
+            document.getElementById('geminiApiKeyAdmin').value = data.geminiApiKey || '';
         }
     }
 
-    document.getElementById('saveAboutUsBtn').addEventListener('click', async () => {
-        const title = document.getElementById('aboutUsTitleAdmin').value;
-        const imageUrl = document.getElementById('aboutUsImageUrlAdmin').value;
-        const text = document.getElementById('aboutUsTextAdmin').value;
-        try {
-            await setDoc(doc(db, "siteContent", "aboutUs"), { title, imageUrl, text });
-            showToast("About Us content updated successfully!");
-        } catch (error) {
-            showToast("Failed to update content: " + error.message, "error");
+    document.getElementById('adminDashboardMain').addEventListener('click', async (e) => {
+        // Handle Save About Us
+        if (e.target.id === 'saveAboutUsBtn') {
+            const title = document.getElementById('aboutUsTitleAdmin').value;
+            const imageUrl = document.getElementById('aboutUsImageUrlAdmin').value;
+            const text = document.getElementById('aboutUsTextAdmin').value;
+            try {
+                await setDoc(doc(db, "siteContent", "aboutUs"), { title, imageUrl, text });
+                showToast("About Us content updated successfully!");
+            } catch (error) {
+                showToast("Failed to update content: " + error.message, "error");
+            }
         }
-    });
-
-    document.getElementById('saveLogoBtn').addEventListener('click', async () => {
-        const logoUrl = document.getElementById('logoUrlAdmin').value;
-         try {
-            await setDoc(doc(db, "siteContent", "global"), { logoUrl });
-            showToast("Logo updated successfully!");
-        } catch (error) {
-            showToast("Failed to update logo: " + error.message, "error");
+        // NEW: Handle Save Global Settings (Logo + API Key)
+        if (e.target.id === 'saveGlobalSettingsBtn') {
+            const logoUrl = document.getElementById('logoUrlAdmin').value;
+            const geminiApiKey = document.getElementById('geminiApiKeyAdmin').value;
+            try {
+                await setDoc(doc(db, "siteContent", "global"), { logoUrl, geminiApiKey }, { merge: true });
+                // Update the global JS variable immediately
+                window.GEMINI_API_KEY_GLOBAL = geminiApiKey; 
+                showToast("Global settings updated successfully!");
+            } catch (error) {
+                showToast("Failed to update settings: " + error.message, "error");
+            }
         }
     });
     
-    async function loadDonationContentForAdmin() {
-        const docRef = doc(db, "siteContent", "donationPage");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            document.getElementById('donateTitleAdmin').value = data.title || '';
-            document.getElementById('donateTextAdmin').value = data.text || '';
-            document.getElementById('donateQrUrlAdmin').value = data.qrUrl || '';
-        }
-    }
-
-    async function loadDonatePage() {
+    async function loadDonationPage() {
         const docRef = doc(db, "siteContent", "donationPage");
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
