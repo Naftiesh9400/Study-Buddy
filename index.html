@@ -14,11 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* General Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7fafc;
         }
 
+        /* Loader Animation */
         .loader {
             border-top-color: #3b82f6;
             -webkit-animation: spin 1s linear infinite;
@@ -55,9 +57,10 @@
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
 
+        /* Video Embed Container */
         .video-container {
             position: relative;
-            padding-bottom: 56.25%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
             overflow: hidden;
             max-width: 100%;
@@ -72,9 +75,11 @@
             height: 100%;
         }
 
+        /* Scrollbar Hiding */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Toast Notification */
         #toast {
             position: fixed;
             bottom: -100px;
@@ -85,6 +90,7 @@
         }
         #toast.show { bottom: 30px; }
 
+        /* Quiz Styles */
         .quiz-option.selected {
             background-color: #3b82f6;
             color: white;
@@ -98,6 +104,7 @@
         .dropdown-menu { display: none; }
         .dropdown.open .dropdown-menu { display: block; }
 
+        /* Admin Dashboard Styles */
         #adminDashboardGrid {
             display: grid;
             grid-template-columns: 260px 1fr;
@@ -284,13 +291,16 @@
 
 <body class="text-gray-800">
 
+    <!-- Global Loading Screen -->
     <div id="pageLoader">
         <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
         <h2 class="text-2xl font-semibold text-gray-700 mt-6">Loading Study Buddy...</h2>
     </div>
 
+    <!-- Toast Notification -->
     <div id="toast" class="px-6 py-3 rounded-full text-white font-medium shadow-lg"></div>
 
+    <!-- Global Confirmation Modal (replaces alert/confirm) -->
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm space-y-5 text-center">
             <h2 id="confirmTitle" class="text-xl font-bold text-gray-900">Are you sure?</h2>
@@ -304,6 +314,7 @@
 
     <div id="appContainer">
 
+        <!-- Login Page -->
         <div id="loginPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -321,6 +332,7 @@
             </div>
         </div>
 
+        <!-- Signup Page -->
         <div id="signupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -339,6 +351,7 @@
             </div>
         </div>
         
+        <!-- Setup Page (User Focus Selection) -->
         <div id="setupPage" class="page hidden min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
                 <div class="text-center">
@@ -372,7 +385,7 @@
                         <div id="collegeOptions" class="hidden mt-4 space-y-2">
                             <button data-grade="College" data-exam="BCA Sem 1" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">BCA Sem 1</button>
                             <button data-grade="College" data-exam="BCA Sem 2" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">BCA Sem 2</button>
-                             <button data-grade="College" data-exam="B.Tech CSE Sem 1" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">B.Tech CSE Sem 1</button>
+                            <button data-grade="College" data-exam="B.Tech CSE Sem 1" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">B.Tech CSE Sem 1</button>
                             <button data-grade="College" data-exam="B.Tech CSE Sem 2" class="setup-option-btn w-full bg-gray-100 p-3 rounded-lg hover:bg-gray-200">B.Tech CSE Sem 2</button>
                         </div>
                     </div>
@@ -380,12 +393,14 @@
             </div>
         </div>
         
+        <!-- Main App Wrapper (Header, Content, Footer) -->
         <div id="mainAppWrapper" class="page hidden flex flex-col min-h-screen">
             <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center py-4">
                         <div class="flex items-center space-x-3">
-                            <img id="appLogo" src="https://img.icons8.com/plasticine/100/book.png" alt="Study Buddy Logo" class="h-8 w-8">
+                            <!-- Logo is dynamically loaded from Firestore, using default fallback -->
+                            <img id="appLogo" src="https://img.icons8.com/plasticine/100/book.png" onerror="this.onerror=null;this.src='https://placehold.co/48x48/3b82f6/ffffff?text=SB'" alt="Study Buddy Logo" class="h-8 w-8">
                             <h1 class="text-2xl font-bold text-gray-800">Study Buddy</h1>
                         </div>
                         <nav class="hidden md:flex items-center space-x-2">
@@ -412,7 +427,7 @@
                             <div class="relative">
                                 <button id="notificationBellBtn" class="p-2 rounded-full hover:bg-gray-100 relative">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                     <span id="notificationDot" class="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full hidden"></span>
                                 </button>
@@ -447,6 +462,7 @@
 
             <main class="flex-grow">
                 <div id="pageContent" class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+                    <!-- Dynamic content loads here -->
                 </div>
             </main>
             <footer class="bg-gray-800 text-white mt-auto">
@@ -456,6 +472,7 @@
             </footer>
         </div>
         
+        <!-- Admin Dashboard Page -->
         <div id="adminDashboardPage" class="page hidden">
             <div id="admin-overlay" class="hidden md:hidden"></div>
             <div id="adminDashboardGrid">
@@ -466,7 +483,7 @@
                     </div>
                     <div class="search-bar">
                          <span class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                          </span>
                          <input type="text" placeholder="Search">
                     </div>
@@ -575,7 +592,7 @@
                                             <button id="saveLogoBtn" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Save Logo</button>
                                         </div>
                                     </div>
-                                 </div>
+                               </div>
                             </div>
                             
                             <div class="space-y-6">
@@ -716,7 +733,7 @@
                         </div>
                     </div>
                     <div id="prizeClaimsPage" class="admin-content-section hidden">
-                         <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
                         <div class="bg-white rounded-2xl shadow-xl p-8">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
@@ -730,6 +747,7 @@
             </div>
         </div>
 
+        <!-- Camera Modal -->
         <div id="cameraModal" class="fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center p-4 z-50 hidden">
             <video id="cameraView" autoplay playsinline class="mb-4 max-w-full rounded-lg"></video>
             <canvas id="cameraCanvas" class="hidden"></canvas>
@@ -739,6 +757,7 @@
             </div>
         </div>
 
+        <!-- Support Chat Modal -->
         <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
             <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg flex flex-col h-[80vh]">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
@@ -756,6 +775,7 @@
 
     </div>
 
+    <!-- Page Templates -->
     <template id="mainAppPageTemplate">
         <div id="announcementsContainer" class="mb-8"></div>
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
@@ -837,6 +857,7 @@
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <h3 class="text-xl font-semibold mb-4">Community</h3>
+                <!-- Placeholder for WhatsApp link - Replace with actual link -->
                 <a href="https://chat.whatsapp.com/your-group-invite-link" target="_blank" class="w-full bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition shadow-md flex items-center justify-center space-x-2">
                     <img loading="lazy" src="https://img.icons8.com/color/48/whatsapp--v1.png" alt="WhatsApp" class="h-6 w-6">
                     <span>Join WhatsApp Community</span>
@@ -872,7 +893,7 @@
                      <input id="customQuizLength" type="number" min="1" max="20" class="mt-2 w-24 mx-auto px-2 py-1 border border-gray-300 rounded-lg hidden" placeholder="e.g., 7">
                  </div>
                  <button id="generateQuizBtn" class="bg-green-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-green-700 transition w-full sm:w-auto disabled:bg-gray-400">Start Quiz</button>
-            </div>
+             </div>
         </div>
     </template>
 
@@ -916,18 +937,18 @@
     </template>
 
     <template id="quizTakerPageTemplate">
-         <div class="max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-6">
-             <div class="flex justify-between items-center">
-                 <h2 id="quizTakerTitle" class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
-                 <div class="text-lg font-semibold bg-red-500 text-white px-4 py-1 rounded-full"><span id="quizTimer">10:00</span></div>
-             </div>
-             <div id="quizQuestionContainer" class="pt-4">
-                 <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">10</span></p>
-                 <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
-                 <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
-             </div>
-             <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
-        </div>
+          <div class="max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-6">
+              <div class="flex justify-between items-center">
+                  <h2 id="quizTakerTitle" class="text-2xl font-bold text-gray-900">Quiz in Progress</h2>
+                  <div class="text-lg font-semibold bg-red-500 text-white px-4 py-1 rounded-full"><span id="quizTimer">10:00</span></div>
+              </div>
+              <div id="quizQuestionContainer" class="pt-4">
+                  <p class="text-gray-500 text-sm">Question <span id="currentQuestionNumber">1</span> of <span id="totalQuizQuestions">10</span></p>
+                  <p id="quizQuestionText" class="text-lg font-medium mt-2">Loading question...</p>
+                  <div id="quizOptionsContainer" class="space-y-3 mt-4"></div>
+              </div>
+              <button id="nextQuestionBtn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Next Question</button>
+          </div>
     </template>
 
     <template id="quizResultPageTemplate">
@@ -1004,6 +1025,7 @@
             </div>
             <div id="donateQrContainer" class="flex flex-col items-center">
                 <p class="font-semibold mb-4">You can scan the QR code below to donate.</p>
+                <!-- Default QR Code for UPI/Paytm is a placeholder - Admin can update it -->
                 <img loading="lazy" id="donateQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=paytmmp%3A%2F%2Fupi" alt="Donation QR Code" class="w-48 h-48 rounded-lg shadow-md">
             </div>
         </div>
@@ -1045,6 +1067,8 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, getDocs, onSnapshot, updateDoc, arrayUnion, deleteDoc, serverTimestamp, orderBy, where, limit, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase Configuration ---
+    // NOTE: In a Canvas environment, these variables are typically provided externally.
+    // The following config is kept as is from the original file, which is assumed to be running in an environment where these keys work.
     const firebaseConfig = {
         apiKey: "AIzaSyAFBbsNLT4TdPT_ufuo6dYG_nqCCoVYEa0",
         authDomain: "cbse-4fbf5.firebaseapp.com",
@@ -1158,6 +1182,7 @@
 
     const navigateToPage = (pageId) => {
         if (activeQuizState && activeQuizState.type === 'competition' && pageId !== 'quizTakerPage') {
+            // Cancel ongoing competition if user navigates away
             activeQuizState = null;
             clearInterval(quizTimerInterval);
             showToast("Competition progress has been reset.", "error");
@@ -1424,10 +1449,12 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     }
 
     async function getSolution(prompt, imageData = null, userQuestion, topic) {
-        const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // Replace with your key if needed
+        const apiKey = ""; // Keep this blank. Canvas will inject the key.
         const finalApiKey = typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : apiKey;
         if (!finalApiKey) { showError("API Key is missing."); return; }
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${finalApiKey}`;
+
+        // CORRECTED MODEL NAME: Changed gemini-1.5-flash to gemini-pro-vision for v1beta multimodal support
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
         
         const parts = [{ text: prompt }];
         if (imageData) { parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } }); }
@@ -1435,24 +1462,36 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         
         try {
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) { const err = await response.json(); throw new Error(err.error.message); }
+            if (!response.ok) { 
+                const err = await response.json(); 
+                throw new Error(err.error.message); 
+            }
             const result = await response.json();
             
             if (result.candidates && result.candidates[0].content.parts[0]) {
                 const fullResponseText = result.candidates[0].content.parts[0].text;
                 let solutionText = fullResponseText, videoUrl = null, quizData = null;
                 
+                // Extract QUIZ_DATA
                 const quizDataMatch = fullResponseText.match(/QUIZ_DATA:\s*({.*})/s);
                 if(quizDataMatch && quizDataMatch[1]){
                     try { quizData = JSON.parse(quizDataMatch[1]); } 
                     catch(e){ console.error("Failed to parse quiz JSON", e); quizData = null; }
                 }
 
+                // Extract VIDEO_URL
                 const videoUrlMatch = fullResponseText.match(/VIDEO_URL:\s*(https?:\/\/[^\s]+)/);
                 if(videoUrlMatch && videoUrlMatch[1]){ videoUrl = videoUrlMatch[1]; }
 
+                // Clean up solution text
                 solutionText = fullResponseText.split("VIDEO_URL:")[0].split("QUIZ_DATA:")[0].trim();
-                document.getElementById('answer').innerHTML = solutionText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>').replace(/\n/g, '<br>');
+
+                // Simple markdown rendering for display
+                document.getElementById('answer').innerHTML = solutionText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded-md"><code>$1</code></pre>')
+                    .replace(/\n/g, '<br>');
                 
                 if (videoUrl) { displayVideo(videoUrl); }
                 
@@ -1695,21 +1734,33 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     .filter(q => q.options && q.options.length > 0 && q.correctAnswer);
 
                 if(allAvailableQuestions.length < numQuestions) {
-                    showToast(`Not enough questions in the bank for '${userFocus}' to create a ${numQuestions}-question quiz. Only found ${allAvailableQuestions.length}.`, "error");
-                    return;
+                    // Fallback: If not enough bank questions, generate on the fly
+                    showToast(`Not enough practice questions in the bank. Generating ${numQuestions} questions now.`, "error");
+                    const generatedQuestions = await generateQuestionsForTopic(userFocus, numQuestions);
+                    if (generatedQuestions) {
+                         startQuiz(generatedQuestions, type, userFocus);
+                    } else {
+                        throw new Error("Failed to generate questions.");
+                    }
+                    
+                } else {
+                    // Use questions from the bank
+                    shuffleArray(allAvailableQuestions);
+                    const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
+                    startQuiz(quizQuestions, type, userFocus);
                 }
 
-                shuffleArray(allAvailableQuestions);
-                const quizQuestions = allAvailableQuestions.slice(0, numQuestions);
-                startQuiz(quizQuestions, type, userFocus);
-
-            } else { // competition
+            } else { // competition always generates questions to ensure fresh content
                 const userDocRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(userDocRef);
                 const userData = docSnap.data();
+                if(!docSnap.exists() || !userData.targetExam) {
+                    showToast("Please set your focus in your profile first.", "error");
+                    return;
+                }
                 userFocus = `${userData.grade} - ${userData.targetExam}`;
                 
-                const questions = await generateQuestionsForTopic(userFocus, numQuestions);
+                const questions = await generateQuestionsForTopic(userFocus, 10); // Competition is always 10 questions
                 if (questions) {
                     startQuiz(questions, type, userFocus);
                 }
@@ -1727,13 +1778,15 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     }
 
     async function generateQuestionsForTopic(topic, numQuestions) {
-        const apiKey = "AIzaSyAVUM1iSxjffw7RgbEli0pOzMXTVqbxdRA"; // Replace with your key
+        const apiKey = ""; // Keep this blank. Canvas will inject the key.
         const finalApiKey = typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : apiKey;
         if (!finalApiKey) {
             showError("API Key is missing.");
             return null;
         }
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${finalApiKey}`;
+        
+        // CORRECTED MODEL NAME: Changed gemini-1.5-flash to gemini-pro-vision for v1beta output structure.
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
 
         const prompt = `Generate ${numQuestions} multiple-choice questions for an Indian student studying '${topic}'. The questions should be relevant to this curriculum. Provide the output as a valid JSON array of objects. Each object must have these keys: "question" (string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). Do not include any other text or explanations in your response, only the JSON array.`;
 
@@ -1754,11 +1807,12 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             const result = await response.json();
             const textResponse = result.candidates[0].content.parts[0].text;
             
+            // Attempt to find and parse the JSON array
             const jsonMatch = textResponse.match(/\[\s*\{[\s\S]*\}\s*\]/);
             if (jsonMatch && jsonMatch[0]) {
                 return JSON.parse(jsonMatch[0]);
             } else {
-                throw new Error("Invalid JSON format from AI.");
+                throw new Error("Invalid JSON format from AI or no questions generated.");
             }
         } catch (error) {
             console.error("AI Question Generation Error:", error);
@@ -1805,8 +1859,9 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         document.getElementById('nextQuestionBtn').textContent = activeQuizState.currentQuestionIndex === activeQuizState.questions.length - 1 ? "Finish Quiz" : "Next Question";
 
         if (activeQuizState.currentQuestionIndex === 0) {
+            // Timer logic, starts only on the first question display
             clearInterval(quizTimerInterval);
-            let timeLeft = 600; // 10 mins
+            let timeLeft = 600; // 10 mins (600 seconds)
             const timerEl = document.getElementById('quizTimer');
             
             quizTimerInterval = setInterval(() => {
@@ -1862,6 +1917,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const quizType = activeQuizState.type;
         
         if (quizType === 'competition') {
+            // Reward for participation
             const user = auth.currentUser;
             if (user) {
                 const userDocRef = doc(db, "users", user.uid);
@@ -1876,13 +1932,14 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
 
         navigateToPage('quizResultPage');
         
+        // Populate results page immediately after navigation
         setTimeout(async () => {
             document.getElementById('finalScore').textContent = `${lastQuizResults.score}/${lastQuizResults.totalQuestions}`;
             document.getElementById('finalAccuracy').textContent = `${lastQuizResults.percentage}%`;
             
-            const rank = quizType === 'practice' 
-                ? await calculateRank(lastQuizResults.percentage)
-                : await calculateCompetitionRank(lastQuizResults.percentage);
+            const rank = quizType === 'competition' 
+                ? await calculateCompetitionRank(lastQuizResults.percentage)
+                : await calculateRank(lastQuizResults.percentage);
             document.getElementById('finalRank').textContent = rank;
 
             const reviewContainer = document.getElementById('quizReviewContainer');
@@ -1894,9 +1951,9 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 q.options.forEach(opt => {
                     let style = 'border-gray-300';
                     if (opt === q.correctAnswer) {
-                        style = 'bg-green-100 border-green-500 text-green-800';
+                        style = 'bg-green-100 border-green-500 text-green-800 font-semibold';
                     } else if (opt === userAnswer && !isCorrect) {
-                        style = 'bg-red-100 border-red-500 text-red-800';
+                        style = 'bg-red-100 border-red-500 text-red-800 font-semibold';
                     }
                     optionsHtml += `<li class="p-2 border rounded-md ${style}">${opt}</li>`;
                 });
@@ -1949,33 +2006,25 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
     async function calculateRank(userPercentage) {
         const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"));
         const snapshot = await getDocs(q);
-        const allScores = snapshot.docs.map(doc => doc.data().percentage);
+        // Using distinct percentages for ranking based on the highest score only (simple leaderboard)
+        const uniqueScores = Array.from(new Set(snapshot.docs.map(doc => doc.data().percentage))).sort((a, b) => b - a);
         
-        let rank = 1;
-        for (const score of allScores) {
-            if (userPercentage < score) {
-                rank++;
-            } else {
-                break;
-            }
-        }
+        let rank = uniqueScores.findIndex(score => userPercentage >= score) + 1;
+        if (rank === 0) rank = uniqueScores.length + 1; 
+
         return `#${rank}`;
     }
 
     async function calculateCompetitionRank(userPercentage) {
-        const q = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
+        const q = query(collection(db, "competitionResults"), orderBy("percentage", "desc"), orderBy("timestamp", "asc"));
         const snapshot = await getDocs(q);
+        
+        // Find the rank based on score. Break ties using time (earlier time is better).
         const allScores = snapshot.docs.map(doc => doc.data().percentage);
         
-        let rank = 1;
-        for (const score of allScores) {
-            if (userPercentage < score) {
-                rank++;
-            } else {
-                break;
-            }
-        }
-        return `#${rank}`;
+        let rank = allScores.findIndex(score => userPercentage === score);
+        // Note: Due to potential race conditions in real Firestore, this is a simplified ranking.
+        return rank >= 0 ? `#${rank + 1}` : '--';
     }
 
     // --- Leaderboard Functions ---
@@ -1983,7 +2032,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const tableBody = document.getElementById('leaderboardTableBody');
         tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Loading leaderboard...</td></tr>';
 
-        const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"), limit(20));
+        // Fetch all practice results, sort by percentage, then keep only the highest percentage per user
+        const q = query(collection(db, "quizResults"), orderBy("percentage", "desc"));
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
@@ -1991,11 +2041,31 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             return;
         }
 
-        tableBody.innerHTML = '';
-        let rank = 1;
+        const topScores = {};
         snapshot.forEach(doc => {
             const data = doc.data();
-            const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'N/A';
+            // Only keep the best score for each user
+            if (!topScores[data.userId] || data.percentage > topScores[data.userId].percentage) {
+                 topScores[data.userId] = {
+                    ...data,
+                    timestamp: data.timestamp ? data.timestamp.toDate() : new Date()
+                 };
+            }
+        });
+
+        // Convert to array and sort by score (desc), then date (asc - for tie break)
+        const sortedLeaders = Object.values(topScores).sort((a, b) => {
+            if (b.percentage !== a.percentage) {
+                return b.percentage - a.percentage;
+            }
+            return a.timestamp.getTime() - b.timestamp.getTime(); 
+        });
+
+
+        tableBody.innerHTML = '';
+        let rank = 1;
+        sortedLeaders.forEach(data => {
+            const date = data.timestamp ? data.timestamp.toLocaleDateString() : 'N/A';
             const row = tableBody.insertRow();
             row.className = 'border-b hover:bg-gray-50';
             row.innerHTML = `
@@ -2020,45 +2090,50 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const winnerInfoContainer = document.getElementById('competitionWinnerInfo');
         const winnerDetails = document.getElementById('competitionWinnerDetails');
 
-        startBtn.addEventListener('click', () => generateQuiz('competition'));
-
-        submitPaymentIdBtn.addEventListener('click', async () => {
-            const paymentIdInput = document.getElementById('paymentIdInput');
-            const paymentId = paymentIdInput.value.trim();
-            if (!paymentId) {
-                showToast("Please enter your payment details.", "error");
-                return;
-            }
-            submitPaymentIdBtn.disabled = true;
-            submitPaymentIdBtn.textContent = 'Submitting...';
-            try {
-                await addDoc(collection(db, "prizeClaims"), {
-                    winnerId: user.uid,
-                    winnerName: user.displayName,
-                    paymentId: paymentId,
-                    status: 'Pending',
-                    claimedAt: serverTimestamp()
-                });
-                await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
-                prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted.</p>';
-                showToast("Your payment details have been submitted!");
-            } catch (error) {
-                showToast("Could not submit your details. Please try again.", "error");
-                submitPaymentIdBtn.disabled = false;
-                submitPaymentIdBtn.textContent = 'Submit';
-            }
-        });
+        startBtn.onclick = () => { generateQuiz('competition'); }; // Re-attach click listener
+        
+        // Check if event listener exists before attaching
+        if (!submitPaymentIdBtn.hasAttribute('data-listener')) {
+            submitPaymentIdBtn.setAttribute('data-listener', 'true');
+            submitPaymentIdBtn.addEventListener('click', async () => {
+                const paymentIdInput = document.getElementById('paymentIdInput');
+                const paymentId = paymentIdInput.value.trim();
+                if (!paymentId) {
+                    showToast("Please enter your payment details.", "error");
+                    return;
+                }
+                submitPaymentIdBtn.disabled = true;
+                submitPaymentIdBtn.textContent = 'Submitting...';
+                try {
+                    await addDoc(collection(db, "prizeClaims"), {
+                        winnerId: user.uid,
+                        winnerName: user.displayName,
+                        paymentId: paymentId,
+                        status: 'Pending',
+                        claimedAt: serverTimestamp()
+                    });
+                    await updateDoc(doc(db, "users", user.uid), { paymentId: paymentId });
+                    prizeClaimSection.innerHTML = '<p class="font-semibold text-lg">Thank you! Your details have been submitted for processing.</p>';
+                    showToast("Your payment details have been submitted!");
+                } catch (error) {
+                    showToast("Could not submit your details. Please try again.", "error");
+                    submitPaymentIdBtn.disabled = false;
+                    submitPaymentIdBtn.textContent = 'Submit';
+                }
+            });
+        }
 
         const docRef = doc(db, "siteContent", "quizCompetition");
         onSnapshot(docRef, async (docSnap) => {
             const data = docSnap.exists() ? docSnap.data() : {};
             const status = data.status || 'not_started';
             
+            // Set Instructions and UI elements
             document.getElementById('competitionInstructions').innerHTML = data.instructions ? data.instructions.replace(/\n/g, '<br>') : "<p>The admin has not set any instructions yet.</p>";
             
             const bannerContainer = document.getElementById('competitionBannerContainer');
             if (data.bannerImageUrl) {
-                bannerContainer.innerHTML = `<img loading="lazy" src="${data.bannerImageUrl}" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
+                bannerContainer.innerHTML = `<img loading="lazy" src="${data.bannerImageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/600x200/f97316/ffffff?text=Competition+Banner'" alt="Competition Banner" class="w-full h-auto rounded-lg shadow-md object-cover">`;
                 bannerContainer.classList.remove('hidden');
             } else {
                 bannerContainer.classList.add('hidden');
@@ -2071,17 +2146,19 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                 document.getElementById('prizeAmountText').textContent = data.prizePool;
             }
             if (data.prizeImageUrl) {
-                prizeInfoContainer.innerHTML += `<img loading="lazy" src="${data.prizeImageUrl}" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
+                prizeInfoContainer.innerHTML += `<img loading="lazy" src="${data.prizeImageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/f97316/ffffff?text=Prize'" alt="Prize" class="mt-2 max-w-xs h-auto rounded-md shadow-sm">`;
             }
 
             startBtn.disabled = true;
             prizeClaimSection.classList.add('hidden');
             winnerInfoContainer.classList.add('hidden');
+            document.getElementById('competitionTimer').textContent = '';
 
             switch (status) {
                 case 'in_progress':
                     startBtn.disabled = false;
                     startBtn.textContent = 'Start 10-Minute Challenge!';
+                    document.getElementById('competitionTimer').textContent = '10 minutes maximum time.';
                     break;
                 case 'ended':
                     startBtn.textContent = 'Competition Has Ended';
@@ -2111,6 +2188,22 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     startBtn.textContent = 'Competition Not Started';
                     break;
             }
+            
+            // Load competition announcements
+            const annQuery = query(collection(db, "competitionAnnouncements"), orderBy("timestamp", "desc"), limit(5));
+            onSnapshot(annQuery, (annSnapshot) => {
+                const annContainer = document.getElementById('competitionAnnouncementsContainer');
+                annContainer.innerHTML = '';
+                if (annSnapshot.empty) {
+                    annContainer.innerHTML = '<p class="text-gray-500 text-center">No competition updates yet.</p>';
+                } else {
+                    annSnapshot.forEach(doc => {
+                        const annData = doc.data();
+                        const date = annData.timestamp ? new Date(annData.timestamp.toDate()).toLocaleTimeString() : 'N/A';
+                        annContainer.innerHTML += `<div class="p-3 bg-gray-50 rounded-lg border-l-4 border-orange-400"><p class="text-sm font-medium text-gray-800">${annData.message}</p><p class="text-xs text-gray-500 mt-1">@${date}</p></div>`;
+                    });
+                }
+            });
         });
     }
 
@@ -2137,7 +2230,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             document.getElementById('cameraView').srcObject = stream;
         } catch (err) {
-            showError("Could not access the camera.");
+            showError("Could not access the camera. Make sure permissions are granted.");
             closeCamera();
         }
     }
@@ -2187,10 +2280,22 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const user = auth.currentUser;
         if (!user) return;
         const logEntry = { question: quizData ? quizData.question : question, answer, timestamp: Date.now(), userId: user.uid, userEmail: user.email, userName: user.displayName || 'Unknown', topic };
+        
+        // Log to user history (simple array merge in user document)
         await updateDoc(doc(db, "users", user.uid), { history: arrayUnion({ question, answer, timestamp: logEntry.timestamp }) });
+        
+        // Log to global questions collection
         await addDoc(collection(db, "questions"), logEntry);
+        
+        // Add to Question Bank if a valid MCQ was generated
         if (!answer.includes("not seem to be a valid academic question") && quizData && quizData.options && quizData.correctAnswer) {
-            const bankEntry = { ...logEntry, question: quizData.question, options: quizData.options, correctAnswer: quizData.correctAnswer, timestamp: serverTimestamp() };
+            const bankEntry = { 
+                ...logEntry, 
+                question: quizData.question, 
+                options: quizData.options, 
+                correctAnswer: quizData.correctAnswer, 
+                timestamp: serverTimestamp() 
+            };
             delete bankEntry.answer;
             await addDoc(collection(db, "questionBank"), bankEntry);
         }
@@ -2260,7 +2365,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             allUserAnnouncements = querySnapshot.docs.map(doc => doc.data());
             announcementIndex = 0; 
             displayCurrentAnnouncement();
-            announcementInterval = setInterval(displayCurrentAnnouncement, 300000); 
+            announcementInterval = setInterval(displayCurrentAnnouncement, 300000); // Rotate every 5 minutes
         }
     }
 
@@ -2280,7 +2385,19 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             document.querySelectorAll('.admin-nav-link').forEach(nav => nav.classList.remove('active'));
             e.currentTarget.classList.add('active');
             
+            // Handle sub-menu active state
+            let parentDetails = e.currentTarget.closest('details');
+            document.querySelectorAll('details').forEach(details => {
+                if (details !== parentDetails) details.open = false;
+            });
+            if (parentDetails) {
+                 parentDetails.open = true;
+            }
+
+
+            
             switch(targetId) {
+                case 'adminDashboardMain': loadAdminDashboardStats(); break; // Only reload stats/content on demand
                 case 'userManagementPage': loadUsersForManagement(); break;
                 case 'issueManagementPage': loadAllIssues(); break;
                 case 'donationManagementPage': loadDonationContentForAdmin(); break;
@@ -2311,14 +2428,14 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         onSnapshot(q, (snapshot) => {
             domElements.admin.announcementList.innerHTML = '';
             if (snapshot.empty) {
-                domElements.admin.announcementList.innerHTML = '<p class="text-gray-500 p-2">No announcements posted yet.</p>';
+                domElements.admin.announcementList.innerHTML = '<p class="text-gray-500 p-2 text-sm">No announcements posted yet.</p>';
                 return;
             }
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const item = document.createElement('div');
                 item.className = 'flex justify-between items-center bg-white p-2 rounded-md shadow-sm';
-                item.innerHTML = `<p class="text-sm text-gray-700">${data.message}</p><button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
+                item.innerHTML = `<p class="text-sm text-gray-700 truncate">${data.message}</p><button data-id="${doc.id}" class="delete-announcement-btn text-red-500 hover:text-red-700 text-xs font-bold px-2">✕</button>`;
                 domElements.admin.announcementList.appendChild(item);
             });
         });
@@ -2364,16 +2481,21 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             });
         }
     });
-
-    function loadAdminDashboard() {
-        loadAdminAnnouncements();
-        loadAdminRecentQuestions();
-        loadSiteContentForAdmin(); 
-        setupAdminNotificationListeners();
+    
+    // Function to reload dashboard statistics (called on initial load and navigation to dashboard)
+    function loadAdminDashboardStats() {
         onSnapshot(collection(db, "users"), (snap) => { domElements.admin.totalUsersStat.textContent = snap.size; });
         onSnapshot(collection(db, "questions"), (snap) => { domElements.admin.totalQuestionsStat.textContent = snap.size; });
         onSnapshot(collection(db, "questionBank"), (snap) => { domElements.admin.questionBankStat.textContent = snap.size; });
         onSnapshot(query(collection(db, "issues"), where("status", "==", "Open")), (snap) => { domElements.admin.openIssuesStat.textContent = snap.size; });
+    }
+
+    function loadAdminDashboard() {
+        loadAdminDashboardStats();
+        loadAdminAnnouncements();
+        loadAdminRecentQuestions();
+        loadSiteContentForAdmin(); 
+        setupAdminNotificationListeners();
     }
 
     async function loadUsersForManagement() {
@@ -2384,7 +2506,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         usersTableBody.innerHTML = '';
         snapshot.forEach(doc => {
             const userData = doc.data();
-            const questionsCount = userData.history ? userData.history.length : 0;
+            // Ensure history is treated as an array before getting length
+            const questionsCount = Array.isArray(userData.history) ? userData.history.length : 0;
             const row = usersTableBody.insertRow();
             row.className = 'border-b';
             row.innerHTML = `<td class="py-3 px-4">${userData.name || 'N/A'}</td><td class="py-3 px-4">${userData.email}</td><td class="py-3 px-4">${questionsCount}</td><td class="py-3 px-4"><button class="delete-btn bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full" data-id="${doc.id}">Delete</button></td>`;
@@ -2424,7 +2547,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
                     <td class="py-3 px-4 text-sm"><p class="font-semibold">${issue.userName}</p><p class="text-gray-500">${issue.userEmail}</p></td>
                     <td class="py-3 px-4 text-sm">${issue.category}</td>
                     <td class="py-3 px-4 text-sm max-w-xs truncate" title="${issue.description}">${issue.description}</td>
-                    <td class="py-3 px-4 text-sm"><textarea data-id="${issueId}" class="admin-notes-input w-full p-1 border border-gray-300 rounded-md">${issue.adminNotes || ''}</textarea></td>
+                    <td class="py-3 px-4 text-sm"><textarea data-id="${issueId}" class="admin-notes-input w-full p-1 border border-gray-300 rounded-md" rows="2">${issue.adminNotes || ''}</textarea></td>
                     <td class="py-3 px-4 text-sm">${date}</td>
                     <td class="py-3 px-4 text-sm">
                         <select data-id="${issueId}" class="status-select w-full p-1 border-gray-300 rounded-md">
@@ -2501,7 +2624,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'N/A';
-                const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].join(",");
+                // Escape commas in user data
+                const row = [data.userName, data.score, data.totalQuestions, data.percentage, `"${data.topic}"`, `"${date}"`].map(v => typeof v === 'string' ? `"${v.replace(/"/g, '""')}"` : v).join(",");
                 csvContent += row + "\r\n";
             });
             const link = document.createElement("a");
@@ -2569,7 +2693,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         });
 
         const resultsTableBody = document.getElementById('competitionResultsTableBody');
-        const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"));
+        // Sort by percentage (desc) and then timestamp (asc - faster time is better for a competition)
+        const resultsQuery = query(collection(db, "competitionResults"), orderBy("percentage", "desc"), orderBy("timestamp", "asc"));
         onSnapshot(resultsQuery, (snapshot) => {
             resultsTableBody.innerHTML = '';
             if (snapshot.empty) {
@@ -2597,7 +2722,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
             await setDoc(doc(db, "siteContent", "quizCompetition"), { prizePool, bannerImageUrl, prizeImageUrl }, { merge: true });
             showToast("Competition settings saved!");
         } else if (target.id === 'startCompetitionAdminBtn') {
-            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress' }, { merge: true });
+            await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'in_progress', winnerName: null, winnerScore: null }, { merge: true });
             showToast("Competition started!");
         } else if (target.id === 'endCompetitionAdminBtn') {
             await setDoc(doc(db, "siteContent", "quizCompetition"), { status: 'ended' }, { merge: true });
