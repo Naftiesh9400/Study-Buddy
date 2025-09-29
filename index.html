@@ -564,7 +564,7 @@
                                     <h3 class="text-xl font-semibold mb-4">Recently Added to Question Bank</h3>
                                     <div id="adminHistoryContainer" class="space-y-4 max-h-96 overflow-y-auto no-scrollbar"></div>
                                 </div>
-                                 <div class="chart-card">
+                                <div class="chart-card">
                                     <h3 class="text-xl font-semibold mb-4">Manage Site Content</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div class="space-y-4">
@@ -738,8 +738,8 @@
                         </div>
                     </div>
                     <div id="prizeClaimsPage" class="admin-content-section hidden">
-                           <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
-                         <div class="bg-white rounded-2xl shadow-xl p-8">
+                            <h2 class="text-3xl font-bold text-gray-900 mb-8">Prize Claims</h2>
+                          <div class="bg-white rounded-2xl shadow-xl p-8">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
                                     <thead class="bg-gray-100"><tr><th class="text-left py-3 px-4 font-semibold text-sm">Winner Name</th><th class="text-left py-3 px-4 font-semibold text-sm">Paytm/UPI ID</th><th class="text-left py-3 px-4 font-semibold text-sm">Date Claimed</th><th class="text-left py-3 px-4 font-semibold text-sm">Status</th><th class="text-left py-3 px-4 font-semibold text-sm">Action</th></tr></thead>
@@ -1465,7 +1465,8 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const finalApiKey = window.GEMINI_API_KEY_GLOBAL;
 
         // Use gemini-pro-vision for multimodal (image) support on the v1beta endpoint
-        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
+        // FIX: Changed /v1/ to /v1beta/ as required for gemini-pro-vision
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
         
         const parts = [{ text: prompt }];
         if (imageData) { parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } }); }
@@ -1788,7 +1789,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         }
 
         // Use gemini-pro-vision for the v1beta endpoint
-        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
 
         const prompt = `Generate ${numQuestions} multiple-choice questions for an Indian student studying '${topic}'. The questions should be relevant to this curriculum. Provide the output as a valid JSON array of objects. Each object must have these keys: "question" (string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). Do not include any other text or explanations in your response, only the JSON array.`;
 
@@ -3002,4 +3003,3 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
 
 </body>
 </html>
-
