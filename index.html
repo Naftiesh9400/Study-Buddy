@@ -1465,7 +1465,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         const finalApiKey = window.GEMINI_API_KEY_GLOBAL;
 
         // Use gemini-pro-vision for multimodal (image) support on the v1beta endpoint
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
         
         const parts = [{ text: prompt }];
         if (imageData) { parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } }); }
@@ -1788,7 +1788,7 @@ Finally, on a new line, if the question can be converted into a multiple-choice 
         }
 
         // Use gemini-pro-vision for the v1beta endpoint
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${finalApiKey}`;
 
         const prompt = `Generate ${numQuestions} multiple-choice questions for an Indian student studying '${topic}'. The questions should be relevant to this curriculum. Provide the output as a valid JSON array of objects. Each object must have these keys: "question" (string), "options" (an array of 4 strings), and "correctAnswer" (a string that exactly matches one of the options). Do not include any other text or explanations in your response, only the JSON array.`;
 
